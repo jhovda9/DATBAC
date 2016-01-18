@@ -3,7 +3,7 @@ import sys
 import getopt
 import HTMLParser
 import os
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
 print "Command line worked"
 """
 opts, args = getopt.getopt(sys.argv[1:], "i:o:", ["inputFile=", "outputLocation="])
@@ -33,5 +33,6 @@ while True:
 
 file = open("IciIpsTest.trx", "r")
 root = ET.fromstring(file.read())
-for child in root:
-    print child.text
+subtests = root.find("InnerTests")
+for child in subtests:
+    print child.find("TestResult").text
