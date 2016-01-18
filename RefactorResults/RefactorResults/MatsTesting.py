@@ -14,10 +14,15 @@ for opt, arg in opts:
 print inputfile
 print outputLocation"""
 
+class SubTest(object):
+
+
 class HTMLParser(HTMLParser.HTMLParser):
     def handle_data(self, data):
         print "Encountered data: %s" % data;
-#print os.listdir(os.getcwd())
+
+
+print os.getcwd()
 file = open("tes.html", "r")
 parser = HTMLParser()
 while True:
