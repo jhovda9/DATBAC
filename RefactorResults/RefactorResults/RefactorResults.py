@@ -19,7 +19,7 @@ class test(object):
 
 """
 
-class test(object):
+class TFSTest(object):
     innerTests = []
     def __init__(self, name, result, errorMessage, detailedFile):
         self.name = name
@@ -31,11 +31,20 @@ def createTestObject(testElement):
     result = False
     if testElement.find("TestResult").text == "Passed":
         result = True
-    testObject = test(testElement.find("TestName").text, result, testElement.find("ErrorMessage").text, 
+    testObject = TFSTest(testElement.find("TestName").text, result, testElement.find("ErrorMessage").text, 
                       "Placeholder")
     return testObject
 
+
+def createTestHierarchy(root):
+    baseTest = createTestObject(root)
+    if root.find("InnerTests") != None:
+        for test in root.find("InnerTests"):
+            baseTest.innerTests.append(createTestObject(test))
+    return baseTest
+
 file = open("IciIpsTest.trx", "r")
 root = ET.fromstring(file.read())
-rootObject = createTestObject(root)
-print rootObject.result
+rootObject = createTestHierarchy(root)
+for test in rootObject.innerTests:
+    print test.name
