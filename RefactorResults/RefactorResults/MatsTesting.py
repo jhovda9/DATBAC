@@ -3,6 +3,7 @@ import sys
 import getopt
 import HTMLParser
 import os
+import xml.etree.cElementTree as ET
 print "Command line worked"
 """
 opts, args = getopt.getopt(sys.argv[1:], "i:o:", ["inputFile=", "outputLocation="])
@@ -14,17 +15,23 @@ for opt, arg in opts:
 print inputfile
 print outputLocation"""
 
-class SubTest(object):
+#class SubTest(object):
 
-
+"""
 class HTMLParser(HTMLParser.HTMLParser):
     def handle_data(self, data):
         print "Encountered data: %s" % data;
 
 
 print os.getcwd()
-file = open("tes.html", "r")
+file = open("test.html", "r")
 parser = HTMLParser()
 while True:
     parser.feed(file.readline())
     raw_input()
+"""
+
+file = open("IciIpsTest.trx", "r")
+root = ET.fromstring(file.read())
+for child in root:
+    print child.text
