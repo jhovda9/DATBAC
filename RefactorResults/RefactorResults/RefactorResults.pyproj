@@ -27,6 +27,9 @@
     <Compile Include="MatsTesting.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="EntryPoint.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="RefactorResults.py" />
   </ItemGroup>
   <ItemGroup>
