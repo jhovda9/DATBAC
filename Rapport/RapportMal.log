@@ -1,12 +1,12 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.1.12)  14 JAN 2016 13:58
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.1.20)  20 JAN 2016 12:49
 entering extended mode
 **./RapportMal.tex
 (RapportMal.tex
 LaTeX2e <2015/10/01> patch level 2
 Babel <3.9m> and hyphenation patterns for 69 languages loaded.
-("C:\Users\jonah\AppData\Local\Programs\MiKTeX 2.9\tex\latex\base\article.cls"
+(D:\programmer\MiKTeX2.9\tex\latex\base\article.cls
 Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
-("C:\Users\jonah\AppData\Local\Programs\MiKTeX 2.9\tex\latex\base\size10.clo"
+(D:\programmer\MiKTeX2.9\tex\latex\base\size10.clo
 File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
@@ -21,27 +21,22 @@ File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
-("C:\Users\jonah\AppData\Local\Programs\MiKTeX 2.9\tex\latex\geometry\geometry.
-sty"
+(D:\programmer\MiKTeX2.9\tex\latex\geometry\geometry.sty
 Package: geometry 2010/09/12 v5.6 Page Geometry
 
-("C:\Users\jonah\AppData\Local\Programs\MiKTeX 2.9\tex\latex\graphics\keyval.st
-y"
+(D:\programmer\MiKTeX2.9\tex\latex\graphics\keyval.sty
 Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
 \KV@toks@=\toks14
 )
-("C:\Users\jonah\AppData\Local\Programs\MiKTeX 2.9\tex\generic\oberdiek\ifpdf.s
-ty"
+(D:\programmer\MiKTeX2.9\tex\generic\oberdiek\ifpdf.sty
 Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
 Package ifpdf Info: pdfTeX in PDF mode is detected.
 )
-("C:\Users\jonah\AppData\Local\Programs\MiKTeX 2.9\tex\generic\oberdiek\ifvtex.
-sty"
+(D:\programmer\MiKTeX2.9\tex\generic\oberdiek\ifvtex.sty
 Package: ifvtex 2010/03/01 v1.5 Detect VTeX and its facilities (HO)
 Package ifvtex Info: VTeX not detected.
 )
-("C:\Users\jonah\AppData\Local\Programs\MiKTeX 2.9\tex\generic\ifxetex\ifxetex.
-sty"
+(D:\programmer\MiKTeX2.9\tex\generic\ifxetex\ifxetex.sty
 Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 )
 \Gm@cnth=\count87
@@ -57,8 +52,7 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 \Gm@layoutvoffset=\dimen110
 \Gm@dimlist=\toks15
 
-("C:\Users\jonah\AppData\Local\Programs\MiKTeX 2.9\tex\latex\geometry\geometry.
-cfg"))
+(D:\programmer\MiKTeX2.9\tex\latex\geometry\geometry.cfg))
 *geometry* verbose mode - [ newgeometry ] result:
 * driver: 
 * paper: <default>
@@ -144,7 +138,7 @@ LaTeX Font Info:    ... okay on input line 16.
 [1
 
 
-{C:/Users/jonah/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+{C:/Users/matsj/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <12> on input line 25.
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -193,20 +187,18 @@ Missing character: There is no “ in font cmr10!
  [10] [11] (RapportMal.aux) ) 
 Here is how much of TeX's memory you used:
  763 strings out of 493634
- 10773 string characters out of 3135239
+ 10265 string characters out of 3145390
  68984 words of memory out of 3000000
  4198 multiletter control sequences out of 15000+200000
  8194 words of font info for 29 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
  23i,6n,19p,125b,189s stack positions out of 5000i,500n,10000p,200000b,50000s
-<C:/Users/jonah/AppData/Local/Programs/MiKTeX 2.9/
-fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/jonah/AppData/Local/Program
-s/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/jonah/AppData/
-Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/jo
-nah/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb>
-<C:/Users/jonah/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/c
-m/cmr17.pfb>
-Output written on RapportMal.pdf (11 pages, 88298 bytes).
+<D:/programmer/MiKTeX2.9/fonts/type1/public/amsfon
+ts/cm/cmbx10.pfb><D:/programmer/MiKTeX2.9/fonts/type1/public/amsfonts/cm/cmbx12
+.pfb><D:/programmer/MiKTeX2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><D:/prog
+rammer/MiKTeX2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><D:/programmer/MiKTeX
+2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb>
+Output written on RapportMal.pdf (11 pages, 88125 bytes).
 PDF statistics:
  58 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

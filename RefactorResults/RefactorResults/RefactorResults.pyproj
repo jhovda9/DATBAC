@@ -31,6 +31,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="RefactorResults.py" />
+    <Compile Include="SummaryResult.py" />
+    <Compile Include="testrunner.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\2.7" />

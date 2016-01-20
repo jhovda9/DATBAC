@@ -1,6 +1,7 @@
 """This program is part of "Presentasjon av resultat av automatisk testing av software" by Hovda and Jonassen. """
 
 import xml.etree.ElementTree as ET
+from reportlab.pdfgen import canvas
 """
 class test(object):
     #parentTest
@@ -43,13 +44,26 @@ def createTestHierarchy(root):
             baseTest.innerTests.append(createTestObject(test))
     return baseTest
 
-file = open("IciIpsTest.trx", "r")
-root = ET.fromstring(file.read())
-rootObject = createTestHierarchy(root)
-for test in rootObject.innerTests:
-    print test.name
-
 def createHTML(file, outDir):
     trxFile = open(file, "r")
-    htmlFile = open(outDir + "/" + file + ".html", "w+")
-    root = createTestHierarchy(ET.fromstring(open(file, "r").read()))   
+    htmlFile = open(outDir + "/" + file + ".html", "wb")
+    root = createTestHierarchy(ET.fromstring(open(file, "r").read()))
+    htmlFile.write("<table style='border: solid black 2px'>\n")
+    htmlFile.write("<tr><td>Testname</td> <td>result</td> <td>Innertest</td> <td>Innertest result</td>\n")
+    htmlFile.write("<tr style='border: solid black 2px'>")
+    htmlFile.write("<td>Root test</td>")
+    htmlFile.write("<td>" + root.result + "</td>")
+    htmlFile.write("<td></td><td></td>\n")
+    htmlFile.write("</tr>")
+    for innerTest in root.innerTests:
+        htmlFile.write("<tr style='border: solid black 2px'>")
+        htmlFile.write("<td></td><td></td>")
+        htmlFile.write("<td>" + innerTest.name + "</td>")
+        htmlFile.write("<td>" + innerTest.result + "</td>")
+        htmlFile.write("</tr>")
+    htmlFile.write("</table>")
+
+def createPDF(file, outDir):
+    c = canvas.Canvas((file + ".pdf"))
+    c.drawString(100,2000, "Test av ReportLab")
+    c.save()

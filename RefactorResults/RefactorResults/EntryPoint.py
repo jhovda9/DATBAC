@@ -1,3 +1,3 @@
 import RefactorResults as RR
 import os
-RR.createHTML("IciIpsTest.trx", os.getcwd())
+RR.createPDF("IciIpsTest.trx", os.getcwd())
