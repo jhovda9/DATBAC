@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>cee0f5b1-b70d-4f9d-ab3a-ee0a7005f2f5</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>RefactorResults.py</StartupFile>
+    <StartupFile>EntryPoint.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

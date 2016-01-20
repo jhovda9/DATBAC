@@ -48,3 +48,8 @@ root = ET.fromstring(file.read())
 rootObject = createTestHierarchy(root)
 for test in rootObject.innerTests:
     print test.name
+
+def createHTML(file, outDir):
+    trxFile = open(file, "r")
+    htmlFile = open(outDir + "/" + file + ".html", "w+")
+    root = createTestHierarchy(ET.fromstring(open(file, "r").read()))   
