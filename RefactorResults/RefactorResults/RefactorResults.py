@@ -28,11 +28,11 @@ class TFSTest(object):
         self.detailedFile = detailedFile
 
 def createTestObject(testElement):
-    result = False
-    if testElement.find("TestResult").text == "Passed":
-        result = True
-    testObject = TFSTest(testElement.find("TestName").text, result, testElement.find("ErrorMessage").text, 
-                      "Placeholder")
+    detailedResultsFile = "No file exists"
+    if testElement.find("DetailedResultsFile") != None:
+        detailedResultsFile = testElement.find("DetailedResultsFile").text
+    testObject = TFSTest(testElement.find("TestName").text, testElement.find("TestResult").text, testElement.find("ErrorMessage").text,
+                      detailedResultsFile)
     return testObject
 
 
