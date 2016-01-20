@@ -2,3 +2,12 @@
 Visit to ABB avd. Bryne. 
 Introduced to the working environment at ABB, got a tour of the different divisions. Got to see the equipment and components
  which the tests are performed on. 
+
+Here we got a broader idea of what the program needs to be, and why it is needed.
+We discussed the idea of getting the html and xml objects directly from the python script, rather than going from object, to html, then to object again.
+However as the tests are run in parallel, and also can finish at very different times, we had to scrap that. 
+This resulted in that we agreed to make a very basic script that gathers all html files into one. Links makes it easy to navigate from 
+overview to a test that has failed, and back again. 
+
+We are suggested to let Morten know if we want any changes made in the info that is retrieved in the html files.
+Morten suggested that timestamps could be relevant, and might be used to link from html to the log file.
