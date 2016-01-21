@@ -1,0 +1,9 @@
+\contentsline {section}{\numberline {1}Abstract}{3}
+\contentsline {section}{\numberline {2}Acknowledgments}{5}
+\contentsline {section}{\numberline {3}Introduction}{6}
+\contentsline {section}{\numberline {4}What makes a good presentation of test results}{7}
+\contentsline {section}{\numberline {5}Theory}{8}
+\contentsline {section}{\numberline {6}Experiments}{9}
+\contentsline {section}{\numberline {7}Results}{10}
+\contentsline {section}{\numberline {8}Discussion}{11}
+\contentsline {section}{\numberline {9}References}{12}
