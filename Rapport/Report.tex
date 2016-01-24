@@ -1,6 +1,7 @@
 \documentclass{article}
-
 \usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[parfill]{parskip}
 
 \newgeometry{
 	top=2in,
@@ -14,58 +15,81 @@
 \date{\today}
 
 \begin{document}
+	\begin{center}
+		\begin{Huge}
+			Here goes the front page
+		\end{Huge} 
+	\end{center}
 	
-\begin{center}
-\begin{Huge}
-Here goes the front page
-\end{Huge} 
-\end{center}
-
-\pagebreak
-\maketitle
-The title page should include the title of your thesis, author, date/year, field of
-study, and name of institution (UiS and collaborating company/institution, if any). Remember
-to fill out the form ”Title page – Master’s Thesis” and insert this as page 1. 
-\pagebreak
-
-\section{Abstract}
-The abstract must be understandable independently of the thesis itself. It gives a
-brief presentation of the problem(s) and the work that has been carried out. Main results and
-important conclusions should also be included. A good deal of work ought to be spent on
-writing a good abstract because this is what most people will read. The abstract should be
-short. 
-\pagebreak
-
-\tableofcontents 
-This shows the chapters and subchapters with page numbers. If there are
-symbols and abbreviations they can be listed after the table of contents. 
-\pagebreak
-
-\section{Acknowledgments}
-If you wish to thank institutions and/or persons who have been of great
-help during the project, this may be done in the acknowledgements. You may use the first-
-12
-Student guide for bachelor’s and master’s thesis
-Faculty of Science and Technology
-Decision made of the Dean June 25th 2013
-person mode (“I”) in this section. The use of first person is normally avoided in the actual
-report. 
-\pagebreak
-
-\section{Introduction}
-The introduction could consist of several sections. First comes a short
-presentation of the background for the thesis, e.g. why it is important to examine this
-problem. Furthermore, you should describe what the thesis is about, what has been done and
-how the report is built up. 
-\linebreak
-\linebreak
-Testing is used in every aspect of programming. It is the key way to achieve stable and working programs. 
-As tests are run for every attempted solution, their efficiency is vital to increase productivity of workers. Currently its simple to recognize if everything is as it should, but in the event of a test failure log-files often turn out thousands of lines long and result files hundreds, making precious time wasted scrolling through and searching for what exactly went wrong.
-\linebreak
-In this thesis we hope to define what a good result design is and discuss what is necessary to recreate a better design based on already existing result files.
-\linebreak
-(Vi må notere en måte at vi ikke er kilden til resultatene vi jobber med	)
-\iffalse
+	\pagebreak
+	\maketitle
+	The title page should include the title of your thesis, author, date/year, field of
+	study, and name of institution (UiS and collaborating company/institution, if any). Remember
+	to fill out the form ”Title page – Master’s Thesis” and insert this as page 1. 
+	\pagebreak
+	
+	\section{Abstract}
+	The abstract must be understandable independently of the thesis itself. It gives a
+	brief presentation of the problem(s) and the work that has been carried out. Main results and
+	important conclusions should also be included. A good deal of work ought to be spent on
+	writing a good abstract because this is what most people will read. The abstract should be
+	short. 
+	\pagebreak
+	
+	
+	
+	\section{Acknowledgments}
+	If you wish to thank institutions and/or persons who have been of great
+	help during the project, this may be done in the acknowledgements. You may use the first-
+	12
+	Student guide for bachelor’s and master’s thesis
+	Faculty of Science and Technology
+	Decision made of the Dean June 25th 2013
+	person mode (“I”) in this section. The use of first person is normally avoided in the actual
+	report. 
+	\pagebreak
+	
+	\tableofcontents 
+	This shows the chapters and subchapters with page numbers. If there are
+	symbols and abbreviations they can be listed after the table of contents. 
+	\pagebreak
+	
+	\section{Introduction}
+	\em The introduction could consist of several sections. First comes a short
+	presentation of the background for the thesis, e.g. why it is important to examine this
+	problem. Furthermore, you should describe what the thesis is about, what has been done and
+	how the report is built up.\em
+	
+	
+	Testing is used in every aspect of programming. It is the key way to achieve stable and working programs. 
+	As tests are run for every attempted solution, their efficiency is vital to increase productivity of workers. Not only are tests useful in software development, they are pivotal in making sure components that are already deployed, works as intended. 
+	
+	In larger systems, one component's fault can make delays and unnecessary downtime occur. Therefore it is important to identify a fault as fast and efficiently as possible. If a scheduled test reports errors, it should be intuitive for a programmer to find out where the underlying fault is. If a programmer spends more time going through logs and reports than necessary, the test process is inefficient and faulty. 
+	
+	Currently it's simple to recognize if everything is as it should, but in the event of a test failure, log-files often turn out thousands of lines long and result files hundreds, making precious time wasted scrolling through and searching for what exactly went wrong.
+	
+	The thesis will try to define what a good result design is, and discuss what is necessary to recreate a better design based on already existing result files. It will discuss different methods of gathering test data, whether the data should come from the source, or be parsed from reports already generated. 
+	
+	There are several ways to present these reports, this thesis will focus on two of them, in PDF, and HTML. They are both powerful ways to gather lots of information into one, consistent file. Both having different pros and cons. They will both be used in order to give a flexible experience. 
+	
+	The Python(2.7) language will be used almost exclusively. The library support is extensive, which gives many alternatives and ways to solve the tasks. Python is used at ABB, and therefore the script/program will easily be compatible and give simple implementation in their test-framework. In league with Python, is Visual Studio. The thesis will discover how the synergy is between those two, and how they work together with the Team Foundation Server.
+	
+	This thesis is written in English, and there are several reasons to this. First, because the code at ABB is written in English, it makes sense that the code produced along with this thesis also is written in English. Also, writing about programming involves many definitions and expressions not easily described in Norwegian. Computer Science in general is best suited for English, therefore it makes sense to write both code and thesis in English.
+	
+	
+	\subsection{Subsection name about how this is built up but a more fancy word}
+	Chapter \ref{background} explains underlying concepts in which the thesis is built upon. The Python language, Visual Studio and the Team Foundation Server, how this is integrated at ABB, and how the current report generating solution works.
+	
+	Chapter \ref{design} considers the design considered when making the solution. How the HTML was made, and the PDF. Also a possibility to use Zip to gather all the files neatly. 
+	
+	Chapter \ref{implementation} focuses on the implementation of said solution. The decisions made throughout the project in cooperation with ABB. And how flexibility is an important factor.
+	
+	Chapter \ref{results} consists of results that has been made. How decisions have affected the process of the program. Also evaluating what could have been done better or differently. 
+	
+	Chapter \ref{discussion} finally concludes the thesis, wraps it up, and discusses what has been learned. 
+	
+	(Vi må notere en måte at vi ikke er kilden til resultatene vi jobber med	)
+	\iffalse
 	\subsection{Background}
 	Why is it important to examine this problem?
 	\linebreak
@@ -80,57 +104,74 @@ In this thesis we hope to define what a good result design is and discuss what i
 	What have we completed?
 	\subsection{Structure}
 	How is the report structured?	
-\fi	
-\pagebreak
-
-\section{What makes a good presentation of test results}
-
-Test results must be quickly understandable while still providing useful deep level information.
-The design has to pull the readers attention to what he might find important, while not being annoying. 
-\pagebreak
-
-\section{Theory}
-Description of the work that has already been done in this field. Normally one
-evaluates alternative methods and components/equipment and argues for the choices one has
-made. This section also outlines the theories, methods, models, equations, etc. that are
-relevant to the thesis. Remember to tell the reader of the paper where you found the
-information. Write down the sources both in the text and in the reference list. 
-\pagebreak
-
-\section{Experiments}
-List the equipment you have used (for instance by tables and figures),
-chemicals and experimental methods. You should also include methods for literature search,
-interviews, development of methods and models etc. 
-
-The end result has some requirements, but one of these; "To display the result in an easy-to-read
-structure" is of relative acceptance.
-Therefore we decided to create multiple designs in multiple filetypes and discuss pros and cons.
-
-\pagebreak
- 
-\section{Results}
-All results should be presented. What was the outcome of the experiments, analyses,
-literature search and interviews? What kind of method or model did you arrive at?
-Calculations and estimates (if any) of uncertainty should be included at this point. Use tables
-(with text above) and figures (with text below). In the text all tables must be referred to with
-necessary explanations. It must appear logical to the reader why these tables/figures have
-been included. Reference to formulas, models and literature should be made in the theory
-section. It is often more appropriate to discuss and comment on the result(s) as you move
-along. In that case, the results and discussion should be dealt with in the same chapter. 
-\pagebreak
-
-\section{Discussion}
-This is where you evaluate and interpret your results. Compare your findings to
-other available results. Discuss possible sources of error and the implications of these. A good
-thesis is recognized by a reflective discussion. The discussion must focus on significant
-results and observations. Avoid making the impression that you have solved every single
-detail. Be honest – do not try to cover up errors and simplifications that you have made on the
-way and later found to be unfortunate. Explain instead your choice of simplification and
-comment on it. 
-\pagebreak
-
-\section{References}
-To avoid all suspicion of cheating by copying, it is important to quote references
-correctly. This also applies to the internet when it is used as a source. 
-
+	\fi	
+	\pagebreak
+	
+	\section{Background} \label{background}
+	\subsection{Python}
+	\subsection{Visual Studio}
+	\subsubsection{Team Foundation Server}
+	\subsection{ABB}
+	\subsection{Current solution}
+	
+	Description of the work that has already been done in this field. Normally one
+	evaluates alternative methods and components/equipment and argues for the choices one has
+	made. This section also outlines the theories, methods, models, equations, etc. that are
+	relevant to the thesis. Remember to tell the reader of the paper where you found the
+	information. Write down the sources both in the text and in the reference list. 
+	\pagebreak
+	
+	\section{Design} \label{design}
+	
+	\subsection{HTML}
+	\subsection{PDF}
+	\subsection{Zip}
+	
+	The end result has some requirements, but one of these; "To display the result in an easy-to-read
+	structure" is of relative acceptance.
+	
+	Therefore we decided to create multiple designs in multiple filetypes and discuss pros and cons.
+	
+	
+	Test results must be quickly understandable while still providing useful deep level information.
+	The design has to pull the readers attention to what he might find important, while not being annoying. 
+	\pagebreak
+	
+	
+	
+	\section{Implementation} \label{implementation}
+	List the equipment you have used (for instance by tables and figures),
+	chemicals and experimental methods. You should also include methods for literature search,
+	interviews, development of methods and models etc. 
+	
+	\subsection{Integration with ABB}
+	\subsection{Flexibility}
+	
+	\pagebreak
+	
+	\section{Results} \label{results}
+	All results should be presented. What was the outcome of the experiments, analyses,
+	literature search and interviews? What kind of method or model did you arrive at?
+	Calculations and estimates (if any) of uncertainty should be included at this point. Use tables
+	(with text above) and figures (with text below). In the text all tables must be referred to with
+	necessary explanations. It must appear logical to the reader why these tables/figures have
+	been included. Reference to formulas, models and literature should be made in the theory
+	section. It is often more appropriate to discuss and comment on the result(s) as you move
+	along. In that case, the results and discussion should be dealt with in the same chapter. 
+	\pagebreak
+	
+	\section{Discussion} \label{discussion}
+	This is where you evaluate and interpret your results. Compare your findings to
+	other available results. Discuss possible sources of error and the implications of these. A good
+	thesis is recognized by a reflective discussion. The discussion must focus on significant
+	results and observations. Avoid making the impression that you have solved every single
+	detail. Be honest – do not try to cover up errors and simplifications that you have made on the
+	way and later found to be unfortunate. Explain instead your choice of simplification and
+	comment on it. 
+	\pagebreak
+	
+	\section{References}
+	To avoid all suspicion of cheating by copying, it is important to quote references
+	correctly. This also applies to the internet when it is used as a source. 
+	
 \end{document}
