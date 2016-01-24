@@ -2,6 +2,8 @@
 
 import xml.etree.ElementTree as ET
 from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib.colors import green
 """
 class test(object):
     #parentTest
@@ -45,7 +47,6 @@ def createTestHierarchy(root):
     return baseTest
 
 def createHTML(file, outDir):
-    trxFile = open(file, "r")
     htmlFile = open(outDir + "/" + file + ".html", "wb")
     root = createTestHierarchy(ET.fromstring(open(file, "r").read()))
     htmlFile.write("<table style='border: solid black 2px'>\n")
@@ -64,6 +65,36 @@ def createHTML(file, outDir):
     htmlFile.write("</table>")
 
 def createPDF(file, outDir):
+    headers = ["Test name", "Result", "Innertest", "Innertest Result"]
+    root = createTestHierarchy(ET.fromstring(open(file, "r").read()))
+    table = []
+    tableStyle = TableStyle([('Grid'),(0,0),(-1,-1)], 1, green)
+    table.append(headers)
+    table.append([root.name, str(root.result), "place", "place"])
+    for innerTest in root.innerTests:
+        table.append(["place", "place", innerTest.name, str(innerTest.result)])
+        table.append(["place", "place", innerTest.name, str(innerTest.result)])
+        table.append(["place", "place", innerTest.name, str(innerTest.result)])
+        table.append(["place", "place", innerTest.name, str(innerTest.result)])
+        table.append(["place", "place", innerTest.name, str(innerTest.result)])
+        table.append(["place", "place", innerTest.name, str(innerTest.result)])
+        table.append(["place", "place", innerTest.name, str(innerTest.result)])
+        table.append(["place", "place", innerTest.name, str(innerTest.result)])
+
+        table.append(["place", "place", innerTest.name, str(innerTest.result)])
+        table.append(["place", "place", innerTest.name, str(innerTest.result)])
+        table.append(["place", "place", innerTest.name, str(innerTest.result)])
+
+        table.append(["place", "place", innerTest.name, str(innerTest.result)])
+        table.append(["place", "place", innerTest.name, str(innerTest.result)])
     c = canvas.Canvas((file + ".pdf"))
-    c.drawString(100,2000, "Test av ReportLab")
-    c.save()
+    doc = SimpleDocTemplate(file + ".pdf")
+    #c.drawString(100,2000, "Test av ReportLab")
+    #print table
+    tab = Table(table)
+    tab.setStyle(tableStyle)
+    what = []
+    what.append(tab)
+    doc.build(what)
+    #c.draw
+    #c.save()
