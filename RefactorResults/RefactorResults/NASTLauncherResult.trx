@@ -1,0 +1,97 @@
+<SummaryResult>
+    <TestName>ipsunittest</TestName>
+    <TestResult>Error</TestResult>
+    <ErrorMessage>Error: IpsReadSignal error: SignalCheck: A1Material/Value is 8.000 actual 0.000000 (Passed: 1/15, Warning: 1/15, Error: 13/15, Abort: 0/15)</ErrorMessage>
+    <InnerTests>
+        <InnerTest>
+            <TestName>HVC02 Init Test</TestName>
+            <TestResult>Error</TestResult>
+            <ErrorMessage>Error: Command failed: Set signal A1Material/Value to: 100.000000</ErrorMessage>
+            <DetailedResultsFile>HVC02 Init Test.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Apply Global Parameters</TestName>
+            <TestResult>Passed</TestResult>
+            <ErrorMessage>Passed</ErrorMessage>
+            <DetailedResultsFile>HVC02 Apply Global Parameters.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Run Iteration 1</TestName>
+            <TestResult>Error</TestResult>
+            <ErrorMessage>Error: Command failed: Set signal A1Material/Value to: 5.000000</ErrorMessage>
+            <DetailedResultsFile>HVC02 Run Iteration 1.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Query iteration parameters in iteration 1</TestName>
+            <TestResult>Error</TestResult>
+            <ErrorMessage>Error: Command failed: Set signal A1Material/Toggle to: 0.000000</ErrorMessage>
+            <DetailedResultsFile>HVC02 Query iteration parameters in iteration 1.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Compare iteration param vs actual in iteration 1</TestName>
+            <TestResult>Error</TestResult>
+            <ErrorMessage>Error: IpsReadSignal error: SignalCheck: A1Material/Value is 5.000 actual 0.000000</ErrorMessage>
+            <DetailedResultsFile>HVC02 Compare iteration param vs actual in iteration 1.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Run Iteration 2</TestName>
+            <TestResult>Error</TestResult>
+            <ErrorMessage>Error: Command failed: Set signal A1Material/Value to: 6.000000</ErrorMessage>
+            <DetailedResultsFile>HVC02 Run Iteration 2.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Query iteration parameters in iteration 2</TestName>
+            <TestResult>Error</TestResult>
+            <ErrorMessage>Error: Command failed: Set signal A1Material/Toggle to: 0.000000</ErrorMessage>
+            <DetailedResultsFile>HVC02 Query iteration parameters in iteration 2.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Compare iteration param vs actual in iteration 2</TestName>
+            <TestResult>Error</TestResult>
+            <ErrorMessage>Error: IpsReadSignal error: SignalCheck: A1Material/Value is 6.000 actual 0.000000</ErrorMessage>
+            <DetailedResultsFile>HVC02 Compare iteration param vs actual in iteration 2.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Run Iteration 3</TestName>
+            <TestResult>Error</TestResult>
+            <ErrorMessage>Error: Command failed: Set signal A1Material/Value to: 7.000000</ErrorMessage>
+            <DetailedResultsFile>HVC02 Run Iteration 3.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Query iteration parameters in iteration 3</TestName>
+            <TestResult>Error</TestResult>
+            <ErrorMessage>Error: Command failed: Set signal A1Material/Toggle to: 0.000000</ErrorMessage>
+            <DetailedResultsFile>HVC02 Query iteration parameters in iteration 3.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Compare iteration param vs actual in iteration 3</TestName>
+            <TestResult>Error</TestResult>
+            <ErrorMessage>Error: IpsReadSignal error: SignalCheck: A1Material/Value is 7.000 actual 0.000000</ErrorMessage>
+            <DetailedResultsFile>HVC02 Compare iteration param vs actual in iteration 3.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Run Iteration 4</TestName>
+            <TestResult>Error</TestResult>
+            <ErrorMessage>Error: Command failed: Set signal A1Material/Value to: 8.000000</ErrorMessage>
+            <DetailedResultsFile>HVC02 Run Iteration 4.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Query iteration parameters in iteration 4</TestName>
+            <TestResult>Error</TestResult>
+            <ErrorMessage>Error: Command failed: Set signal A1Material/Toggle to: 0.000000</ErrorMessage>
+            <DetailedResultsFile>HVC02 Query iteration parameters in iteration 4.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Compare iteration param vs actual in iteration 4</TestName>
+            <TestResult>Error</TestResult>
+            <ErrorMessage>Error: IpsReadSignal error: SignalCheck: A1Material/Value is 8.000 actual 0.000000</ErrorMessage>
+            <DetailedResultsFile>HVC02 Compare iteration param vs actual in iteration 4.xml</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>HVC02 Clean Up Test</TestName>
+            <TestResult>Warning</TestResult>
+            <ErrorMessage>Warning: A warning</ErrorMessage>
+            <DetailedResultsFile>HVC02 Clean Up Test.xml</DetailedResultsFile>
+        </InnerTest>
+    </InnerTests>
+</SummaryResult>

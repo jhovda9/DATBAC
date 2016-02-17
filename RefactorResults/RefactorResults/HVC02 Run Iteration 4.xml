@@ -1,0 +1,16 @@
+<innertestdetails>
+   <logfile>HVC02.txt</logfile>
+   <starttime>2016-02-11 14:21:56,969</starttime>
+   <endtime>2016-02-11 14:21:56,983</endtime>
+   <duration>0.015</duration>
+   <subinnertest>
+      <text>Prepare to apply iteration parameters</text>
+      <result>Passed</result>
+      <endtime>2016-02-11 14:21:56,970</endtime>
+   </subinnertest>
+   <subinnertest>
+      <text>Command failed: Set signal A1Material/Value to: 8.000000</text>
+      <result>Failed</result>
+      <endtime>2016-02-11 14:21:56,982</endtime>
+   </subinnertest>
+</innertestdetails>

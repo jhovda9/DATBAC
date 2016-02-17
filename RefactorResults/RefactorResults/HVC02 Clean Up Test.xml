@@ -1,0 +1,11 @@
+<innertestdetails>
+   <logfile>HVC02.txt</logfile>
+   <starttime>2016-02-11 14:21:57,036</starttime>
+   <endtime>2016-02-11 14:21:57,039</endtime>
+   <duration>0.003</duration>
+   <subinnertest>
+      <text>A warning</text>
+      <result>Warning</result>
+      <endtime>2016-02-11 14:21:57,038</endtime>
+   </subinnertest>
+</innertestdetails>

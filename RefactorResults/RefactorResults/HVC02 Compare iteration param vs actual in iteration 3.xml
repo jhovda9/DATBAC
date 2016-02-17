@@ -1,0 +1,16 @@
+<innertestdetails>
+   <logfile>HVC02.txt</logfile>
+   <starttime>2016-02-11 14:21:56,950</starttime>
+   <endtime>2016-02-11 14:21:56,967</endtime>
+   <duration>0.018</duration>
+   <subinnertest>
+      <text>Command failed IpsReadSignal: Read signal A1Material/Value</text>
+      <result>Failed</result>
+      <endtime>2016-02-11 14:21:56,964</endtime>
+   </subinnertest>
+   <subinnertest>
+      <text>IpsReadSignal error: SignalCheck: A1Material/Value is 7.000 actual 0.000000</text>
+      <result>Failed</result>
+      <endtime>2016-02-11 14:21:56,966</endtime>
+   </subinnertest>
+</innertestdetails>
