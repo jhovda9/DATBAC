@@ -1,0 +1,43 @@
+<SummaryResult>
+    <TestName></TestName>
+    <TestResult>Passed</TestResult>
+    <ErrorMessage>No message</ErrorMessage>
+    <InnerTests>
+        <InnerTest>
+            <TestName>IciIpsTest PIB</TestName>
+            <TestResult>Passed</TestResult>
+            <ErrorMessage>...</ErrorMessage>
+            <DetailedResultsFile>%TestOutputDirectory%\ICIIpsTest.xml.IciIpsTest PIB.html</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>IciIpsTest MCOB-02</TestName>
+            <TestResult>Passed</TestResult>
+            <ErrorMessage>...</ErrorMessage>
+            <DetailedResultsFile>%TestOutputDirectory%\ICIIpsTest.xml.IciIpsTest MCOB-02.html</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>IciIpsTest ACU</TestName>
+            <TestResult>Passed</TestResult>
+            <ErrorMessage>...</ErrorMessage>
+            <DetailedResultsFile>%TestOutputDirectory%\ICIIpsTest.xml.IciIpsTest ACU.html</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>IciIpsTest HVC-02</TestName>
+            <TestResult>Passed</TestResult>
+            <ErrorMessage>...</ErrorMessage>
+            <DetailedResultsFile>%TestOutputDirectory%\ICIIpsTest.xml.IciIpsTest HVC-02.html</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>IciIpsTest PPRI-02</TestName>
+            <TestResult>Passed</TestResult>
+            <ErrorMessage>...</ErrorMessage>
+            <DetailedResultsFile>%TestOutputDirectory%\ICIIpsTest.xml.IciIpsTest PPRI-02.html</DetailedResultsFile>
+        </InnerTest>
+        <InnerTest>
+            <TestName>IciIpsTest MCB-02</TestName>
+            <TestResult>Passed</TestResult>
+            <ErrorMessage>...</ErrorMessage>
+            <DetailedResultsFile>%TestOutputDirectory%\ICIIpsTest.xml.IciIpsTest MCB-02.html</DetailedResultsFile>
+        </InnerTest>
+    </InnerTests>
+</SummaryResult>
