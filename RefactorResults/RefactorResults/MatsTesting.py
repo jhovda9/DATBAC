@@ -55,12 +55,12 @@ def parseInnerTest():
 
 #print root.find("subinnertest").find("text").text
 #print root.find("subinnertest").find("text").text
-
+"""
 
 for file in os.listdir("D:Dropbox/SharedBachelor2016/TestData/xmllog"):
     if file.endswith(".xml"):
         
-
+"""
 
 
 

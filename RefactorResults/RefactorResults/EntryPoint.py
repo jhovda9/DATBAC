@@ -1,3 +1,3 @@
 import RefactorResults as RR
 import os
-RR.createPDF("IciIpsTest.trx", os.getcwd())
+RR.generateTestReport("D:Dropbox/SharedBachelor2016/TestData/xmllog")

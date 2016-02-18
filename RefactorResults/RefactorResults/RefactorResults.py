@@ -72,7 +72,7 @@ def createHTML(file, outDir):
     htmlFile.write(HTMLTemplate())
     
     # HEADER
-    root = createTestHierarchy(ET.fromstring(open(file, "r").read()))
+    root = createTestHierarchy(ET.parse(file))
     htmlFile.write("""<body><div id="header">""")
     htmlFile.write("<h1> Title: " + root.name + "</h1>")
     htmlFile.write("<h1> Result: " + root.result + "</h1>")
@@ -136,11 +136,11 @@ def createHTML(file, outDir):
             htmlFile.write(""" <i class="material-icons red" class="add">add_box</i>""")
         else:
             htmlFile.write(""" <i class="material-icons orange" class="add">add_box</i>""")
-        innerRoot = ET.fromstring(open(innerTest.detailedFile, "r").read())
+        innerRoot = ET.parse(innerTest.detailedFile)
         htmlFile.write( innerTest.result )
         htmlFile.write("""<div class="innertestcontent">""")
         htmlFile.write("<span>Start: " + innerRoot.find("starttime").text + "&emsp; End: "+ innerRoot.find("endtime").text + "&emsp; Duration: " + innerRoot.find("duration").text + "</span>")
-        xmlroot = ET.fromstring(open(innerTest.detailedFile, "r").read())
+        xmlroot = ET.parse(innerTest.detailedFile)
         for e in xmlroot.iter('subinnertest'):
             htmlFile.write("""<div onclick="oneClick(event,this)">""")
             if e.find("result").text=="Passed":
