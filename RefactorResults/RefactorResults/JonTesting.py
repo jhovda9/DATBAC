@@ -90,10 +90,10 @@ def createHTML(file, outDir):
     else:
       htmlFile.write(""" <i class="material-icons orange" class="add">add_box</i>""")
 
-    root = ET.fromstring(open(innerTest.detailedFile, "r").read())
+    innerRoot = ET.fromstring(open(innerTest.detailedFile, "r").read())
     htmlFile.write( innerTest.result )
     htmlFile.write("""<div class="innertestcontent">""")
-    htmlFile.write("<span>Start: " + root.find("starttime").text + "&emsp; End: "+ root.find("endtime").text + "&emsp; Duration: " + root.find("duration").text + "</span>")
+    htmlFile.write("<span>Start: " + innerRoot.find("starttime").text + "&emsp; End: "+ innerRoot.find("endtime").text + "&emsp; Duration: " + innerRoot.find("duration").text + "</span>")
     xmlroot = ET.fromstring(open(innerTest.detailedFile, "r").read())
 
     for e in xmlroot.iter('subinnertest'):
