@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>
+   Prototype
+  </title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style type="text/css">
+   *{
+      font-family:arial, sans-serif;
+    }
+    #iconarea .material-icons{
+      font-size: 190px;
+    }
+
+    .material-icons.red { color: red; }
+    .material-icons.green { color: green; }
+    .material-icons.orange { color: orange; }
+
+    #header h1, h3{
+      margin: 25px 0 25px 100px;
+    }
+    #summaryarea{
+      height: auto;
+      overflow: hidden;
+      border: 1px solid black;
+      border-left: none;
+      border-right: none;
+    }
+    #iconarea{
+      display: inline-block;
+      float: right;
+      width: 10%;
+      min-width: 200px;
+      border-left: 1px solid black;
+    }
+    #chartarea{
+      display: inline-block;
+      width: auto;
+      overflow: hidden;
+    }
+    #chart{
+      border: 1px solid black;
+      border-radius: 255px;
+      height: 150px;
+      width: 150px;
+      margin: 20px 0 0 20px;
+      display: inline-block;
+    }
+    #chartlist{
+      display: inline-block;
+      float: right;
+    }
+    li{
+      list-style-type: square;
+      font-size: 1.5em;
+    }
+
+    span{
+      font-size:0.6em;
+    }
+
+    #innertestcontainer{
+      margin: 0 100px 0 100px;
+      padding:10px;
+      font-size: 1.5em;
+    }
+
+
+
+    .innertestcontent .innertestcontent {
+      font-size:0.9em;
+      border:1px solid black;
+      padding:5px;
+      font-family:monospace;
+    }
+    .remove{
+      display:none;
+    }
+    .innertestcontent{
+      display:none;
+      margin-left: 50px;
+      font-size:0.9em;
+      vertical-align:middle;
+    }
+    .innertestcontent i{
+    font-size:15px;
+    }
+    .innertests{
+      cursor: pointer;
+      -webkit-user-select:none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      margin-top:5px;
+    }
+  </style>
+  <script type="text/javascript">
+   function amIclicked(e, element)
+    {
+      if (!e) var e = window.event;
+      e.cancelBubble = true;
+      if (e.stopPropagation) e.stopPropagation()
+        e = e || event;
+      var target = e.target || e.srcElement;
+
+      if(target.id==element.id)
+        return true;
+      else
+        return false;
+    }
+    function oneClick(event, element)
+    {
+      if(amIclicked(event, element))
+      {
+        
+        if(element.getElementsByTagName("div")[0].style.display === "none"||element.getElementsByTagName("div")[0].style.display === ''){
+          element.getElementsByTagName("div")[0].style.display = "block";
+          element.getElementsByTagName("i")[0].innerHTML = "indeterminate_check_box";
+        } else {
+          element.getElementsByTagName("div")[0].style.display = "none";
+          element.getElementsByTagName("i")[0].innerHTML = "add_box";
+        }
+
+      }
+    }
+
+    function threeClick(event, element)
+    {
+      if(amIclicked(event, element))
+      {
+        alert("TODO:implement")
+      }
+    }
+  </script>
+ </head>
+ <body>
+  <div id="header">
+   <h1>
+    Title: ipsunittest
+   </h1>
+   <h1>
+    Result: Error
+   </h1>
+   <h3>
+    ErrorMessage: Error: IpsReadSignal error: SignalCheck: A1Material/Value is 8.000 actual 0.000000 (Passed: 1/15, Warning: 1/15, Error: 13/15, Abort: 0/15)
+   </h3>
+  </div>
+  <div id="summaryarea">
+   <div id="chartarea">
+    <div id="chart">
+    </div>
+    <div id="chartlist">
+     <ul>
+      <li>
+       # of passes
+      </li>
+      <li>
+       # of fails
+      </li>
+      <li>
+       # of aborts
+      </li>
+     </ul>
+    </div>
+   </div>
+   <div id="iconarea">
+    <i class="material-icons red">
+     error
+    </i>
+   </div>
+  </div>
+  <div id="innertestcontainer">
+   <div class="innertests" onclick="oneClick(event,this)">
+    <i class="material-icons red" class="add">
+     add_box
+    </i>
+    Error
+    <div class="innertestcontent">
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons red" class="add">
+       add_box
+      </i>
+      Error
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:56,575&emsp; End: 2016-02-11 14:21:56,759&emsp; Duration: 0.185
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons green" class="add">
+         add_box
+        </i>
+        Prepare to upgrade software
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Init Test
+         <br />
+         Prepare to upgrade software
+         <br />
+         2016-02-11 14:21:56,575
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons green" class="add">
+         add_box
+        </i>
+        No need to upgrade software, build Paint.Dev.EmbSw.CI_20160209.2 already present
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Init Test
+         <br />
+         No need to upgrade software, build Paint.Dev.EmbSw.CI_20160209.2 already present
+         <br />
+         2016-02-11 14:21:56,625
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons green" class="add">
+         add_box
+        </i>
+        Prepare to load IPS configuration
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Init Test
+         <br />
+         Prepare to load IPS configuration
+         <br />
+         2016-02-11 14:21:56,625
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons green" class="add">
+         add_box
+        </i>
+        No default config specified!
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Init Test
+         <br />
+         No default config specified!
+         <br />
+         2016-02-11 14:21:56,625
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons green" class="add">
+         add_box
+        </i>
+        Prepare to run ips smoke test
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Init Test
+         <br />
+         Prepare to run ips smoke test
+         <br />
+         2016-02-11 14:21:56,625
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed: Set signal A1Material/Value to: 100.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Init Test
+         <br />
+         Command failed: Set signal A1Material/Value to: 100.000000
+         <br />
+         2016-02-11 14:21:56,756
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="innertests" onclick="oneClick(event,this)">
+    <i class="material-icons green" class="add">
+     add_box
+    </i>
+    Passed
+    <div class="innertestcontent">
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons green" class="add">
+       add_box
+      </i>
+      Passed
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:56,762&emsp; End: 2016-02-11 14:21:56,765&emsp; Duration: 0.004
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons green" class="add">
+         add_box
+        </i>
+        Prepare to apply global iteration parameters
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Apply Global Parameters
+         <br />
+         Prepare to apply global iteration parameters
+         <br />
+         2016-02-11 14:21:56,762
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons green" class="add">
+         add_box
+        </i>
+        No global iteration parameters specified
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Apply Global Parameters
+         <br />
+         No global iteration parameters specified
+         <br />
+         2016-02-11 14:21:56,763
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="innertests" onclick="oneClick(event,this)">
+    <i class="material-icons red" class="add">
+     add_box
+    </i>
+    Error
+    <div class="innertestcontent">
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons red" class="add">
+       add_box
+      </i>
+      Error
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:56,766&emsp; End: 2016-02-11 14:21:56,782&emsp; Duration: 0.016
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons green" class="add">
+         add_box
+        </i>
+        Prepare to apply iteration parameters
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Run Iteration 1
+         <br />
+         Prepare to apply iteration parameters
+         <br />
+         2016-02-11 14:21:56,767
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed: Set signal A1Material/Value to: 5.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Run Iteration 1
+         <br />
+         Command failed: Set signal A1Material/Value to: 5.000000
+         <br />
+         2016-02-11 14:21:56,779
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons red" class="add">
+       add_box
+      </i>
+      Error
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:56,782&emsp; End: 2016-02-11 14:21:56,811&emsp; Duration: 0.028
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed: Set signal A1Material/Toggle to: 1.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Query iteration parameters in iteration 1
+         <br />
+         Command failed: Set signal A1Material/Toggle to: 1.000000
+         <br />
+         2016-02-11 14:21:56,796
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed: Set signal A1Material/Toggle to: 0.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Query iteration parameters in iteration 1
+         <br />
+         Command failed: Set signal A1Material/Toggle to: 0.000000
+         <br />
+         2016-02-11 14:21:56,809
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons red" class="add">
+       add_box
+      </i>
+      Error
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:56,812&emsp; End: 2016-02-11 14:21:56,828&emsp; Duration: 0.016
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed IpsReadSignal: Read signal A1Material/Value
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Compare iteration param vs actual in iteration 1
+         <br />
+         Command failed IpsReadSignal: Read signal A1Material/Value
+         <br />
+         2016-02-11 14:21:56,825
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        IpsReadSignal error: SignalCheck: A1Material/Value is 5.000 actual 0.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Compare iteration param vs actual in iteration 1
+         <br />
+         IpsReadSignal error: SignalCheck: A1Material/Value is 5.000 actual 0.000000
+         <br />
+         2016-02-11 14:21:56,825
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons red" class="add">
+       add_box
+      </i>
+      Error
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:56,828&emsp; End: 2016-02-11 14:21:56,845&emsp; Duration: 0.016
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons green" class="add">
+         add_box
+        </i>
+        Prepare to apply iteration parameters
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Run Iteration 2
+         <br />
+         Prepare to apply iteration parameters
+         <br />
+         2016-02-11 14:21:56,829
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed: Set signal A1Material/Value to: 6.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Run Iteration 2
+         <br />
+         Command failed: Set signal A1Material/Value to: 6.000000
+         <br />
+         2016-02-11 14:21:56,842
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons red" class="add">
+       add_box
+      </i>
+      Error
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:56,845&emsp; End: 2016-02-11 14:21:56,874&emsp; Duration: 0.029
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed: Set signal A1Material/Toggle to: 1.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Query iteration parameters in iteration 2
+         <br />
+         Command failed: Set signal A1Material/Toggle to: 1.000000
+         <br />
+         2016-02-11 14:21:56,858
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed: Set signal A1Material/Toggle to: 0.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Query iteration parameters in iteration 2
+         <br />
+         Command failed: Set signal A1Material/Toggle to: 0.000000
+         <br />
+         2016-02-11 14:21:56,872
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons red" class="add">
+       add_box
+      </i>
+      Error
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:56,875&emsp; End: 2016-02-11 14:21:56,891&emsp; Duration: 0.017
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed IpsReadSignal: Read signal A1Material/Value
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Compare iteration param vs actual in iteration 2
+         <br />
+         Command failed IpsReadSignal: Read signal A1Material/Value
+         <br />
+         2016-02-11 14:21:56,888
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        IpsReadSignal error: SignalCheck: A1Material/Value is 6.000 actual 0.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Compare iteration param vs actual in iteration 2
+         <br />
+         IpsReadSignal error: SignalCheck: A1Material/Value is 6.000 actual 0.000000
+         <br />
+         2016-02-11 14:21:56,890
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons red" class="add">
+       add_box
+      </i>
+      Error
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:56,892&emsp; End: 2016-02-11 14:21:56,914&emsp; Duration: 0.021
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons green" class="add">
+         add_box
+        </i>
+        Prepare to apply iteration parameters
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Run Iteration 3
+         <br />
+         Prepare to apply iteration parameters
+         <br />
+         2016-02-11 14:21:56,894
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed: Set signal A1Material/Value to: 7.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Run Iteration 3
+         <br />
+         Command failed: Set signal A1Material/Value to: 7.000000
+         <br />
+         2016-02-11 14:21:56,911
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons red" class="add">
+       add_box
+      </i>
+      Error
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:56,914&emsp; End: 2016-02-11 14:21:56,948&emsp; Duration: 0.033
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed: Set signal A1Material/Toggle to: 1.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Query iteration parameters in iteration 3
+         <br />
+         Command failed: Set signal A1Material/Toggle to: 1.000000
+         <br />
+         2016-02-11 14:21:56,933
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed: Set signal A1Material/Toggle to: 0.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Query iteration parameters in iteration 3
+         <br />
+         Command failed: Set signal A1Material/Toggle to: 0.000000
+         <br />
+         2016-02-11 14:21:56,947
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons red" class="add">
+       add_box
+      </i>
+      Error
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:56,950&emsp; End: 2016-02-11 14:21:56,967&emsp; Duration: 0.018
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed IpsReadSignal: Read signal A1Material/Value
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Compare iteration param vs actual in iteration 3
+         <br />
+         Command failed IpsReadSignal: Read signal A1Material/Value
+         <br />
+         2016-02-11 14:21:56,964
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        IpsReadSignal error: SignalCheck: A1Material/Value is 7.000 actual 0.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Compare iteration param vs actual in iteration 3
+         <br />
+         IpsReadSignal error: SignalCheck: A1Material/Value is 7.000 actual 0.000000
+         <br />
+         2016-02-11 14:21:56,966
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons red" class="add">
+       add_box
+      </i>
+      Error
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:56,969&emsp; End: 2016-02-11 14:21:56,983&emsp; Duration: 0.015
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons green" class="add">
+         add_box
+        </i>
+        Prepare to apply iteration parameters
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Run Iteration 4
+         <br />
+         Prepare to apply iteration parameters
+         <br />
+         2016-02-11 14:21:56,970
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed: Set signal A1Material/Value to: 8.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Run Iteration 4
+         <br />
+         Command failed: Set signal A1Material/Value to: 8.000000
+         <br />
+         2016-02-11 14:21:56,982
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons red" class="add">
+       add_box
+      </i>
+      Error
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:56,986&emsp; End: 2016-02-11 14:21:57,016&emsp; Duration: 0.031
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed: Set signal A1Material/Toggle to: 1.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Query iteration parameters in iteration 4
+         <br />
+         Command failed: Set signal A1Material/Toggle to: 1.000000
+         <br />
+         2016-02-11 14:21:57,000
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed: Set signal A1Material/Toggle to: 0.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Query iteration parameters in iteration 4
+         <br />
+         Command failed: Set signal A1Material/Toggle to: 0.000000
+         <br />
+         2016-02-11 14:21:57,015
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons red" class="add">
+       add_box
+      </i>
+      Error
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:57,016&emsp; End: 2016-02-11 14:21:57,035&emsp; Duration: 0.018
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        Command failed IpsReadSignal: Read signal A1Material/Value
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Compare iteration param vs actual in iteration 4
+         <br />
+         Command failed IpsReadSignal: Read signal A1Material/Value
+         <br />
+         2016-02-11 14:21:57,032
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons red" class="add">
+         add_box
+        </i>
+        IpsReadSignal error: SignalCheck: A1Material/Value is 8.000 actual 0.000000
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Compare iteration param vs actual in iteration 4
+         <br />
+         IpsReadSignal error: SignalCheck: A1Material/Value is 8.000 actual 0.000000
+         <br />
+         2016-02-11 14:21:57,032
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div class="innertests" onclick="oneClick(event,this)">
+    <i class="material-icons orange" class="add">
+     add_box
+    </i>
+    Warning
+    <div class="innertestcontent">
+     <div class="innertests" onclick="oneClick(event,this)">
+      <i class="material-icons orange" class="add">
+       add_box
+      </i>
+      Warning
+      <div class="innertestcontent">
+       <span>
+        Start: 2016-02-11 14:21:57,036&emsp; End: 2016-02-11 14:21:57,039&emsp; Duration: 0.003
+       </span>
+       <div onclick="oneClick(event,this)">
+        <i class="material-icons orange" class="add">
+         add_box
+        </i>
+        A warning
+        <div class="innertestcontent" onclick="threeClick(event,this)">
+         HVC02 Clean Up Test
+         <br />
+         A warning
+         <br />
+         2016-02-11 14:21:57,038
+         <br />
+         <a href="#">
+          log.txt not yet implemented
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>
