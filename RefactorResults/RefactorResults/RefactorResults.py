@@ -203,9 +203,11 @@ def createHTML(file, outDir):
             else:
                 htmlFile.write(""" <i class="material-icons orange" class="add">add_box</i>""")
             htmlFile.write(e.find("text").text )
-            htmlFile.write("""<div class="innertestcontent" onclick="threeClick(event,this)">"""
-                + innerTest.name +"<br>"+ e.find("text").text + "<br>" + e.find("endtime").text +
-                """<br><a href="#"> log.txt not yet implemented</a></div></div>""")
+            htmlFile.write("""<div class="innertestcontent" onclick="threeClick(event,this)">""")
+            consoleLines = locateLinesInLog(os.path.join( outDir, innerRoot.find("logfile").text), e.find("endtime").text, 3, 3)
+            for line in consoleLines:
+                htmlFile.write(line + "<br>")
+            htmlFile.write("</div></div>")
         htmlFile.write("</div></div>")     
     htmlFile.write("</div></div></div></div></body></html>")
     htmlFile.close()
@@ -256,6 +258,27 @@ def createPDF(file, outDir):
     doc.build(what)
     #c.draw
     #c.save()
+
+def locateLinesInLog(filePath, timeStamp, preLines, postLines):
+    lines = []
+    file = open(filePath, "r+")
+    for i in range(preLines):
+        lines.append("")
+    with open(filePath) as openfileobject:
+        for line in openfileobject:
+            if line.startswith(timeStamp):
+                lines.append(line)
+                break
+            else:
+                for i in range(preLines):
+                    if i != 2:
+                        lines[i] = lines[i+1]
+                    else:
+                        lines[2] = line
+    for i in range(postLines):
+        lines.append(file.readline())
+    file.close()
+    return lines
 
 def HTMLTemplate():
     return """<!DOCTYPE html>
