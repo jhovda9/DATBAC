@@ -6,6 +6,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.colors import green
 from BeautifulSoup import BeautifulSoup as BS
 import os
+import sys
 
 """
 class test(object):
@@ -82,11 +83,12 @@ def parseInnerTest(trxTest, outdir):
             subInnerTests.append(temp)
 
 def generateTestReport(outDir):
-    try:
-        trxFile = findTRX(outDir)
-        createHTML(trxFile,outDir)
-    except:
+    trxFile = findTRX(outDir)
+    if trxFile==None:
         print  "No .trx file found in " + outDir
+        return
+        
+    createHTML(trxFile,outDir)
 
 
 def findTRX(outDir):
@@ -118,11 +120,12 @@ def createHTML(file, outDir):
     wasError=False
     wasOther=False
     divCounter = 0
-    htmlFile = open(outDir + "/" + file + ".html", "wb")
+    trxFile = os.path.join( outDir, file  )
+    htmlFile = open( os.path.join( outDir, file + ".html"), "wb")
     htmlFile.write(HTMLTemplate())
     
     # HEADER
-    root = createTestHierarchy(ET.parse(file))
+    root = createTestHierarchy(ET.parse(trxFile))
     htmlFile.write("""<body><div id="header">""")
     htmlFile.write("<h1> Title: " + root.name + "</h1>")
     htmlFile.write("<h1> Result: " + root.result + "</h1>")
@@ -186,11 +189,11 @@ def createHTML(file, outDir):
             htmlFile.write(""" <i class="material-icons red" class="add">add_box</i>""")
         else:
             htmlFile.write(""" <i class="material-icons orange" class="add">add_box</i>""")
-        innerRoot = ET.parse(innerTest.detailedFile)
-        htmlFile.write( innerTest.result )
+        innerRoot = ET.parse( os.path.join( outDir,innerTest.detailedFile) )
+        htmlFile.write( innerTest.name )
         htmlFile.write("""<div class="innertestcontent">""")
         htmlFile.write("<span>Start: " + innerRoot.find("starttime").text + "&emsp; End: "+ innerRoot.find("endtime").text + "&emsp; Duration: " + innerRoot.find("duration").text + "</span>")
-        xmlroot = ET.parse(innerTest.detailedFile)
+        xmlroot = ET.parse( os.path.join( outDir, innerTest.detailedFile) )
         for e in xmlroot.iter('subinnertest'):
             htmlFile.write("""<div onclick="oneClick(event,this)">""")
             if e.find("result").text=="Passed":
@@ -206,7 +209,7 @@ def createHTML(file, outDir):
         htmlFile.write("</div></div>")     
     htmlFile.write("</div></div></div></div></body></html>")
     htmlFile.close()
-    prettifyHTML(file)
+    prettifyHTML(os.path.join( outDir, file) )
 
 
 def prettifyHTML(file):
@@ -391,3 +394,9 @@ def HTMLTemplate():
 
     </script>
     </head>"""
+
+def main():
+    generateTestReport( sys.argv[1] )
+
+if __name__ == "__main__":
+    sys.exit(main())
