@@ -7,79 +7,13 @@ from reportlab.lib.colors import green
 from BeautifulSoup import BeautifulSoup as BS
 import os
 
-"""
-class test(object):
-    #parentTest
-    children = []
-    def __init__(self, testobject):
-        self.testObject = testobject
-        if testobject.find("TestResult").text == "Passed" :
-            self.Result = True
-        else:
-            self.Result = False
-        self.name = testobject.find("TestName").text
-        self.findChildren()
-    def findChildren(self):
-        for child in self.testObject.findall("InnerTest"):
-            self.children.append(test(child))
-
-"""
-
-class TRXTest(object):
+class TFSTest(object):
     innerTests = []
     def __init__(self, name, result, errorMessage, detailedFile):
         self.name = name
         self.result = result
         self.errorMessage = errorMessage
         self.detailedFile = detailedFile
-
-class InnerTest(object):
-    innerTests = []
-    startTime = ""
-    endTime = ""
-    duration = ""
-    detailedFile = ""
-    def __init__(self, name):
-        self.name = name
-
-    def calculateResult(self):
-        result = "Passed"
-        for subInner in self.innerTests:
-            if subInner.result != "Passed":
-                result = subInner.result
-                break
-        self.result = result
-
-class SubInnerTest(object):
-    def __init__(self, result, errorMessage, timeStamp):
-        self.result = result
-        self.errorMessage = errorMessage
-        self.timeStamp = timeStamp
-
-def initializeTRXStructure(path):
-    testElement = ET.parse(path)
-    testObject = TRXTest(testElement.find("TestName").text, testElement.find("TestResult").text, testElement.find("ErrorMessage").text)
-    for innerTest in testElement.find("InnerTests").iter("InnerTest"):
-        testObject.innerTests.append(InnerTest(innerTest.find("TestName").text))
-    return testObject
-
-def parseInnerTest(trxTest, outdir):
-    
-    for innertest in trxTest.innerTests:
-        root = ET.parse(os.path.join(outdir,innertest.name + ".xml"))
-
-        innertest.logfile = root.find("logfile").text
-        innertest.startTime = root.find("starttime").text
-        innertest.endTime = root.find("endtime").text
-        innertest.duration = root.find("duration").text
-
-        subInnerTests = []
-        for subinnertest in root.iter("subinnertest"):
-            result = subinnertest.find("result").text
-            errorMessage = subinnertest.find("text").text
-            timestamp = subinnertest.find("endtime").text
-            temp = SubInnerTest(result,errorMessage,timestamp)
-            subInnerTests.append(temp)
 
 def generateTestReport(outDir):
     try:
@@ -94,14 +28,12 @@ def findTRX(outDir):
         if file.endswith(".trx"):
             return file
     
-def parseTRX(path):
-    file = open()
 
 def createTestObject(testElement):
     detailedResultsFile = "No file exists"
     if testElement.find("DetailedResultsFile") != None:
         detailedResultsFile = testElement.find("DetailedResultsFile").text
-    testObject = TRXTest(testElement.find("TestName").text, testElement.find("TestResult").text, testElement.find("ErrorMessage").text,
+    testObject = TFSTest(testElement.find("TestName").text, testElement.find("TestResult").text, testElement.find("ErrorMessage").text,
                       detailedResultsFile)
     return testObject
 
@@ -219,40 +151,6 @@ def prettifyHTML(file):
     file.truncate()
     file.close
 
-def createPDF(file, outDir):
-    headers = ["Test name", "Result", "Innertest", "Innertest Result"]
-    root = createTestHierarchy(ET.fromstring(open(file, "r").read()))
-    table = []
-    tableStyle = TableStyle([('Grid'),(0,0),(-1,-1)], 1, green)
-    table.append(headers)
-    table.append([root.name, str(root.result), "place", "place"])
-    for innerTest in root.innerTests:
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-    c = canvas.Canvas((file + ".pdf"))
-    doc = SimpleDocTemplate(file + ".pdf")
-    #c.drawString(100,2000, "Test av ReportLab")
-    #print table
-    tab = Table(table)
-    tab.setStyle(tableStyle)
-    what = []
-    what.append(tab)
-    doc.build(what)
-    #c.draw
-    #c.save()
 
 def HTMLTemplate():
     return """<!DOCTYPE html>
