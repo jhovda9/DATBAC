@@ -9,24 +9,6 @@ import os
 import sys
 import datetime
 
-"""
-class test(object):
-    #parentTest
-    children = []
-    def __init__(self, testobject):
-        self.testObject = testobject
-        if testobject.find("TestResult").text == "Passed" :
-            self.Result = True
-        else:
-            self.Result = False
-        self.name = testobject.find("TestName").text
-        self.findChildren()
-    def findChildren(self):
-        for child in self.testObject.findall("InnerTest"):
-            self.children.append(test(child))
-
-"""
-
 class TRXTest(object):
     innerTests = []
     def __init__(self, name, result, errorMessage):
@@ -72,13 +54,14 @@ def parseInnerTest(trxTest, outdir):
         innertest.startTime = root.find("starttime").text
         innertest.endTime = root.find("endtime").text
         innertest.duration = root.find("duration").text 
+
         for subinnertest in root.iter("subinnertest"):
             result = subinnertest.find("result").text
             errorMessage = subinnertest.find("text").text
             timestamp = subinnertest.find("endtime").text
             temp = SubInnerTest(result,errorMessage,timestamp)
             innertest.subInnerTests.append(temp)
-        innertest.calculateResult()
+
 
 def generateTestReport(outDir):
     trxFile = findTRX(outDir)
