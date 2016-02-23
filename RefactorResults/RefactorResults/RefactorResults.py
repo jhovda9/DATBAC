@@ -7,6 +7,7 @@ from reportlab.lib.colors import green
 from BeautifulSoup import BeautifulSoup as BS
 import os
 import sys
+import datetime
 
 """
 class test(object):
@@ -28,14 +29,13 @@ class test(object):
 
 class TRXTest(object):
     innerTests = []
-    def __init__(self, name, result, errorMessage, detailedFile):
+    def __init__(self, name, result, errorMessage):
         self.name = name
         self.result = result
         self.errorMessage = errorMessage
-        self.detailedFile = detailedFile
 
 class InnerTest(object):
-    innerTests = []
+    subInnerTests = []
     startTime = ""
     endTime = ""
     duration = ""
@@ -45,7 +45,7 @@ class InnerTest(object):
 
     def calculateResult(self):
         result = "Passed"
-        for subInner in self.innerTests:
+        for subInner in self.subInnerTests:
             if subInner.result != "Passed":
                 result = subInner.result
                 break
@@ -68,19 +68,17 @@ def parseInnerTest(trxTest, outdir):
     
     for innertest in trxTest.innerTests:
         root = ET.parse(os.path.join(outdir,innertest.name + ".xml"))
-
         innertest.logfile = root.find("logfile").text
         innertest.startTime = root.find("starttime").text
         innertest.endTime = root.find("endtime").text
-        innertest.duration = root.find("duration").text
-
-        subInnerTests = []
+        innertest.duration = root.find("duration").text 
         for subinnertest in root.iter("subinnertest"):
             result = subinnertest.find("result").text
             errorMessage = subinnertest.find("text").text
             timestamp = subinnertest.find("endtime").text
             temp = SubInnerTest(result,errorMessage,timestamp)
-            subInnerTests.append(temp)
+            innertest.subInnerTests.append(temp)
+        innertest.calculateResult()
 
 def generateTestReport(outDir):
     trxFile = findTRX(outDir)
@@ -122,10 +120,12 @@ def createHTML(file, outDir):
     divCounter = 0
     trxFile = os.path.join( outDir, file  )
     htmlFile = open( os.path.join( outDir, file + ".html"), "wb")
+    root = initializeTRXStructure(trxFile)
+    parseInnerTest(root,outDir)
     htmlFile.write(HTMLTemplate())
     
     # HEADER
-    root = createTestHierarchy(ET.parse(trxFile))
+
     htmlFile.write("""<body><div id="header">""")
     htmlFile.write("<h1> Title: " + root.name + "</h1>")
     htmlFile.write("<h1> Result: " + root.result + "</h1>")
@@ -143,6 +143,7 @@ def createHTML(file, outDir):
     # MAIN
     htmlFile.write("""</div></div><div id="innertestcontainer">""")
     for innerTest in root.innerTests:
+
         if innerTest.result=="Passed" and wasPassed==False:
             for div in range(0,divCounter):
                 htmlFile.write("</div>")
@@ -189,22 +190,22 @@ def createHTML(file, outDir):
             htmlFile.write(""" <i class="material-icons red" class="add">add_box</i>""")
         else:
             htmlFile.write(""" <i class="material-icons orange" class="add">add_box</i>""")
-        innerRoot = ET.parse( os.path.join( outDir,innerTest.detailedFile) )
+
         htmlFile.write( innerTest.name )
         htmlFile.write("""<div class="innertestcontent">""")
-        htmlFile.write("<span>Start: " + innerRoot.find("starttime").text + "&emsp; End: "+ innerRoot.find("endtime").text + "&emsp; Duration: " + innerRoot.find("duration").text + "</span>")
-        xmlroot = ET.parse( os.path.join( outDir, innerTest.detailedFile) )
-        for e in xmlroot.iter('subinnertest'):
+        htmlFile.write("<span>Start: " + innerTest.startTime + "&emsp; End: "+ innerTest.endTime + "&emsp; Duration: " + innerTest.duration + "</span>")
+
+        for subInnerTest in innerTest.subInnerTests:
             htmlFile.write("""<div onclick="oneClick(event,this)">""")
-            if e.find("result").text=="Passed":
+            if subInnerTest.result=="Passed":
                 htmlFile.write(""" <i class="material-icons green" class="add">add_box</i>""")
-            elif e.find("result").text=="Failed":
+            elif subInnerTest.result=="Failed":
                 htmlFile.write(""" <i class="material-icons red" class="add">add_box</i>""")
             else:
                 htmlFile.write(""" <i class="material-icons orange" class="add">add_box</i>""")
-            htmlFile.write(e.find("text").text )
+            htmlFile.write(subInnerTest.errorMessage)
             htmlFile.write("""<div class="innertestcontent" onclick="threeClick(event,this)">""")
-            consoleLines = locateLinesInLog(os.path.join( outDir, innerRoot.find("logfile").text), e.find("endtime").text, 3, 3)
+            consoleLines = locateLinesInLog(os.path.join( outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
             for line in consoleLines:
                 htmlFile.write(line + "<br>")
             htmlFile.write("</div></div>")
@@ -262,19 +263,25 @@ def createPDF(file, outDir):
 def locateLinesInLog(filePath, timeStamp, preLines, postLines):
     lines = []
     file = open(filePath, "r+")
+    time = datetime.datetime.strptime(timeStamp, "%Y-%m-%d %H:%M:%S,%f")
     for i in range(preLines):
         lines.append("")
-    with open(filePath) as openfileobject:
-        for line in openfileobject:
-            if line.startswith(timeStamp):
+    while True:
+        line = file.readline()
+        if not line: 
+            break
+        try:
+            if time <= datetime.datetime.strptime(line[0:23],"%Y-%m-%d %H:%M:%S,%f"):
                 lines.append(line)
                 break
-            else:
-                for i in range(preLines):
-                    if i != 2:
-                        lines[i] = lines[i+1]
-                    else:
-                        lines[2] = line
+        except ValueError:
+            continue
+        else:
+            for i in range(preLines):
+                if i != preLines-1:
+                    lines[i] = lines[i+1]
+                else:
+                    lines[preLines - 1] = line
     for i in range(postLines):
         lines.append(file.readline())
     file.close()
