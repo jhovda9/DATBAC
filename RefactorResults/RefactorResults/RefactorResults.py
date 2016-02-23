@@ -8,34 +8,15 @@ from BeautifulSoup import BeautifulSoup as BS
 import os
 import sys
 
-"""
-class test(object):
-    #parentTest
-    children = []
-    def __init__(self, testobject):
-        self.testObject = testobject
-        if testobject.find("TestResult").text == "Passed" :
-            self.Result = True
-        else:
-            self.Result = False
-        self.name = testobject.find("TestName").text
-        self.findChildren()
-    def findChildren(self):
-        for child in self.testObject.findall("InnerTest"):
-            self.children.append(test(child))
-
-"""
-
 class TRXTest(object):
     innerTests = []
-    def __init__(self, name, result, errorMessage, detailedFile):
+    def __init__(self, name, result, errorMessage):
         self.name = name
         self.result = result
         self.errorMessage = errorMessage
-        self.detailedFile = detailedFile
 
 class InnerTest(object):
-    innerTests = []
+    subInnerTests = []
     startTime = ""
     endTime = ""
     duration = ""
@@ -45,7 +26,7 @@ class InnerTest(object):
 
     def calculateResult(self):
         result = "Passed"
-        for subInner in self.innerTests:
+        for subInner in self.subInnerTests:
             if subInner.result != "Passed":
                 result = subInner.result
                 break
@@ -72,15 +53,14 @@ def parseInnerTest(trxTest, outdir):
         innertest.logfile = root.find("logfile").text
         innertest.startTime = root.find("starttime").text
         innertest.endTime = root.find("endtime").text
-        innertest.duration = root.find("duration").text
+        innertest.duration = root.find("duration").text 
 
-        subInnerTests = []
         for subinnertest in root.iter("subinnertest"):
             result = subinnertest.find("result").text
             errorMessage = subinnertest.find("text").text
             timestamp = subinnertest.find("endtime").text
             temp = SubInnerTest(result,errorMessage,timestamp)
-            subInnerTests.append(temp)
+            innertest.subInnerTests.append(temp)
 
 def generateTestReport(outDir):
     trxFile = findTRX(outDir)
