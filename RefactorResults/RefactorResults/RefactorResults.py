@@ -61,7 +61,7 @@ def parseInnerTest(trxTest, outdir):
             timestamp = subinnertest.find("endtime").text
             temp = SubInnerTest(result,errorMessage,timestamp)
             innertest.subInnerTests.append(temp)
-        innertest.calculateResult()
+            innertest.calculateResult()
 
 
 def generateTestReport(outDir):
