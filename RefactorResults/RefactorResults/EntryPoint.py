@@ -1,5 +1,18 @@
 import RefactorResults as RR
 import os
-path = "D:Dropbox/SharedBachelor2016/TestData/xm3"
+#path = "D:Dropbox/SharedBachelor2016/TestData/xm3"
+path = "C:/Users/matsj/Source/Repos/DATBAC/RefactorResults/RefactorResults/"
+#path = "C:Users/matsj/Source/Repos/DATBAC/RefactorResults/RefactorResults/HVC02.txt"
+
+"""
+path = "D:Dropbox/SharedBachelor2016/TestData/xm3/Mcob02Ccpu.txt"
+inStamp = "2016-02-22 10:36:21,765"
+print RR.locateLinesInLog(path,inStamp,3,3)
+"""
+
+
 root = RR.initializeTRXStructure(os.path.join(path, RR.findTRX(path)))
 RR.parseInnerTest(root, path)
+for inner in root.innerTests:
+    print len(inner.sub)
+    print inner.duration

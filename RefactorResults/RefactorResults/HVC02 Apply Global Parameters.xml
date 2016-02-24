@@ -4,7 +4,7 @@
    <endtime>2016-02-11 14:21:56,765</endtime>
    <duration>0.004</duration>
    <subinnertest>
-      <text>Prepare to apply global iteration parameters</text>
+      <text>SubInner ONE</text>
       <result>Passed</result>
       <endtime>2016-02-11 14:21:56,762</endtime>
    </subinnertest>

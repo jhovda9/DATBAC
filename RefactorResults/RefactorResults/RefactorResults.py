@@ -17,15 +17,15 @@ class TRXTest(object):
         self.errorMessage = errorMessage
 
 class InnerTest(object):
-    subInnerTests = []
-    startTime = ""
-    endTime = ""
-    duration = ""
-    def __init__(self, name, result, errorMessage, detailedFile):
+    def __init__(self, name, result, errorMessage, detailedFile, subInnerTests = [], startTime = "", endTime = "", duration = ""):
         self.name = name
         self.result = result
         self.errorMessage = errorMessage
         self.detailedFile = detailedFile
+        self.subInnerTests = list(subInnerTests)
+        self.startTime = startTime
+        self.endTime = endTime
+        self.duration = duration
 
     def calculateResult(self):
         result = "Passed"
@@ -51,18 +51,17 @@ def initializeTRXStructure(path):
 
 def parseInnerTest(trxTest, outdir):
     
-    for innertest in trxTest.innerTests:
-        root = ET.parse(os.path.join(outdir,innertest.detailedFile))
-        innertest.logfile = root.find("logfile").text
-        innertest.startTime = root.find("starttime").text
-        innertest.endTime = root.find("endtime").text
-        innertest.duration = root.find("duration").text
-        for subinnertest in root.iter("subinnertest"):
-            result = subinnertest.find("result").text
-            errorMessage = subinnertest.find("text").text
-            timestamp = subinnertest.find("endtime").text
-            temp = SubInnerTest(result,errorMessage,timestamp)
-            innertest.subInnerTests.append(temp)
+    for inner in trxTest.innerTests:
+        root = ET.parse(os.path.join(outdir,inner.detailedFile))
+        print inner.detailedFile
+        inner.logfile = root.find("logfile").text
+        inner.startTime = root.find("starttime").text
+        inner.endTime = root.find("endtime").text
+        inner.duration = root.find("duration").text
+        print len(root.findall("subinnertest"))
+        for subinnertest in root.findall("subinnertest"):
+            inner.subInnerTests.append(SubInnerTest(subinnertest.find("result").text,subinnertest.find("text").text,subinnertest.find("endtime").text))
+            print len(inner.subInnerTests)
         #innertest.calculateResult()
 
 
