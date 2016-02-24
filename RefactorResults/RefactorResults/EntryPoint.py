@@ -10,9 +10,3 @@ inStamp = "2016-02-22 10:36:21,765"
 print RR.locateLinesInLog(path,inStamp,3,3)
 """
 
-
-root = RR.initializeTRXStructure(os.path.join(path, RR.findTRX(path)))
-RR.parseInnerTest(root, path)
-for inner in root.innerTests:
-    print len(inner.sub)
-    print inner.duration

@@ -53,16 +53,12 @@ def parseInnerTest(trxTest, outdir):
     
     for inner in trxTest.innerTests:
         root = ET.parse(os.path.join(outdir,inner.detailedFile))
-        print inner.detailedFile
         inner.logfile = root.find("logfile").text
         inner.startTime = root.find("starttime").text
         inner.endTime = root.find("endtime").text
         inner.duration = root.find("duration").text
-        print len(root.findall("subinnertest"))
         for subinnertest in root.findall("subinnertest"):
             inner.subInnerTests.append(SubInnerTest(subinnertest.find("result").text,subinnertest.find("text").text,subinnertest.find("endtime").text))
-            print len(inner.subInnerTests)
-        #innertest.calculateResult()
 
 
 def generateTestReport(outDir):
