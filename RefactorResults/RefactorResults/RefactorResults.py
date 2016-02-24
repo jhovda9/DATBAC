@@ -22,8 +22,10 @@ class InnerTest(object):
     endTime = ""
     duration = ""
     detailedFile = ""
-    def __init__(self, name):
+    def __init__(self, name, result, errorMessage):
         self.name = name
+        self.result = result
+        self.errorMessage = errorMessage
 
     def calculateResult(self):
         result = "Passed"
@@ -43,7 +45,7 @@ def initializeTRXStructure(path):
     testElement = ET.parse(path)
     testObject = TRXTest(testElement.find("TestName").text, testElement.find("TestResult").text, testElement.find("ErrorMessage").text)
     for innerTest in testElement.find("InnerTests").iter("InnerTest"):
-        testObject.innerTests.append(InnerTest(innerTest.find("TestName").text))
+        testObject.innerTests.append(InnerTest(innerTest.find("TestName").text, innerTest.find("TestResult").text, innerTest.find("ErrorMessage").text))
     return testObject
 
 def parseInnerTest(trxTest, outdir):
@@ -61,7 +63,7 @@ def parseInnerTest(trxTest, outdir):
             timestamp = subinnertest.find("endtime").text
             temp = SubInnerTest(result,errorMessage,timestamp)
             innertest.subInnerTests.append(temp)
-        innertest.calculateResult()
+        #innertest.calculateResult()
 
 
 def generateTestReport(outDir):
