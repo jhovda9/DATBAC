@@ -21,11 +21,11 @@ class InnerTest(object):
     startTime = ""
     endTime = ""
     duration = ""
-    detailedFile = ""
-    def __init__(self, name, result, errorMessage):
+    def __init__(self, name, result, errorMessage, detailedFile):
         self.name = name
         self.result = result
         self.errorMessage = errorMessage
+        self.detailedFile = detailedFile
 
     def calculateResult(self):
         result = "Passed"
@@ -45,18 +45,18 @@ def initializeTRXStructure(path):
     testElement = ET.parse(path)
     testObject = TRXTest(testElement.find("TestName").text, testElement.find("TestResult").text, testElement.find("ErrorMessage").text)
     for innerTest in testElement.find("InnerTests").iter("InnerTest"):
-        testObject.innerTests.append(InnerTest(innerTest.find("TestName").text, innerTest.find("TestResult").text, innerTest.find("ErrorMessage").text))
+        testObject.innerTests.append(InnerTest(innerTest.find("TestName").text, innerTest.find("TestResult").text,
+                                               innerTest.find("ErrorMessage").text, innerTest.find("DetailedResultsFile").text))
     return testObject
 
 def parseInnerTest(trxTest, outdir):
     
     for innertest in trxTest.innerTests:
-        root = ET.parse(os.path.join(outdir,innertest.name + ".xml"))
+        root = ET.parse(os.path.join(outdir,innertest.detailedFile))
         innertest.logfile = root.find("logfile").text
         innertest.startTime = root.find("starttime").text
         innertest.endTime = root.find("endtime").text
-        innertest.duration = root.find("duration").text 
-
+        innertest.duration = root.find("duration").text
         for subinnertest in root.iter("subinnertest"):
             result = subinnertest.find("result").text
             errorMessage = subinnertest.find("text").text
