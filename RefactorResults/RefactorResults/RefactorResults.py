@@ -112,9 +112,11 @@ def createHTML(file, outDir):
     htmlFile.write("<h1> Result: " + root.result + "</h1>")
     htmlFile.write("<h3> ErrorMessage: " + root.errorMessage + "</h3> </div>")
     htmlFile.write("""<div id="summaryarea"><div id="chartarea"><div id="chart"></div><div id="chartlist"><ul>""")
-    htmlFile.write("<li>" + "# of passes" + "</li>")
-    htmlFile.write("<li>" + "# of fails" + "</li>")
-    htmlFile.write("<li>" + "# of aborts" + "</li>")
+    passed,warning,error,abort = parseErrorMessage(root.errorMessage)
+    htmlFile.write("<li>" + passed + " Passed</li>")
+    htmlFile.write("<li>" + error +  " Errors</li>")
+    htmlFile.write("<li>" + warning +  " Warnings</li>")
+    htmlFile.write("<li>" + abort + " Aborts</li>")
     htmlFile.write("""</ul></div></div><div id="iconarea">""")
     if root.result=="Passed":
         htmlFile.write("""<i class="material-icons green"> done </i>""")
@@ -172,7 +174,7 @@ def createHTML(file, outDir):
         else:
             htmlFile.write(""" <i class="material-icons orange" class="add">add_box</i>""")
 
-        htmlFile.write( innerTest.name )
+        htmlFile.write( innerTest.name + " -" + innerTest.duration + "ms" )
         htmlFile.write("""<div class="innertestcontent">""")
         htmlFile.write("<span>Start: " + innerTest.startTime + "&emsp; End: "+ innerTest.endTime + "&emsp; Duration: " + innerTest.duration + "</span>")
 
@@ -271,6 +273,20 @@ def locateLinesInLog(filePath, timeStamp, preLines, postLines):
         except IndexError:
             continue
     return ret
+
+def parseErrorMessage(errorMessage):
+    valueString = []
+    finalString = []
+    errorMessage = errorMessage[:-1]
+    splitString = errorMessage.split("(")
+    pairString = splitString[1].split(",")
+    for idx,value in enumerate(pairString):
+        valueString.append(value.split(":"))
+    passed = valueString[0][1].split("/")
+    warning = valueString[1][1].split("/")
+    error = valueString[2][1].split("/")
+    abort = valueString[3][1].split("/")
+    return passed[0],warning[0],error[0],abort[0]
 
 def HTMLTemplate():
     return """<!DOCTYPE html>
