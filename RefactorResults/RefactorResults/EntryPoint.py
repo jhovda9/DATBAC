@@ -1,6 +1,6 @@
 import RefactorResults as RR
 import os
-path = "D:Dropbox/SharedBachelor2016/TestData/xm3"
+path = "D:TONSofTEST"
 #path = "C:/Users/matsj/Source/Repos/DATBAC/RefactorResults/RefactorResults/"
 #path = "C:Users/matsj/Source/Repos/DATBAC/RefactorResults/RefactorResults/HVC02.txt"
 
