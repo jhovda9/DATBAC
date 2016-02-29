@@ -210,3 +210,11 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+*.trx
+/RefactorResults/RefactorResults/IciIpsTest.trx.html
+/RefactorResults/RefactorResults/IciIpsTest.trx.pdf
+/RefactorResults/RefactorResults/NASTLauncherResult.trx.html
+/RefactorResults/RefactorResults/NASTLauncherResult.trx.pdf
+/RefactorResults/RefactorResults/RefactorResults.pyc
+/RefactorResults/RefactorResults/test.html
+/RefactorResults/RefactorResults/testStructFromXML.py
