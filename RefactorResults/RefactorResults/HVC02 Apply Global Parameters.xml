@@ -1,0 +1,16 @@
+<innertestdetails>
+   <logfile>HVC02.txt</logfile>
+   <starttime>2016-02-11 14:21:56,762</starttime>
+   <endtime>2016-02-11 14:21:56,765</endtime>
+   <duration>0.004</duration>
+   <subinnertest>
+      <text>SubInner ONE</text>
+      <result>Passed</result>
+      <endtime>2016-02-11 14:21:56,762</endtime>
+   </subinnertest>
+   <subinnertest>
+      <text>No global iteration parameters specified</text>
+      <result>Passed</result>
+      <endtime>2016-02-11 14:21:56,763</endtime>
+   </subinnertest>
+</innertestdetails>

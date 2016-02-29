@@ -1,0 +1,16 @@
+<innertestdetails>
+   <logfile>HVC02.txt</logfile>
+   <starttime>2016-02-11 14:21:56,845</starttime>
+   <endtime>2016-02-11 14:21:56,874</endtime>
+   <duration>0.029</duration>
+   <subinnertest>
+      <text>Command failed: Set signal A1Material/Toggle to: 1.000000</text>
+      <result>Failed</result>
+      <endtime>2016-02-11 14:21:56,858</endtime>
+   </subinnertest>
+   <subinnertest>
+      <text>Command failed: Set signal A1Material/Toggle to: 0.000000</text>
+      <result>Failed</result>
+      <endtime>2016-02-11 14:21:56,872</endtime>
+   </subinnertest>
+</innertestdetails>

@@ -1,0 +1,36 @@
+<innertestdetails>
+   <logfile>HVC02.txt</logfile>
+   <starttime>2016-02-11 14:21:56,575</starttime>
+   <endtime>2016-02-11 14:21:56,759</endtime>
+   <duration>0.185</duration>
+   <subinnertest>
+      <text>Prepare to upgrade software</text>
+      <result>Passed</result>
+      <endtime>2016-02-11 14:21:56,575</endtime>
+   </subinnertest>
+   <subinnertest>
+      <text>No need to upgrade software, build Paint.Dev.EmbSw.CI_20160209.2 already present</text>
+      <result>Passed</result>
+      <endtime>2016-02-11 14:21:56,625</endtime>
+   </subinnertest>
+   <subinnertest>
+      <text>Prepare to load IPS configuration</text>
+      <result>Passed</result>
+      <endtime>2016-02-11 14:21:56,625</endtime>
+   </subinnertest>
+   <subinnertest>
+      <text>No default config specified! </text>
+      <result>Passed</result>
+      <endtime>2016-02-11 14:21:56,625</endtime>
+   </subinnertest>
+   <subinnertest>
+      <text>Prepare to run ips smoke test</text>
+      <result>Passed</result>
+      <endtime>2016-02-11 14:21:56,625</endtime>
+   </subinnertest>
+   <subinnertest>
+      <text>Command failed: Set signal A1Material/Value to: 100.000000</text>
+      <result>Failed</result>
+      <endtime>2016-02-11 14:21:56,756</endtime>
+   </subinnertest>
+</innertestdetails>
