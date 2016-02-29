@@ -417,6 +417,25 @@ def HTMLTemplate():
       }
     }
 
+    function searchClick(clicked){
+	if (clicked.getElementsByTagName("div").length() === 1) {
+		div = clicked.getElementsByTagName("div")[0];
+		strings = str.split(div.innerHTML, ",");
+		logdata = new Array(document.getElementById(strings[0]).innerHTML);
+		endData = "<p>";
+		for (var i = 0; i < strings[1]; ++) {
+			endData += logdata[i];
+		};
+		endData += "<span class='locatedLine'>" + logdata[strings[1]] + "</span>";
+		for (var i = strings[1] + 1; i < logdata.length(); i++) {
+			endData += logdata[i];
+		};
+		endData += "</p>";
+		newDiv = document.createElement("div");
+		newDiv.innerHTML = endData;
+		clicked.appendChild(newDiv);
+	};
+}
 
     </script>
     </head>"""

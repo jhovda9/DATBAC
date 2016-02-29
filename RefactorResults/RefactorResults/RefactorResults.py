@@ -74,9 +74,7 @@ def findTRX(outDir):
     for file in os.listdir(outDir):
         if file.endswith(".trx"):
             return file
-    
-def parseTRX(path):
-    file = open()
+
 
 def createTestObject(testElement):
     detailedResultsFile = "No file exists"
