@@ -106,7 +106,7 @@ def createHTML(file, outDir):
 
     
     # HEADER
-
+    htmlFile.write("<!DOCTYPE html><html><head><title>" + root.name + "</title>")
     htmlFile.write("""<body><div id="header">""")
     htmlFile.write("""<div id="iconarea">""")
     if root.result=="Passed":
@@ -175,7 +175,7 @@ def createHTML(file, outDir):
         else:
             htmlFile.write(""" <i class="material-icons orange" class="add">add_box</i>""")
 
-        htmlFile.write( innerTest.name + ", Duration: " + innerTest.duration + "ms" )
+        htmlFile.write( innerTest.name + ", duration: " + innerTest.duration + "ms" )
         htmlFile.write("""<div class="innertestcontent">""")
         htmlFile.write("<span>Start: " + innerTest.startTime + "&emsp; End: "+ innerTest.endTime + "&emsp; Duration: " + innerTest.duration + "</span>")
 
@@ -277,10 +277,7 @@ def parseErrorMessage(errorMessage):
     return passed[0],warning[0],error[0],abort[0]
 
 def HTMLTemplate():
-    return """<!DOCTYPE html>
-    <html>
-    <head>
-    <title>Prototype</title>
+    return """
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style type="text/css">
     *{
@@ -289,9 +286,11 @@ def HTMLTemplate():
     body{
         overflow-y:scroll;
         background-color: #F4F5F9;
+        min-width:560px;
     }
     #textresultarea{
         display:inline-block;
+        max-width:50%;
     }
     #iconarea .material-icons{
       font-size: 190px;
@@ -301,32 +300,36 @@ def HTMLTemplate():
     .material-icons.green { color: green; }
     .material-icons.orange { color: orange; }
 
-    #header h1, h3{
-      margin: 25px 0 25px 10px;
+    #header{
+      margin: 25px 0 25px 0;
+      display:inline-block;
     }
+
     #summaryarea{
       height: auto;
       overflow: hidden;
+      width:100%;
       border: 1px solid black;
       border-left: none;
       border-right: none;
     }
     #iconarea{
         display:inline-block;
-      width: 10%;
       min-width: 200px;
+      margin-left: 75px;
     }
     #chartarea{
       display: inline-block;
       width: auto;
       overflow: hidden;
+      margin-left:75px;
     }
     #chart{
       border: 1px solid black;
       border-radius: 255px;
       height: 150px;
       width: 150px;
-      margin: 20px 0 0 20px;
+      margin: 20px 0 20px 20px;
       display: inline-block;
     }
     #chartlist{
@@ -343,7 +346,7 @@ def HTMLTemplate():
     }
 
     #innertestcontainer{
-      margin: 0 100px 0 100px;
+      margin: 0 0 0 100px;
       padding:10px;
       font-size: 1.5em;
     }
@@ -353,7 +356,9 @@ def HTMLTemplate():
       border:1px solid black;
       padding:5px;
       font-family:monospace;
-      overflow:auto;
+    }
+    .innertestcontent .innertestcontent .innertestcontent{
+        overflow-y:scroll;
     }
     .remove{
       display:none;
