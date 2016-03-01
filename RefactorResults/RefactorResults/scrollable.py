@@ -424,7 +424,7 @@ def HTMLTemplate():
 	if (clicked.getElementsByTagName("div").length === 1) {
 		div = clicked.getElementsByTagName("div")[0];
 		strings = div.innerHTML.split(",");
-		logdata = new Array(document.getElementById(strings[0]));
+		logdata = new Array(document.getElementById(strings[0]).innerHTML);
 		endData = "<p>";
 		for (var i = 0; i < strings[1]; i++) {
 			endData += logdata[i];
