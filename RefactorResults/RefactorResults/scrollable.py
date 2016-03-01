@@ -8,7 +8,6 @@ from BeautifulSoup import BeautifulSoup as BS
 import os
 import sys
 import datetime
-
 class TRXTest(object):
     innerTests = []
     def __init__(self, name, result, errorMessage):
@@ -104,7 +103,7 @@ def createHTML(file, outDir):
     htmlFile = open( os.path.join( outDir, file + ".html"), "wb")
     root = initializeTRXStructure(trxFile)
     parseInnerTest(root,outDir)
-    htmlFile.write(HTMLTemplate())
+
     
     # HEADER
 
@@ -196,15 +195,16 @@ def createHTML(file, outDir):
         htmlFile.write("</div></div>")     
     htmlFile.write("</div></div></div></div></body></html>")
     htmlFile.close()
-    prettifyHTML(os.path.join( outDir, file) )
+    prettifyHTMLandAddHeader(os.path.join( outDir, file))
 
 
-def prettifyHTML(file):
+def prettifyHTMLandAddHeader(file):
     file = open(file + ".html","r+")
     uglyHtml = file.read()
     soup = BS(uglyHtml)
     prettyHTML = soup.prettify()
     file.seek(0)
+    file.write(HTMLTemplate())
     file.write(prettyHTML)
     file.truncate()
     file.close
@@ -353,6 +353,7 @@ def HTMLTemplate():
       border:1px solid black;
       padding:5px;
       font-family:monospace;
+      overflow:auto;
     }
     .remove{
       display:none;
@@ -373,7 +374,9 @@ def HTMLTemplate():
       -ms-user-select: none;
       margin-top:5px;
     }
-
+    .locatedLine{
+        background-color:yellow;
+    }
 
     </style>
     <script type="text/javascript">
@@ -418,22 +421,20 @@ def HTMLTemplate():
     }
 
     function searchClick(clicked){
-	if (clicked.getElementsByTagName("div").length() === 1) {
+	if (clicked.getElementsByTagName("div").length === 1) {
 		div = clicked.getElementsByTagName("div")[0];
-		strings = str.split(div.innerHTML, ",");
-		logdata = new Array(document.getElementById(strings[0]).innerHTML);
+		strings = div.innerHTML.split(",");
+		logdata = new Array(document.getElementById(strings[0]));
 		endData = "<p>";
-		for (var i = 0; i < strings[1]; ++) {
+		for (var i = 0; i < strings[1]; i++) {
 			endData += logdata[i];
 		};
 		endData += "<span class='locatedLine'>" + logdata[strings[1]] + "</span>";
-		for (var i = strings[1] + 1; i < logdata.length(); i++) {
+		for (var i = strings[1] + 1; i < logdata.length; i++) {
 			endData += logdata[i];
 		};
 		endData += "</p>";
-		newDiv = document.createElement("div");
-		newDiv.innerHTML = endData;
-		clicked.appendChild(newDiv);
+		div.innerHTML = endData;
 	};
 }
 
