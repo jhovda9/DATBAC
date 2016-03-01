@@ -303,6 +303,7 @@ def HTMLTemplate():
     #header{
       margin: 25px 0 25px 0;
       display:inline-block;
+      width:100%;
     }
 
     #summaryarea{
