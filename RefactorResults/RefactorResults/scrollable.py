@@ -8,12 +8,16 @@ from BeautifulSoup import BeautifulSoup as BS
 import os
 import sys
 import datetime
+
+
 class TRXTest(object):
     innerTests = []
+
     def __init__(self, name, result, errorMessage):
         self.name = name
         self.result = result
         self.errorMessage = errorMessage
+
 
 class InnerTest(object):
     def __init__(self, name, result, errorMessage, detailedFile, subInnerTests = [], startTime = "", endTime = "", duration = ""):
@@ -34,11 +38,13 @@ class InnerTest(object):
                 break
         self.result = result
 
+
 class SubInnerTest(object):
     def __init__(self, result, errorMessage, timeStamp):
         self.result = result
         self.errorMessage = errorMessage
         self.timeStamp = timeStamp
+
 
 def initializeTRXStructure(path):
     testElement = ET.parse(path)
@@ -47,6 +53,7 @@ def initializeTRXStructure(path):
         testObject.innerTests.append(InnerTest(innerTest.find("TestName").text, innerTest.find("TestResult").text,
                                                innerTest.find("ErrorMessage").text, innerTest.find("DetailedResultsFile").text))
     return testObject
+
 
 def parseInnerTest(trxTest, outdir):
     
@@ -62,8 +69,8 @@ def parseInnerTest(trxTest, outdir):
 
 def generateTestReport(outDir):
     trxFile = findTRX(outDir)
-    if trxFile==None:
-        print  "No .trx file found in " + outDir
+    if trxFile == None:
+        print "No .trx file found in " + outDir
         return
         
     createHTML(trxFile,outDir)
@@ -73,9 +80,7 @@ def findTRX(outDir):
     for file in os.listdir(outDir):
         if file.endswith(".trx"):
             return file
-    
-def parseTRX(path):
-    file = open()
+
 
 def createTestObject(testElement):
     detailedResultsFile = "No file exists"
@@ -99,10 +104,10 @@ def createHTML(file, outDir):
     wasError = False
     wasOther = False
     divCounter = 0
-    trxFile = os.path.join( outDir, file)
-    htmlFile = open( os.path.join( outDir, file + ".html"), "wb")
+    trxFile = os.path.join(outDir, file)
+    htmlFile = open(os.path.join(outDir, file + ".html"), "wb")
     root = initializeTRXStructure(trxFile)
-    parseInnerTest(root,outDir)
+    parseInnerTest(root, outDir)
 
     
     # HEADER
@@ -118,31 +123,31 @@ def createHTML(file, outDir):
     htmlFile.write("<h1> Result: " + root.result + "</h1>")
     htmlFile.write("<h3> ErrorMessage: " + root.errorMessage + "</h3> </div>")
     htmlFile.write("""<div id="summaryarea"><div id="chartarea"><div id="chart"></div><div id="chartlist"><ul>""")
-    passed,warning,error,abort = parseErrorMessage(root.errorMessage)
-    htmlFile.write("<li>" + passed + " Passed</li>")
-    htmlFile.write("<li>" + error +  " Errors</li>")
-    htmlFile.write("<li>" + warning +  " Warnings</li>")
-    htmlFile.write("<li>" + abort + " Aborts</li></ul></div></div></div></div>")
+    errorList = parseErrorMessage(root.errorMessage)
+    for message in errorList:
+        if message[1] != 0:
+            htmlFile.write("<li>  {} {} </li>".format(message[1], message[0]))
+    htmlFile.write("</ul></div></div></div></div>")
 
     # MAIN
     htmlFile.write("""<div id="innertestcontainer">""")
     for innerTest in root.innerTests:
 
-        if innerTest.result=="Passed" and wasPassed==False:
-            for div in range(0,divCounter):
+        if innerTest.result == "Passed" and wasPassed == False:
+            for div in range(0, divCounter):
                 htmlFile.write("</div>")
             divCounter = 0
-            wasPassed=True
-            wasError=False
-            wasOther=False
+            wasPassed = True
+            wasError = False
+            wasOther = False
             htmlFile.write("""<div class="innertests" onclick="oneClick(event,this)">""")
-            divCounter+= 1
+            divCounter += 1
             htmlFile.write(""" <i class="material-icons green" class="add">add_box</i>""")
             htmlFile.write(innerTest.result)
             htmlFile.write("""<div class="innertestcontent">""")
-            divCounter+= 1
-        elif innerTest.result=="Error" and wasError==False:
-            for div in range(0,divCounter):
+            divCounter += 1
+        elif innerTest.result == "Error" and wasError == False:
+            for div in range(0, divCounter):
                 htmlFile.write("</div>")
             divCounter = 0
             wasPassed = False
@@ -153,24 +158,24 @@ def createHTML(file, outDir):
             htmlFile.write(""" <i class="material-icons red" class="add">add_box</i>""")
             htmlFile.write(innerTest.result)
             htmlFile.write("""<div class="innertestcontent">""")
-            divCounter+= 1
-        elif innerTest.result=="Warning" and wasOther==False:
-            for div in range(0,divCounter):
+            divCounter += 1
+        elif innerTest.result == "Warning" and wasOther == False:
+            for div in range(0, divCounter):
                 htmlFile.write("</div>")
             divCounter = 0
             wasPassed = False
             wasError = False
             wasOther = True
             htmlFile.write("""<div class="innertests" onclick="oneClick(event,this)">""")
-            divCounter+= 1
+            divCounter += 1
             htmlFile.write(""" <i class="material-icons orange" class="add">add_box</i>""")
             htmlFile.write(innerTest.result)
             htmlFile.write("""<div class="innertestcontent">""")
-            divCounter+= 1
+            divCounter += 1
         htmlFile.write("""<div class="innertests" onclick="oneClick(event,this)">""")
-        if innerTest.result=="Passed":
+        if innerTest.result == "Passed":
             htmlFile.write(""" <i class="material-icons green" class="add">add_box</i>""")
-        elif innerTest.result=="Error":
+        elif innerTest.result == "Error":
             htmlFile.write(""" <i class="material-icons red" class="add">add_box</i>""")
         else:
             htmlFile.write(""" <i class="material-icons orange" class="add">add_box</i>""")
@@ -181,21 +186,21 @@ def createHTML(file, outDir):
 
         for subInnerTest in innerTest.subInnerTests:
             htmlFile.write("""<div onclick="oneClick(event,this);searchClick(this)">""")
-            if subInnerTest.result=="Passed":
+            if subInnerTest.result == "Passed":
                 htmlFile.write(""" <i class="material-icons green" class="add">add_box</i>""")
-            elif subInnerTest.result=="Failed":
+            elif subInnerTest.result == "Failed":
                 htmlFile.write(""" <i class="material-icons red" class="add">add_box</i>""")
             else:
                 htmlFile.write(""" <i class="material-icons orange" class="add">add_box</i>""")
             htmlFile.write(subInnerTest.errorMessage)
             htmlFile.write("""<div class="innertestcontent" onclick="threeClick(event,this)">""")
-            pos,lines = locateLinesInLog(os.path.join( outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
-            htmlFile.write(innerTest.logfile + ",%d"%pos)
+            pos, lines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
+            htmlFile.write(innerTest.logfile + ",%d" % pos)
             htmlFile.write("</div></div>")
         htmlFile.write("</div></div>")     
     htmlFile.write("</div></div></div></div></body></html>")
     htmlFile.close()
-    prettifyHTMLandAddHeader(os.path.join( outDir, file))
+    prettifyHTMLandAddHeader(os.path.join(outDir, file))
 
 
 def prettifyHTMLandAddHeader(file):
@@ -207,7 +212,8 @@ def prettifyHTMLandAddHeader(file):
     file.write(HTMLTemplate())
     file.write(prettyHTML)
     file.truncate()
-    file.close
+    file.close()
+
 
 def createPDF(file, outDir):
     headers = ["Test name", "Result", "Innertest", "Innertest Result"]
@@ -244,6 +250,7 @@ def createPDF(file, outDir):
     #c.draw
     #c.save()
 
+
 def locateLinesInLog(filePath, timeStamp, preLines, postLines):
     fil = open(filePath, "r+")
     lines = fil.readlines()
@@ -262,19 +269,16 @@ def locateLinesInLog(filePath, timeStamp, preLines, postLines):
             hi = mid
     return lo, lines
 
+
 def parseErrorMessage(errorMessage):
     valueString = []
-    finalString = []
-    errorMessage = errorMessage[:-1]
-    splitString = errorMessage.split("(")
-    pairString = splitString[1].split(",")
-    for idx,value in enumerate(pairString):
-        valueString.append(value.split(":"))
-    passed = valueString[0][1].split("/")
-    warning = valueString[1][1].split("/")
-    error = valueString[2][1].split("/")
-    abort = valueString[3][1].split("/")
-    return passed[0],warning[0],error[0],abort[0]
+    pairString = errorMessage[:-1].split("(")[1].split(",")
+    for value in pairString:
+        result = value.split(":")[0].strip()
+        number = int(value.split(":")[1].split("/")[0].strip())
+        valueString.append([result, number])
+    return valueString
+
 
 def HTMLTemplate():
     return """
@@ -317,13 +321,13 @@ def HTMLTemplate():
     #iconarea{
         display:inline-block;
       min-width: 200px;
-      margin-left: 75px;
+      margin-left: 25px;
     }
     #chartarea{
       display: inline-block;
       width: auto;
       overflow: hidden;
-      margin-left:75px;
+      margin-left:25px;
     }
     #chart{
       border: 1px solid black;
@@ -446,6 +450,7 @@ def HTMLTemplate():
 
     </script>
     </head>"""
+
 
 def main():
     generateTestReport( sys.argv[1] )
