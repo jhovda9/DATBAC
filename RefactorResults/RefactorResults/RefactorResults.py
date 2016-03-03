@@ -112,12 +112,13 @@ def createHTML(file, outDir):
     parseInnerTest(root, outDir)
     errorList = parseErrorMessage(root.errorMessage)
 
-    
+
+
     # HEADER
     htmlFile.write("<!DOCTYPE html><html><head><title>" + root.name + "</title>")
     htmlFile.write("""<body><div id="header">""")
     htmlFile.write("""<div id="iconarea">""")
-    if root.result=="Passed":
+    if root.result == "Passed":
         htmlFile.write("""<i class="material-icons green"> done </i>""")
     else:
         htmlFile.write("""<i class="material-icons red"> error </i>""")
@@ -130,10 +131,6 @@ def createHTML(file, outDir):
     htmlFile.write("<img src='data:image/png;base64,%s'" %base64.getvalue().encode("base64").strip())
     htmlFile.write("""</div><div id="chartlist"><ul>""")
 
-
-    for message in errorList:
-        if message[1] != 0:
-            htmlFile.write("<li>  {} {} </li>".format(message[1], message[0]))
     htmlFile.write("</ul></div></div></div></div>")
 
     # MAIN
@@ -304,9 +301,11 @@ def parseErrorMessage(errorMessage):
 def drawPieChart(errorList):
     sizes = []
     colors = []
+    labels = []
     for message in errorList:
         if message[1] != 0:
             sizes.append(message[1])
+            labels.append("{} {}".format(message[1], message[0]))
             if message[0] == 'Passed':
                 colors.append('#26C154')
             elif message[0] == 'Error':
@@ -314,11 +313,16 @@ def drawPieChart(errorList):
             else:
                 colors.append('orange')
 
-    plt.figure(figsize=(1, 1))
+    plt.figure(figsize=(2, 1))
     pieWedgesCollection = plt.pie(sizes, colors=colors)[0]
     for wedge in pieWedgesCollection:
         wedge.set_lw(0)
+
     plt.axis('equal')
+    plt.legend(loc=2, prop={'size': 7}, bbox_to_anchor=(1, 1), labels=labels, frameon=False)
+    ax = plt.subplot(111)
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.5, box.height])
     format = "png"
     sio = cStringIO.StringIO()
     plt.savefig(sio, format=format, transparent=True, dpi=200)
@@ -368,14 +372,11 @@ def HTMLTemplate():
       margin-left: 25px;
     }
     #chartarea{
-      display: inline-block;
       width: auto;
-      overflow: hidden;
-      margin-left:25px;
     }
     #chart{
       height: 200px;
-      width: 200px;
+      width: auto;
       display: inline-block;
     }
     #chartlist{
