@@ -136,7 +136,6 @@ def createHTML(file, outDir):
     # MAIN
     htmlFile.write("""<div id="innertestcontainer">""")
     for innerTest in root.innerTests:
-
         if innerTest.result == "Passed" and wasPassed == False:
             for div in range(0, divCounter):
                 htmlFile.write("</div>")
@@ -305,19 +304,12 @@ def drawPieChart(errorList):
     for message in errorList:
         if message[1] != 0:
             sizes.append(message[1])
+            colors.append(getColorFromResult(message[0])[0])
             labels.append("{} {}".format(message[1], message[0]))
-            if message[0] == 'Passed':
-                colors.append('#26C154')
-            elif message[0] == 'Error':
-                colors.append('#DF4138')
-            else:
-                colors.append('orange')
-
     plt.figure(figsize=(2, 1))
     pieWedgesCollection = plt.pie(sizes, colors=colors)[0]
     for wedge in pieWedgesCollection:
         wedge.set_lw(0)
-
     plt.axis('equal')
     plt.legend(loc=2, prop={'size': 7}, bbox_to_anchor=(1, 1), labels=labels, frameon=False)
     ax = plt.subplot(111)
@@ -327,6 +319,21 @@ def drawPieChart(errorList):
     sio = cStringIO.StringIO()
     plt.savefig(sio, format=format, transparent=True, dpi=200)
     return sio
+
+
+def getColorFromResult(result):
+    result = str.lower(result)
+    if result == 'passed':
+        return '#26C154', result
+    elif result == 'error':
+        return '#DF4138', result
+    elif result == 'warning':
+        return 'orange', result
+    else:
+        return 'blue', result
+    print result
+
+
 
 def HTMLTemplate():
     return """
@@ -351,6 +358,7 @@ def HTMLTemplate():
     .material-icons.red { color: #DF4138; }
     .material-icons.green { color: #26C154; }
     .material-icons.orange { color: orange; }
+    .material-icons.blue { color: blue; }
 
     #header{
       margin: 25px 0 25px 0;
