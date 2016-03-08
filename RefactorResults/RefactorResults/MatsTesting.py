@@ -46,6 +46,7 @@ def locateLines2(filepath, timeStamp, preLines, postLines):
             currStamp = datetime.datetime.strptime(lines[mid][0:23],"%Y-%m-%d %H:%M:%S,%f")
         except ValueError:
             mid = mid - 1
+            continue
         if currStamp < stamp:
             lo = mid+1
         else:
@@ -80,4 +81,4 @@ def locateBench():
         if file.endswith(".txt"):
             locateLines2((path + "/" + file),inStamp, 3, 3)
 
-print timeit.timeit(locateBench,number=50)
+print timeit.timeit(locateBench,number=100)
