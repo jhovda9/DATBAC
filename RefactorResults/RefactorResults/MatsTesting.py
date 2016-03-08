@@ -12,31 +12,22 @@ import timeit
 
 
 def locateLinesInLog(filePath, timeStamp, preLines, postLines):
-    lines = []
-    file = open(filePath, "r+")
-    time = datetime.datetime.strptime(timeStamp, "%Y-%m-%d %H:%M:%S,%f")
-    for i in range(preLines):
-        lines.append("")
-    while True:
-        line = file.readline()
-        if not line: 
-            break
+    fil = open(filePath, "r+")
+    lines = fil.readlines()
+    stamp = datetime.datetime.strptime(timeStamp, "%Y-%m-%d %H:%M:%S,%f")
+    lo = 0
+    hi = len(lines)
+    while lo < hi:
+        mid = (hi + lo)/2
         try:
-            if time <= datetime.datetime.strptime(line[0:23],"%Y-%m-%d %H:%M:%S,%f"):
-                lines.append(line)
-                break
+            currStamp = datetime.datetime.strptime(lines[mid][0:23],"%Y-%m-%d %H:%M:%S,%f")
         except ValueError:
-            continue
+            mid = mid - 1
+        if currStamp < stamp:
+            lo = mid+1
         else:
-            for i in range(preLines):
-                if i != preLines-1:
-                    lines[i] = lines[i+1]
-                else:
-                    lines[preLines - 1] = line
-    for i in range(postLines):
-        lines.append(file.readline())
-    file.close()
-    return lines
+            hi = mid
+    return lo, lines
 
 """
 Search algorithm based on Binary search

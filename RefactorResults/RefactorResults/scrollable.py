@@ -8,8 +8,6 @@ from BeautifulSoup import BeautifulSoup as BS
 import os
 import sys
 import datetime
-import matplotlib.pyplot as plt
-import cStringIO
 
 
 class TRXTest(object):
@@ -110,15 +108,13 @@ def createHTML(file, outDir):
     htmlFile = open(os.path.join(outDir, file + ".html"), "wb")
     root = initializeTRXStructure(trxFile)
     parseInnerTest(root, outDir)
-    errorList = parseErrorMessage(root.errorMessage)
 
-
-
+    
     # HEADER
     htmlFile.write("<!DOCTYPE html><html><head><title>" + root.name + "</title>")
     htmlFile.write("""<body><div id="header">""")
     htmlFile.write("""<div id="iconarea">""")
-    if root.result == "Passed":
+    if root.result=="Passed":
         htmlFile.write("""<i class="material-icons green"> done </i>""")
     else:
         htmlFile.write("""<i class="material-icons red"> error </i>""")
@@ -126,11 +122,11 @@ def createHTML(file, outDir):
     htmlFile.write("<h1> Title: " + root.name + "</h1>")
     htmlFile.write("<h1> Result: " + root.result + "</h1>")
     htmlFile.write("<h3> ErrorMessage: " + root.errorMessage + "</h3> </div>")
-    base64 = drawPieChart(errorList)
-    htmlFile.write("""<div id="summaryarea"><div id="chartarea"><div id="chart">""")
-    htmlFile.write("<img src='data:image/png;base64,%s'" %base64.getvalue().encode("base64").strip())
-    htmlFile.write("""</div><div id="chartlist"><ul>""")
-
+    htmlFile.write("""<div id="summaryarea"><div id="chartarea"><div id="chart"></div><div id="chartlist"><ul>""")
+    errorList = parseErrorMessage(root.errorMessage)
+    for message in errorList:
+        if message[1] != 0:
+            htmlFile.write("<li>  {} {} </li>".format(message[1], message[0]))
     htmlFile.write("</ul></div></div></div></div>")
 
     # MAIN
@@ -163,7 +159,7 @@ def createHTML(file, outDir):
             htmlFile.write(innerTest.result)
             htmlFile.write("""<div class="innertestcontent">""")
             divCounter += 1
-        elif innerTest.result != "Passed" and innerTest.result != "Error" and wasOther == False:
+        elif innerTest.result == "Warning" and wasOther == False:
             for div in range(0, divCounter):
                 htmlFile.write("</div>")
             divCounter = 0
@@ -189,7 +185,7 @@ def createHTML(file, outDir):
         htmlFile.write("<span>Start: " + innerTest.startTime + "&emsp; End: "+ innerTest.endTime + "&emsp; Duration: " + innerTest.duration + "</span>")
 
         for subInnerTest in innerTest.subInnerTests:
-            htmlFile.write("""<div onclick="oneClick(event,this)">""")
+            htmlFile.write("""<div onclick="oneClick(event,this);searchClick(this)">""")
             if subInnerTest.result == "Passed":
                 htmlFile.write(""" <i class="material-icons green" class="add">add_box</i>""")
             elif subInnerTest.result == "Failed":
@@ -198,9 +194,8 @@ def createHTML(file, outDir):
                 htmlFile.write(""" <i class="material-icons orange" class="add">add_box</i>""")
             htmlFile.write(subInnerTest.errorMessage)
             htmlFile.write("""<div class="innertestcontent" onclick="threeClick(event,this)">""")
-            consoleLines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
-            for line in consoleLines:
-                htmlFile.write(line + "<br>")
+            pos, lines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
+            htmlFile.write(innerTest.logfile + ",%d" % pos)
             htmlFile.write("</div></div>")
         htmlFile.write("</div></div>")     
     htmlFile.write("</div></div></div></div></body></html>")
@@ -272,20 +267,7 @@ def locateLinesInLog(filePath, timeStamp, preLines, postLines):
             lo = mid+1
         else:
             hi = mid
-    ret = []
-    for i in range(preLines+1)[::-1]:
-        if lo-i < 0:
-            continue
-        try:
-            ret.append(lines[lo-i])
-        except  :
-            continue
-    for i in range(postLines+1)[1:]:
-        try:
-            ret.append(lines[lo+i])
-        except IndexError:
-            continue
-    return ret
+    return lo, lines
 
 
 def parseErrorMessage(errorMessage):
@@ -297,36 +279,6 @@ def parseErrorMessage(errorMessage):
         valueString.append([result, number])
     return valueString
 
-
-def drawPieChart(errorList):
-    sizes = []
-    colors = []
-    labels = []
-    for message in errorList:
-        if message[1] != 0:
-            sizes.append(message[1])
-            labels.append("{} {}".format(message[1], message[0]))
-            if message[0] == 'Passed':
-                colors.append('#26C154')
-            elif message[0] == 'Error':
-                colors.append('#DF4138')
-            else:
-                colors.append('orange')
-
-    plt.figure(figsize=(2, 1))
-    pieWedgesCollection = plt.pie(sizes, colors=colors)[0]
-    for wedge in pieWedgesCollection:
-        wedge.set_lw(0)
-
-    plt.axis('equal')
-    plt.legend(loc=2, prop={'size': 7}, bbox_to_anchor=(1, 1), labels=labels, frameon=False)
-    ax = plt.subplot(111)
-    box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.5, box.height])
-    format = "png"
-    sio = cStringIO.StringIO()
-    plt.savefig(sio, format=format, transparent=True, dpi=200)
-    return sio
 
 def HTMLTemplate():
     return """
@@ -348,8 +300,8 @@ def HTMLTemplate():
       font-size: 190px;
     }
 
-    .material-icons.red { color: #DF4138; }
-    .material-icons.green { color: #26C154; }
+    .material-icons.red { color: red; }
+    .material-icons.green { color: green; }
     .material-icons.orange { color: orange; }
 
     #header{
@@ -372,11 +324,17 @@ def HTMLTemplate():
       margin-left: 25px;
     }
     #chartarea{
+      display: inline-block;
       width: auto;
+      overflow: hidden;
+      margin-left:25px;
     }
     #chart{
-      height: 200px;
-      width: auto;
+      border: 1px solid black;
+      border-radius: 255px;
+      height: 150px;
+      width: 150px;
+      margin: 20px 0 20px 20px;
       display: inline-block;
     }
     #chartlist{
@@ -393,7 +351,7 @@ def HTMLTemplate():
     }
 
     #innertestcontainer{
-      margin: 0 0 0 200px;
+      margin: 0 0 0 100px;
       padding:10px;
       font-size: 1.5em;
     }
@@ -426,7 +384,9 @@ def HTMLTemplate():
       -ms-user-select: none;
       margin-top:5px;
     }
-
+    .locatedLine{
+        background-color:yellow;
+    }
 
     </style>
     <script type="text/javascript">
@@ -458,7 +418,10 @@ def HTMLTemplate():
 
       }
     }
+    function searchClick(element){
+        var div = element.getElementsByTagName("div")[0];
 
+    }
     function threeClick(event, element)
     {
       if(amIclicked(event, element))
@@ -466,6 +429,24 @@ def HTMLTemplate():
         alert("TODO:implement")
       }
     }
+
+    function searchClick(clicked){
+	if (clicked.getElementsByTagName("div").length === 1) {
+		div = clicked.getElementsByTagName("div")[0];
+		strings = div.innerHTML.split(",");
+		logdata = new Array(document.getElementById(strings[0]).innerHTML);
+		endData = "<p>";
+		for (var i = 0; i < strings[1]; i++) {
+			endData += logdata[i];
+		};
+		endData += "<span class='locatedLine'>" + logdata[strings[1]] + "</span>";
+		for (var i = strings[1] + 1; i < logdata.length; i++) {
+			endData += logdata[i];
+		};
+		endData += "</p>";
+		div.innerHTML = endData;
+	};
+}
 
     </script>
     </head>"""
