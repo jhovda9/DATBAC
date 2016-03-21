@@ -142,7 +142,7 @@ def createHTML(file, outDir):
                 htmlFile.write("</div>")
             htmlFile.write("<div class='innertests' onclick='oneClick(event,this)'>")
             htmlFile.write(" <i class='material-icons' style='color:" + currentColor + "' >add_box</i>")
-            htmlFile.write(innerTest.result)
+            htmlFile.write(innerTest.result + "<span></span>")
             htmlFile.write("<div class='innertestcontent'>")
             divCounter = 2
             prevTest = currentTest
@@ -369,6 +369,10 @@ def HTMLTemplate():
       font-size: 1.5em;
     }
 
+    #innertestcontainer span{
+        font-size:1em;
+    }
+
     .innertestcontent .innertestcontent {
       font-size:0.9em;
       border:1px solid black;
@@ -401,6 +405,21 @@ def HTMLTemplate():
 
     </style>
     <script type="text/javascript">
+
+    window.onload = function () {
+        var outerdiv = document.getElementById("innertestcontainer");
+        var outerdivchildren = outerdiv.children;
+        var fromnumber = 1;
+        var tonumber = 0;
+        for (var i = 0; i < outerdivchildren.length; i++) {
+            var incnumber = outerdivchildren[i].children[2].children.length;
+            tonumber += incnumber;
+            var str = fromnumber + "-" + tonumber;
+            outerdivchildren[i].getElementsByTagName("span")[0].innerHTML = str;
+            fromnumber+=incnumber;
+        }
+    };
+
     function amIclicked(e, element)
     {
       if (!e) var e = window.event;
