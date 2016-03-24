@@ -156,15 +156,10 @@ def createHTML(file, outDir):
         for subInnerTest in innerTest.subInnerTests:
             if innerTest.logfile not in logFiles:
                 logFiles.append(innerTest.logfile)
-            htmlFile.write("""<div onclick="oneClick(event,this);searchClick(this)">""")
-            if subInnerTest.result == "Passed":
-                htmlFile.write(""" <i class="material-icons green" class="add">add_box</i>""")
-            elif subInnerTest.result == "Failed":
-                htmlFile.write(""" <i class="material-icons red" class="add">add_box</i>""")
-            else:
-                htmlFile.write(""" <i class="material-icons orange" class="add">add_box</i>""")
+            htmlFile.write("<div onclick='oneClick(event,this);searchClick(this)'>")
+            htmlFile.write("<i class='material-icons' style=' color:" + currentColor + "' >add_box</i>")
             htmlFile.write(subInnerTest.errorMessage)
-            htmlFile.write("""<div class="innertestcontent" onclick="threeClick(event,this)">""")
+            htmlFile.write("<div class='innertestcontent " + innerTest.logfile + "' onclick='threeClick(event,this)'>")
             pos, lines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
             htmlFile.write(innerTest.logfile + ",%d" % pos)
             htmlFile.write("</div></div>")
@@ -403,6 +398,18 @@ def HTMLTemplate():
         font-size:1em;
         font-family:monospace;
     }
+    #biglog{
+        font-family:monospace;
+        border:1px solid black;
+        height: 50vh;
+        padding: 10px;
+        overflow:scroll;
+        position:fixed;
+        right: 10px;
+        top:10px;
+        background-color: white;
+        resize:both;
+    }
 
     </style>
     <script type="text/javascript">
@@ -439,8 +446,21 @@ def HTMLTemplate():
     {
       if(amIclicked(event, element))
       {
-        alert("TODO:implement")
+          var str = element.className;
+          str = str.substr(str.indexOf(" ")+1);
+          var thelog = document.getElementById(str);
+          var div = document.createElement("div");
+          div.innerHTML = thelog.innerHTML;
+          div.setAttribute('id','biglog');
+          document.body.appendChild(div);
+
       }
+        window.addEventListener('mousedown', function(event){
+            var box = document.getElementById('biglog');
+            if (event.target != box && event.target.parentNode != box && box != null){
+                box.parentNode.removeChild(box);
+            }
+        });
     }
 
     function searchClick(clicked){

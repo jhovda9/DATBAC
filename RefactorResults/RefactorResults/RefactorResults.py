@@ -453,7 +453,7 @@ def HTMLTemplate():
     {
       if(amIclicked(event, element))
       {
-        alert("TODO:implement")
+
       }
     }
 

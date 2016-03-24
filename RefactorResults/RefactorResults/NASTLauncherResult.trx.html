@@ -69,10 +69,6 @@
       font-size: 1.5em;
     }
 
-    #innertestcontainer span{
-        font-size:1em;
-    }
-
     .innertestcontent .innertestcontent {
       font-size:0.9em;
       border:1px solid black;
@@ -101,25 +97,26 @@
       -ms-user-select: none;
       margin-top:5px;
     }
-
+    .locatedLine{
+        background-color:yellow;
+        font-size:1em;
+        font-family:monospace;
+    }
+    #biglog{
+        font-family:monospace;
+        border:1px solid black;
+        height: 50vh;
+        padding: 10px;
+        overflow:scroll;
+        position:fixed;
+        right: 10px;
+        top:10px;
+        background-color: white;
+        resize:both;
+    }
 
     </style>
     <script type="text/javascript">
-
-    window.onload = function () {
-        var outerdiv = document.getElementById("innertestcontainer");
-        var outerdivchildren = outerdiv.children;
-        var fromnumber = 1;
-        var tonumber = 0;
-        for (var i = 0; i < outerdivchildren.length; i++) {
-            var incnumber = outerdivchildren[i].children[2].children.length;
-            tonumber += incnumber;
-            var str = fromnumber + "-" + tonumber;
-            outerdivchildren[i].getElementsByTagName("span")[0].innerHTML = str;
-            fromnumber+=incnumber;
-        }
-    };
-
     function amIclicked(e, element)
     {
       if (!e) var e = window.event;
@@ -153,9 +150,50 @@
     {
       if(amIclicked(event, element))
       {
-        alert("TODO:implement")
+          var str = element.className;
+          str = str.substr(str.indexOf(" ")+1);
+          var thelog = document.getElementById(str);
+          var div = document.createElement("div");
+          div.innerHTML = thelog.innerHTML;
+          div.setAttribute('id','biglog');
+          document.body.appendChild(div);
+
       }
+        window.addEventListener('mousedown', function(event){
+            var box = document.getElementById('biglog');
+            if (event.target != box && event.target.parentNode != box && box != null){
+                box.parentNode.removeChild(box);
+            }
+        });
     }
+
+    function searchClick(clicked){
+        var clickedDivs = clicked.getElementsByTagName("div");
+        if (clickedDivs[0].style.display === "block" && clickedDivs[0].innerHTML.split(",").length<3 ) {
+            var div = clickedDivs[0];
+            var strings = div.innerHTML.split(",");
+            var txtdiv = strings[0].trim();
+            var linenumber = parseInt(strings[1]);
+            var logdata = document.getElementById(txtdiv).innerHTML;
+            var logdatalines = logdata.split("<br>");
+            var divdata = []
+            for (var i = linenumber-1; i > linenumber-5; i--) {
+                if(i >= 0){
+                    divdata.push(logdatalines[i] + "<br>");
+                }
+            };
+            divdata.push("<span class='locatedline'>" + logdatalines[linenumber] + "</span> <br>");
+            for (var i = linenumber + 1; i < linenumber+5; i++) {
+                if(i<= logdatalines.length){
+                    divdata.push(logdatalines[i] + "<br>");
+                }
+            };
+            div.innerHTML="";
+            for(var val of divdata){
+                div.innerHTML += val;
+            }
+	    };
+}
 
     </script>
     </head><!DOCTYPE html>
@@ -427,8 +465,6 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
       add_box
      </i>
      Error
-     <span>
-     </span>
      <div class="innertestcontent">
       <div class="innertests" onclick="oneClick(event,this)">
        <i class="material-icons" style=" color:#DF4138">
@@ -439,129 +475,58 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:56,575&emsp; End: 2016-02-11 14:21:56,759&emsp; Duration: 0.185
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#26C154">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Prepare to upgrade software
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,562 HVC02  INFO      * * *Log start * * *
-          <br />
-          <br />
-          2016-02-11 14:21:56,575 HVC02  INFO     Prepare to upgrade software
-          <br />
-          2016-02-11 14:21:56,575 HVC02  INFO     Upgrade software if current build name is not equal to Paint.Dev.EmbSw.CI_20160209.2
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,0
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#26C154">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          No need to upgrade software, build Paint.Dev.EmbSw.CI_20160209.2 already present
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,622 HVC02  INFO     &lt;=$0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,624 HVC02  INFO     Current buildname is: Paint.Dev.EmbSw.CI_20160209.2
-          <br />
-          2016-02-11 14:21:56,624 HVC02  INFO     No need to upgrade software, build Paint.Dev.EmbSw.CI_20160209.2 already present
-          <br />
-          2016-02-11 14:21:56,625 HVC02  INFO     Prepare to load IPS configuration
-          <br />
-          2016-02-11 14:21:56,625 HVC02  INFO     No default config specified!
-          <br />
-          2016-02-11 14:21:56,625 HVC02  INFO     Prepare to run ips smoke test
-          <br />
-          2016-02-11 14:21:56,627 HVC02  INFO     =&gt;[LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,19
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#26C154">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Prepare to load IPS configuration
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,622 HVC02  INFO     &lt;=$0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,624 HVC02  INFO     Current buildname is: Paint.Dev.EmbSw.CI_20160209.2
-          <br />
-          2016-02-11 14:21:56,624 HVC02  INFO     No need to upgrade software, build Paint.Dev.EmbSw.CI_20160209.2 already present
-          <br />
-          2016-02-11 14:21:56,625 HVC02  INFO     Prepare to load IPS configuration
-          <br />
-          2016-02-11 14:21:56,625 HVC02  INFO     No default config specified!
-          <br />
-          2016-02-11 14:21:56,625 HVC02  INFO     Prepare to run ips smoke test
-          <br />
-          2016-02-11 14:21:56,627 HVC02  INFO     =&gt;[LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,19
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#26C154">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          No default config specified!
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,622 HVC02  INFO     &lt;=$0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,624 HVC02  INFO     Current buildname is: Paint.Dev.EmbSw.CI_20160209.2
-          <br />
-          2016-02-11 14:21:56,624 HVC02  INFO     No need to upgrade software, build Paint.Dev.EmbSw.CI_20160209.2 already present
-          <br />
-          2016-02-11 14:21:56,625 HVC02  INFO     Prepare to load IPS configuration
-          <br />
-          2016-02-11 14:21:56,625 HVC02  INFO     No default config specified!
-          <br />
-          2016-02-11 14:21:56,625 HVC02  INFO     Prepare to run ips smoke test
-          <br />
-          2016-02-11 14:21:56,627 HVC02  INFO     =&gt;[LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,19
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#26C154">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Prepare to run ips smoke test
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,622 HVC02  INFO     &lt;=$0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,624 HVC02  INFO     Current buildname is: Paint.Dev.EmbSw.CI_20160209.2
-          <br />
-          2016-02-11 14:21:56,624 HVC02  INFO     No need to upgrade software, build Paint.Dev.EmbSw.CI_20160209.2 already present
-          <br />
-          2016-02-11 14:21:56,625 HVC02  INFO     Prepare to load IPS configuration
-          <br />
-          2016-02-11 14:21:56,625 HVC02  INFO     No default config specified!
-          <br />
-          2016-02-11 14:21:56,625 HVC02  INFO     Prepare to run ips smoke test
-          <br />
-          2016-02-11 14:21:56,627 HVC02  INFO     =&gt;[LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,19
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed: Set signal A1Material/Value to: 100.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,742 HVC02  INFO     &lt;=$0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,743 HVC02  INFO     =&gt;!ips A1Material ws Value 100.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,755 HVC02  INFO     &lt;=!ips A1Material ws Value 100.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,756 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,756 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 100.000000
-          <br />
-          2016-02-11 14:21:56,762 HVC02  INFO     Prepare to apply global iteration parameters
-          <br />
-          2016-02-11 14:21:56,762 HVC02  INFO     No global iteration parameters specified
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,29
          </div>
         </div>
        </div>
@@ -573,8 +538,6 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
       add_box
      </i>
      Passed
-     <span>
-     </span>
      <div class="innertestcontent">
       <div class="innertests" onclick="oneClick(event,this)">
        <i class="material-icons" style=" color:#26C154">
@@ -585,48 +548,22 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:56,762&emsp; End: 2016-02-11 14:21:56,765&emsp; Duration: 0.004
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#26C154">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#26C154">
           add_box
          </i>
          SubInner ONE
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,755 HVC02  INFO     &lt;=!ips A1Material ws Value 100.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,756 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,756 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 100.000000
-          <br />
-          2016-02-11 14:21:56,762 HVC02  INFO     Prepare to apply global iteration parameters
-          <br />
-          2016-02-11 14:21:56,762 HVC02  INFO     No global iteration parameters specified
-          <br />
-          2016-02-11 14:21:56,766 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
-          2016-02-11 14:21:56,767 HVC02  INFO     =&gt;!ips A1Material ws Value 5.000 0[LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,31
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#26C154">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#26C154">
           add_box
          </i>
          No global iteration parameters specified
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,756 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 100.000000
-          <br />
-          2016-02-11 14:21:56,762 HVC02  INFO     Prepare to apply global iteration parameters
-          <br />
-          2016-02-11 14:21:56,762 HVC02  INFO     No global iteration parameters specified
-          <br />
-          2016-02-11 14:21:56,766 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
-          2016-02-11 14:21:56,767 HVC02  INFO     =&gt;!ips A1Material ws Value 5.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,778 HVC02  INFO     &lt;=!ips A1Material ws Value 5.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,779 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,33
          </div>
         </div>
        </div>
@@ -638,8 +575,6 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
       add_box
      </i>
      Error
-     <span>
-     </span>
      <div class="innertestcontent">
       <div class="innertests" onclick="oneClick(event,this)">
        <i class="material-icons" style=" color:#DF4138">
@@ -650,48 +585,22 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:56,766&emsp; End: 2016-02-11 14:21:56,782&emsp; Duration: 0.016
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#26C154">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Prepare to apply iteration parameters
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,762 HVC02  INFO     Prepare to apply global iteration parameters
-          <br />
-          2016-02-11 14:21:56,762 HVC02  INFO     No global iteration parameters specified
-          <br />
-          2016-02-11 14:21:56,766 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
-          2016-02-11 14:21:56,767 HVC02  INFO     =&gt;!ips A1Material ws Value 5.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,778 HVC02  INFO     &lt;=!ips A1Material ws Value 5.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,779 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,779 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 5.000000
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,34
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed: Set signal A1Material/Value to: 5.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,766 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
-          2016-02-11 14:21:56,767 HVC02  INFO     =&gt;!ips A1Material ws Value 5.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,778 HVC02  INFO     &lt;=!ips A1Material ws Value 5.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,779 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,779 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 5.000000
-          <br />
-          2016-02-11 14:21:56,779 HVC02  INFO     *** RunIteration 1 {'IPSSIG_A1Material:Value': '5'}
-          <br />
-          2016-02-11 14:21:56,783 HVC02  INFO     =&gt;!ips A1Material ws Toggle 1.000 0[LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,36
          </div>
         </div>
        </div>
@@ -705,48 +614,22 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:56,782&emsp; End: 2016-02-11 14:21:56,811&emsp; Duration: 0.028
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed: Set signal A1Material/Toggle to: 1.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,783 HVC02  INFO     =&gt;!ips A1Material ws Toggle 1.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,793 HVC02  INFO     &lt;=!ips A1Material ws Toggle 1.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,795 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,796 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 1.000000
-          <br />
-          2016-02-11 14:21:56,796 HVC02  INFO     =&gt;!ips A1Material ws Toggle 0.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,806 HVC02  INFO     &lt;=!ips A1Material ws Toggle 0.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,808 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,42
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed: Set signal A1Material/Toggle to: 0.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,806 HVC02  INFO     &lt;=!ips A1Material ws Toggle 0.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,808 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,808 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 0.000000
-          <br />
-          2016-02-11 14:21:56,812 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
-          <br />
-          2016-02-11 14:21:56,822 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
-          <br />
-          2016-02-11 14:21:56,823 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,825 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,47
          </div>
         </div>
        </div>
@@ -760,48 +643,22 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:56,812&emsp; End: 2016-02-11 14:21:56,828&emsp; Duration: 0.016
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed IpsReadSignal: Read signal A1Material/Value
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,812 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
-          <br />
-          2016-02-11 14:21:56,822 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
-          <br />
-          2016-02-11 14:21:56,823 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,825 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
-          2016-02-11 14:21:56,825 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 5.000 actual 0.000000
-          <br />
-          2016-02-11 14:21:56,828 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
-          2016-02-11 14:21:56,829 HVC02  INFO     =&gt;!ips A1Material ws Value 6.000 0[LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,50
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          IpsReadSignal error: SignalCheck: A1Material/Value is 5.000 actual 0.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,812 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
-          <br />
-          2016-02-11 14:21:56,822 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
-          <br />
-          2016-02-11 14:21:56,823 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,825 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
-          2016-02-11 14:21:56,825 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 5.000 actual 0.000000
-          <br />
-          2016-02-11 14:21:56,828 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
-          2016-02-11 14:21:56,829 HVC02  INFO     =&gt;!ips A1Material ws Value 6.000 0[LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,50
          </div>
         </div>
        </div>
@@ -815,48 +672,22 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:56,828&emsp; End: 2016-02-11 14:21:56,845&emsp; Duration: 0.016
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#26C154">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Prepare to apply iteration parameters
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,825 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
-          2016-02-11 14:21:56,825 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 5.000 actual 0.000000
-          <br />
-          2016-02-11 14:21:56,828 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
-          2016-02-11 14:21:56,829 HVC02  INFO     =&gt;!ips A1Material ws Value 6.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,841 HVC02  INFO     &lt;=!ips A1Material ws Value 6.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,842 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,842 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 6.000000
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,53
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed: Set signal A1Material/Value to: 6.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,828 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
-          2016-02-11 14:21:56,829 HVC02  INFO     =&gt;!ips A1Material ws Value 6.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,841 HVC02  INFO     &lt;=!ips A1Material ws Value 6.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,842 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,842 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 6.000000
-          <br />
-          2016-02-11 14:21:56,842 HVC02  INFO     *** RunIteration 2 {'IPSSIG_A1Material:Value': '6'}
-          <br />
-          2016-02-11 14:21:56,845 HVC02  INFO     =&gt;!ips A1Material ws Toggle 1.000 0[LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,55
          </div>
         </div>
        </div>
@@ -870,48 +701,22 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:56,845&emsp; End: 2016-02-11 14:21:56,874&emsp; Duration: 0.029
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed: Set signal A1Material/Toggle to: 1.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,842 HVC02  INFO     *** RunIteration 2 {'IPSSIG_A1Material:Value': '6'}
-          <br />
-          2016-02-11 14:21:56,845 HVC02  INFO     =&gt;!ips A1Material ws Toggle 1.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,857 HVC02  INFO     &lt;=!ips A1Material ws Toggle 1.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,858 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,858 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 1.000000
-          <br />
-          2016-02-11 14:21:56,858 HVC02  INFO     =&gt;!ips A1Material ws Toggle 0.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,871 HVC02  INFO     &lt;=!ips A1Material ws Toggle 0.000 0[CR][LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,60
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed: Set signal A1Material/Toggle to: 0.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,871 HVC02  INFO     &lt;=!ips A1Material ws Toggle 0.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,871 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,871 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 0.000000
-          <br />
-          2016-02-11 14:21:56,875 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
-          <br />
-          2016-02-11 14:21:56,887 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
-          <br />
-          2016-02-11 14:21:56,888 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,888 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,66
          </div>
         </div>
        </div>
@@ -925,48 +730,22 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:56,875&emsp; End: 2016-02-11 14:21:56,891&emsp; Duration: 0.017
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed IpsReadSignal: Read signal A1Material/Value
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,871 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 0.000000
-          <br />
-          2016-02-11 14:21:56,875 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
-          <br />
-          2016-02-11 14:21:56,887 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
-          <br />
-          2016-02-11 14:21:56,888 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,888 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
-          2016-02-11 14:21:56,888 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 6.000 actual 0.000000
-          <br />
-          2016-02-11 14:21:56,894 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,68
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          IpsReadSignal error: SignalCheck: A1Material/Value is 6.000 actual 0.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,888 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,888 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
-          2016-02-11 14:21:56,888 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 6.000 actual 0.000000
-          <br />
-          2016-02-11 14:21:56,894 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
-          2016-02-11 14:21:56,894 HVC02  INFO     =&gt;!ips A1Material ws Value 7.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,907 HVC02  INFO     &lt;=!ips A1Material ws Value 7.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,908 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,71
          </div>
         </div>
        </div>
@@ -980,48 +759,22 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:56,892&emsp; End: 2016-02-11 14:21:56,914&emsp; Duration: 0.021
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#26C154">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Prepare to apply iteration parameters
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,888 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,888 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
-          2016-02-11 14:21:56,888 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 6.000 actual 0.000000
-          <br />
-          2016-02-11 14:21:56,894 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
-          2016-02-11 14:21:56,894 HVC02  INFO     =&gt;!ips A1Material ws Value 7.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,907 HVC02  INFO     &lt;=!ips A1Material ws Value 7.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,908 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,71
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed: Set signal A1Material/Value to: 7.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,894 HVC02  INFO     =&gt;!ips A1Material ws Value 7.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,907 HVC02  INFO     &lt;=!ips A1Material ws Value 7.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,908 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,911 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 7.000000
-          <br />
-          2016-02-11 14:21:56,911 HVC02  INFO     *** RunIteration 3 {'IPSSIG_A1Material:Value': '7'}
-          <br />
-          2016-02-11 14:21:56,915 HVC02  INFO     =&gt;!ips A1Material ws Toggle 1.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,930 HVC02  INFO     &lt;=!ips A1Material ws Toggle 1.000 0[CR][LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,75
          </div>
         </div>
        </div>
@@ -1035,48 +788,22 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:56,914&emsp; End: 2016-02-11 14:21:56,948&emsp; Duration: 0.033
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed: Set signal A1Material/Toggle to: 1.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,915 HVC02  INFO     =&gt;!ips A1Material ws Toggle 1.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,930 HVC02  INFO     &lt;=!ips A1Material ws Toggle 1.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,930 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,933 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 1.000000
-          <br />
-          2016-02-11 14:21:56,934 HVC02  INFO     =&gt;!ips A1Material ws Toggle 0.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,944 HVC02  INFO     &lt;=!ips A1Material ws Toggle 0.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,946 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,80
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed: Set signal A1Material/Toggle to: 0.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,934 HVC02  INFO     =&gt;!ips A1Material ws Toggle 0.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,944 HVC02  INFO     &lt;=!ips A1Material ws Toggle 0.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,946 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,947 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 0.000000
-          <br />
-          2016-02-11 14:21:56,950 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
-          <br />
-          2016-02-11 14:21:56,963 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
-          <br />
-          2016-02-11 14:21:56,963 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,84
          </div>
         </div>
        </div>
@@ -1090,48 +817,22 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:56,950&emsp; End: 2016-02-11 14:21:56,967&emsp; Duration: 0.018
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed IpsReadSignal: Read signal A1Material/Value
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,950 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
-          <br />
-          2016-02-11 14:21:56,963 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
-          <br />
-          2016-02-11 14:21:56,963 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,964 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
-          2016-02-11 14:21:56,964 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 7.000 actual 0.000000
-          <br />
-          2016-02-11 14:21:56,969 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
-          2016-02-11 14:21:56,970 HVC02  INFO     =&gt;!ips A1Material ws Value 8.000 0[LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,88
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          IpsReadSignal error: SignalCheck: A1Material/Value is 7.000 actual 0.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,963 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,964 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
-          2016-02-11 14:21:56,964 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 7.000 actual 0.000000
-          <br />
-          2016-02-11 14:21:56,969 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
-          2016-02-11 14:21:56,970 HVC02  INFO     =&gt;!ips A1Material ws Value 8.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,980 HVC02  INFO     &lt;=!ips A1Material ws Value 8.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,980 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,90
          </div>
         </div>
        </div>
@@ -1145,48 +846,22 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:56,969&emsp; End: 2016-02-11 14:21:56,983&emsp; Duration: 0.015
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#26C154">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Prepare to apply iteration parameters
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,964 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
-          2016-02-11 14:21:56,964 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 7.000 actual 0.000000
-          <br />
-          2016-02-11 14:21:56,969 HVC02  INFO     Prepare to apply iteration parameters
-          <br />
-          2016-02-11 14:21:56,970 HVC02  INFO     =&gt;!ips A1Material ws Value 8.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,980 HVC02  INFO     &lt;=!ips A1Material ws Value 8.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,980 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,982 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 8.000000
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,91
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed: Set signal A1Material/Value to: 8.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,970 HVC02  INFO     =&gt;!ips A1Material ws Value 8.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,980 HVC02  INFO     &lt;=!ips A1Material ws Value 8.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:56,980 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:56,982 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 8.000000
-          <br />
-          2016-02-11 14:21:56,982 HVC02  INFO     *** RunIteration 4 {'IPSSIG_A1Material:Value': '8'}
-          <br />
-          2016-02-11 14:21:56,986 HVC02  INFO     =&gt;!ips A1Material ws Toggle 1.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,999 HVC02  INFO     &lt;=!ips A1Material ws Toggle 1.000 0[CR][LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,94
          </div>
         </div>
        </div>
@@ -1200,48 +875,22 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:56,986&emsp; End: 2016-02-11 14:21:57,016&emsp; Duration: 0.031
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed: Set signal A1Material/Toggle to: 1.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:56,982 HVC02  INFO     *** RunIteration 4 {'IPSSIG_A1Material:Value': '8'}
-          <br />
-          2016-02-11 14:21:56,986 HVC02  INFO     =&gt;!ips A1Material ws Toggle 1.000 0[LF]
-          <br />
-          2016-02-11 14:21:56,999 HVC02  INFO     &lt;=!ips A1Material ws Toggle 1.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:57,000 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:57,000 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 1.000000
-          <br />
-          2016-02-11 14:21:57,000 HVC02  INFO     =&gt;!ips A1Material ws Toggle 0.000 0[LF]
-          <br />
-          2016-02-11 14:21:57,013 HVC02  INFO     &lt;=!ips A1Material ws Toggle 0.000 0[CR][LF]
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,98
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed: Set signal A1Material/Toggle to: 0.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:57,013 HVC02  INFO     &lt;=!ips A1Material ws Toggle 0.000 0[CR][LF]
-          <br />
-          2016-02-11 14:21:57,013 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:57,013 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 0.000000
-          <br />
-          2016-02-11 14:21:57,017 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
-          <br />
-          2016-02-11 14:21:57,029 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
-          <br />
-          2016-02-11 14:21:57,030 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:57,032 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,104
          </div>
         </div>
        </div>
@@ -1255,48 +904,22 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:57,016&emsp; End: 2016-02-11 14:21:57,035&emsp; Duration: 0.018
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          Command failed IpsReadSignal: Read signal A1Material/Value
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:57,017 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
-          <br />
-          2016-02-11 14:21:57,029 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
-          <br />
-          2016-02-11 14:21:57,030 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:57,032 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
-          2016-02-11 14:21:57,032 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 8.000 actual 0.000000
-          <br />
-          2016-02-11 14:21:57,036 HVC02  INFO     CleanUpTest
-          <br />
-          2016-02-11 14:21:57,036 HVC02  INFO     A warning
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,107
          </div>
         </div>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:#DF4138">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:#DF4138">
           add_box
          </i>
          IpsReadSignal error: SignalCheck: A1Material/Value is 8.000 actual 0.000000
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:57,017 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
-          <br />
-          2016-02-11 14:21:57,029 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
-          <br />
-          2016-02-11 14:21:57,030 HVC02  INFO     &lt;=$4[CR][LF]
-          <br />
-          2016-02-11 14:21:57,032 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
-          <br />
-          2016-02-11 14:21:57,032 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 8.000 actual 0.000000
-          <br />
-          2016-02-11 14:21:57,036 HVC02  INFO     CleanUpTest
-          <br />
-          2016-02-11 14:21:57,036 HVC02  INFO     A warning
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,107
          </div>
         </div>
        </div>
@@ -1308,8 +931,6 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
       add_box
      </i>
      Warning
-     <span>
-     </span>
      <div class="innertestcontent">
       <div class="innertests" onclick="oneClick(event,this)">
        <i class="material-icons" style=" color:orange">
@@ -1320,24 +941,242 @@ OVcnPKk755xzdcKTunPOOVcnPKk755xzdeL/AfRmzHbv8flHAAAAAElFTkSuQmCC" />
         <span>
          Start: 2016-02-11 14:21:57,036&emsp; End: 2016-02-11 14:21:57,039&emsp; Duration: 0.003
         </span>
-        <div onclick="oneClick(event,this)">
-         <i class="material-icons" style="color:orange">
+        <div onclick="oneClick(event,this);searchClick(this)">
+         <i class="material-icons" style=" color:orange">
           add_box
          </i>
          A warning
-         <div class="innertestcontent" onclick="threeClick(event,this)">
-          2016-02-11 14:21:57,032 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 8.000 actual 0.000000
-          <br />
-          2016-02-11 14:21:57,036 HVC02  INFO     CleanUpTest
-          <br />
-          2016-02-11 14:21:57,036 HVC02  INFO     A warning
-          <br />
+         <div class="innertestcontent HVC02.txt" onclick="threeClick(event,this)">
+          HVC02.txt,111
          </div>
         </div>
        </div>
       </div>
      </div>
     </div>
+   </div>
+   <div style="display:none" id="HVC02.txt">
+    2016-02-11 14:21:56,562 HVC02  INFO      * * *Log start * * *
+    <br />
+    <br />
+    2016-02-11 14:21:56,575 HVC02  INFO     Prepare to upgrade software
+    <br />
+    2016-02-11 14:21:56,575 HVC02  INFO     Upgrade software if current build name is not equal to Paint.Dev.EmbSw.CI_20160209.2
+    <br />
+    2016-02-11 14:21:56,576 HVC02  INFO     =&gt;ver[LF]
+    <br />
+    2016-02-11 14:21:56,585 HVC02  INFO     &lt;=ver[CR][LF]
+    <br />
+    2016-02-11 14:21:56,589 HVC02  INFO     &lt;=[HT]** Board Type   : HVC-02, 64.00 MB RAM, 396.00 MHz[CR][LF]
+    <br />
+    2016-02-11 14:21:56,595 HVC02  INFO     &lt;=[HT]** Bsp Type     : CcpuBsp v1.0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,598 HVC02  INFO     &lt;=[HT]** Application  : IPS version 4.60.2 (build no 0)[CR][LF]
+    <br />
+    2016-02-11 14:21:56,605 HVC02  INFO     &lt;=[HT]** Build Time   : Feb  9 2016 22:10:54[CR][LF]
+    <br />
+    2016-02-11 14:21:56,608 HVC02  INFO     &lt;=[HT]** Build Name   : Paint.Dev.EmbSw.CI_20160209.2[CR][LF]
+    <br />
+    2016-02-11 14:21:56,611 HVC02  INFO     &lt;=[HT]** Firmware     : CCPU_TOP.rbf version 1.6[CR][LF]
+    <br />
+    2016-02-11 14:21:56,615 HVC02  INFO     &lt;=[HT]** System (OS)  : Linux version 2.6[CR][LF]
+    <br />
+    2016-02-11 14:21:56,618 HVC02  INFO     &lt;=[HT]** System (OS)  : Buildroot version 2014.11[CR][LF]
+    <br />
+    2016-02-11 14:21:56,621 HVC02  INFO     &lt;=[HT]** Firmware     : U-Boot version 1.2[CR][LF]
+    <br />
+    2016-02-11 14:21:56,621 HVC02  INFO     &lt;=[CR][LF]
+    <br />
+    2016-02-11 14:21:56,622 HVC02  INFO     &lt;=$0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,624 HVC02  INFO     Current buildname is: Paint.Dev.EmbSw.CI_20160209.2
+    <br />
+    2016-02-11 14:21:56,624 HVC02  INFO     No need to upgrade software, build Paint.Dev.EmbSw.CI_20160209.2 already present
+    <br />
+    2016-02-11 14:21:56,625 HVC02  INFO     Prepare to load IPS configuration
+    <br />
+    2016-02-11 14:21:56,625 HVC02  INFO     No default config specified!
+    <br />
+    2016-02-11 14:21:56,625 HVC02  INFO     Prepare to run ips smoke test
+    <br />
+    2016-02-11 14:21:56,627 HVC02  INFO     =&gt;[LF]
+    <br />
+    2016-02-11 14:21:56,634 HVC02  INFO     &lt;=[CR][LF]
+    <br />
+    2016-02-11 14:21:56,733 HVC02  INFO     =&gt;!ips[LF]
+    <br />
+    2016-02-11 14:21:56,740 HVC02  INFO     &lt;=!ips[CR][LF]
+    <br />
+    2016-02-11 14:21:56,742 HVC02  INFO     &lt;=$0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,743 HVC02  INFO     =&gt;!ips A1Material ws Value 100.000 0[LF]
+    <br />
+    2016-02-11 14:21:56,755 HVC02  INFO     &lt;=!ips A1Material ws Value 100.000 0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,756 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,756 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 100.000000
+    <br />
+    2016-02-11 14:21:56,762 HVC02  INFO     Prepare to apply global iteration parameters
+    <br />
+    2016-02-11 14:21:56,762 HVC02  INFO     No global iteration parameters specified
+    <br />
+    2016-02-11 14:21:56,766 HVC02  INFO     Prepare to apply iteration parameters
+    <br />
+    2016-02-11 14:21:56,767 HVC02  INFO     =&gt;!ips A1Material ws Value 5.000 0[LF]
+    <br />
+    2016-02-11 14:21:56,778 HVC02  INFO     &lt;=!ips A1Material ws Value 5.000 0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,779 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,779 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 5.000000
+    <br />
+    2016-02-11 14:21:56,779 HVC02  INFO     *** RunIteration 1 {'IPSSIG_A1Material:Value': '5'}
+    <br />
+    2016-02-11 14:21:56,783 HVC02  INFO     =&gt;!ips A1Material ws Toggle 1.000 0[LF]
+    <br />
+    2016-02-11 14:21:56,793 HVC02  INFO     &lt;=!ips A1Material ws Toggle 1.000 0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,795 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,796 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 1.000000
+    <br />
+    2016-02-11 14:21:56,796 HVC02  INFO     =&gt;!ips A1Material ws Toggle 0.000 0[LF]
+    <br />
+    2016-02-11 14:21:56,806 HVC02  INFO     &lt;=!ips A1Material ws Toggle 0.000 0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,808 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,808 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 0.000000
+    <br />
+    2016-02-11 14:21:56,812 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
+    <br />
+    2016-02-11 14:21:56,822 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
+    <br />
+    2016-02-11 14:21:56,823 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,825 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
+    <br />
+    2016-02-11 14:21:56,825 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 5.000 actual 0.000000
+    <br />
+    2016-02-11 14:21:56,828 HVC02  INFO     Prepare to apply iteration parameters
+    <br />
+    2016-02-11 14:21:56,829 HVC02  INFO     =&gt;!ips A1Material ws Value 6.000 0[LF]
+    <br />
+    2016-02-11 14:21:56,841 HVC02  INFO     &lt;=!ips A1Material ws Value 6.000 0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,842 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,842 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 6.000000
+    <br />
+    2016-02-11 14:21:56,842 HVC02  INFO     *** RunIteration 2 {'IPSSIG_A1Material:Value': '6'}
+    <br />
+    2016-02-11 14:21:56,845 HVC02  INFO     =&gt;!ips A1Material ws Toggle 1.000 0[LF]
+    <br />
+    2016-02-11 14:21:56,857 HVC02  INFO     &lt;=!ips A1Material ws Toggle 1.000 0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,858 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,858 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 1.000000
+    <br />
+    2016-02-11 14:21:56,858 HVC02  INFO     =&gt;!ips A1Material ws Toggle 0.000 0[LF]
+    <br />
+    2016-02-11 14:21:56,871 HVC02  INFO     &lt;=!ips A1Material ws Toggle 0.000 0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,871 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,871 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 0.000000
+    <br />
+    2016-02-11 14:21:56,875 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
+    <br />
+    2016-02-11 14:21:56,887 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
+    <br />
+    2016-02-11 14:21:56,888 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,888 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
+    <br />
+    2016-02-11 14:21:56,888 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 6.000 actual 0.000000
+    <br />
+    2016-02-11 14:21:56,894 HVC02  INFO     Prepare to apply iteration parameters
+    <br />
+    2016-02-11 14:21:56,894 HVC02  INFO     =&gt;!ips A1Material ws Value 7.000 0[LF]
+    <br />
+    2016-02-11 14:21:56,907 HVC02  INFO     &lt;=!ips A1Material ws Value 7.000 0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,908 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,911 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 7.000000
+    <br />
+    2016-02-11 14:21:56,911 HVC02  INFO     *** RunIteration 3 {'IPSSIG_A1Material:Value': '7'}
+    <br />
+    2016-02-11 14:21:56,915 HVC02  INFO     =&gt;!ips A1Material ws Toggle 1.000 0[LF]
+    <br />
+    2016-02-11 14:21:56,930 HVC02  INFO     &lt;=!ips A1Material ws Toggle 1.000 0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,930 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,933 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 1.000000
+    <br />
+    2016-02-11 14:21:56,934 HVC02  INFO     =&gt;!ips A1Material ws Toggle 0.000 0[LF]
+    <br />
+    2016-02-11 14:21:56,944 HVC02  INFO     &lt;=!ips A1Material ws Toggle 0.000 0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,946 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,947 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 0.000000
+    <br />
+    2016-02-11 14:21:56,950 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
+    <br />
+    2016-02-11 14:21:56,963 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
+    <br />
+    2016-02-11 14:21:56,963 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,964 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
+    <br />
+    2016-02-11 14:21:56,964 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 7.000 actual 0.000000
+    <br />
+    2016-02-11 14:21:56,969 HVC02  INFO     Prepare to apply iteration parameters
+    <br />
+    2016-02-11 14:21:56,970 HVC02  INFO     =&gt;!ips A1Material ws Value 8.000 0[LF]
+    <br />
+    2016-02-11 14:21:56,980 HVC02  INFO     &lt;=!ips A1Material ws Value 8.000 0[CR][LF]
+    <br />
+    2016-02-11 14:21:56,980 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:56,982 HVC02  ERROR    Command failed: Set signal A1Material/Value to: 8.000000
+    <br />
+    2016-02-11 14:21:56,982 HVC02  INFO     *** RunIteration 4 {'IPSSIG_A1Material:Value': '8'}
+    <br />
+    2016-02-11 14:21:56,986 HVC02  INFO     =&gt;!ips A1Material ws Toggle 1.000 0[LF]
+    <br />
+    2016-02-11 14:21:56,999 HVC02  INFO     &lt;=!ips A1Material ws Toggle 1.000 0[CR][LF]
+    <br />
+    2016-02-11 14:21:57,000 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:57,000 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 1.000000
+    <br />
+    2016-02-11 14:21:57,000 HVC02  INFO     =&gt;!ips A1Material ws Toggle 0.000 0[LF]
+    <br />
+    2016-02-11 14:21:57,013 HVC02  INFO     &lt;=!ips A1Material ws Toggle 0.000 0[CR][LF]
+    <br />
+    2016-02-11 14:21:57,013 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:57,013 HVC02  ERROR    Command failed: Set signal A1Material/Toggle to: 0.000000
+    <br />
+    2016-02-11 14:21:57,017 HVC02  INFO     =&gt;ips tic 2 A1Material Value[LF]
+    <br />
+    2016-02-11 14:21:57,029 HVC02  INFO     &lt;=ips tic 2 A1Material Value[CR][LF]
+    <br />
+    2016-02-11 14:21:57,030 HVC02  INFO     &lt;=$4[CR][LF]
+    <br />
+    2016-02-11 14:21:57,032 HVC02  ERROR    Command failed IpsReadSignal: Read signal A1Material/Value
+    <br />
+    2016-02-11 14:21:57,032 HVC02  ERROR    IpsReadSignal error: SignalCheck: A1Material/Value is 8.000 actual 0.000000
+    <br />
+    2016-02-11 14:21:57,036 HVC02  INFO     CleanUpTest
+    <br />
+    2016-02-11 14:21:57,036 HVC02  INFO     A warning
+    <br />
    </div>
   </body>
  </head>
