@@ -161,7 +161,6 @@ def createHTML(file, outDir):
             htmlFile.write(subInnerTest.errorMessage)
             pos, lines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
             htmlFile.write("<div class='innertestcontent " + innerTest.logfile + " " + str(pos) + "' onclick='threeClick(event,this)'>")
-            htmlFile.write(innerTest.logfile + ",%d" % pos)
             htmlFile.write("</div></div>")
         htmlFile.write("</div></div>")     
     htmlFile.write("</div></div></div></div>")
@@ -454,7 +453,11 @@ def HTMLTemplate():
           var div = document.createElement("div");
           for(var i = 0; i < logdata.length; i++){
               if (i == theline){
-                  div.innerHTML += ("<span class='locatedline'>" + logdata[i] + "</span><br>");
+                    div.innerHTML += ("<span class='locatedline'>" + logdata[i] + "</span><br>");
+                    while(logdata[i].trim().split(" ")[1] === logdata[i+1].trim().split(" ")[1]){
+                        div.innerHTML +=("<span class='locatedline'>" + logdata[i+1] + "</span><br>")
+                        i = i + 1;
+                    }
               }else{
                   div.innerHTML += (logdata[i] + "<br>");
               }
@@ -476,17 +479,22 @@ def HTMLTemplate():
     function searchClick(clicked) {
         var clickedDivs = clicked.getElementsByTagName("div");
         if (clickedDivs[0].style.display === "block" && clickedDivs[0].innerHTML.split(",").length < 3) {
+            var str = clickedDivs[0].className;
+            str = str.split(" ");
+            var txtdiv = document.getElementById(str[1]);
+            var linenumber = parseInt(str[2]);
             var div = clickedDivs[0];
-            var strings = div.innerHTML.split(",");
-            var txtdiv = strings[0].trim();
-            var linenumber = parseInt(strings[1]);
-            var logdata = document.getElementById(txtdiv).innerHTML;
-            var logdatalines = logdata.split("<br>");
+            var logdatalines = txtdiv.innerHTML.split("<br>");
             div.innerHTML = "";
             for (var i = linenumber - 5; i < linenumber + 6; i++) {
                 if (i >= 0 && i <= logdatalines.length-1) {
                     if (i == linenumber) {
                         div.innerHTML += ("<span class='locatedline'>" + logdatalines[linenumber] + "</span><br>");
+                         while(logdatalines[i].trim().split(" ")[1] === logdatalines[i+1].trim().split(" ")[1]){
+                            div.innerHTML +=("<span class='locatedline'>" + logdatalines[i+1] + "</span><br>")
+                            i = i + 1;
+
+                        }
                     } else {
                         div.innerHTML += (logdatalines[i] + "<br>");
                     }
