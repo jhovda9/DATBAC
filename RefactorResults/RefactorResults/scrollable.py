@@ -159,8 +159,8 @@ def createHTML(file, outDir):
             htmlFile.write("<div onclick='oneClick(event,this);searchClick(this)'>")
             htmlFile.write("<i class='material-icons' style=' color:" + currentColor + "' >add_box</i>")
             htmlFile.write(subInnerTest.errorMessage)
-            htmlFile.write("<div class='innertestcontent " + innerTest.logfile + "' onclick='threeClick(event,this)'>")
             pos, lines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
+            htmlFile.write("<div class='innertestcontent " + innerTest.logfile + " " + str(pos) + "' onclick='threeClick(event,this)'>")
             htmlFile.write(innerTest.logfile + ",%d" % pos)
             htmlFile.write("</div></div>")
         htmlFile.write("</div></div>")     
@@ -447,12 +447,22 @@ def HTMLTemplate():
       if(amIclicked(event, element))
       {
           var str = element.className;
-          str = str.substr(str.indexOf(" ")+1);
-          var thelog = document.getElementById(str);
+          str = str.split(" ");
+          var thelog = document.getElementById(str[1]);
+          var theline = str[2];
+          var logdata = thelog.innerHTML.split("<br>");
           var div = document.createElement("div");
-          div.innerHTML = thelog.innerHTML;
+          for(var i = 0; i < logdata.length; i++){
+              if (i == theline){
+                  div.innerHTML += ("<span class='locatedline'>" + logdata[i] + "</span><br>");
+              }else{
+                  div.innerHTML += (logdata[i] + "<br>");
+              }
+          }
           div.setAttribute('id','biglog');
           document.body.appendChild(div);
+          var scrollto = div.getElementsByTagName("span")[0];
+          scrollto.scrollIntoView();
 
       }
         window.addEventListener('mousedown', function(event){
@@ -463,32 +473,27 @@ def HTMLTemplate():
         });
     }
 
-    function searchClick(clicked){
+    function searchClick(clicked) {
         var clickedDivs = clicked.getElementsByTagName("div");
-        if (clickedDivs[0].style.display === "block" && clickedDivs[0].innerHTML.split(",").length<3 ) {
+        if (clickedDivs[0].style.display === "block" && clickedDivs[0].innerHTML.split(",").length < 3) {
             var div = clickedDivs[0];
             var strings = div.innerHTML.split(",");
             var txtdiv = strings[0].trim();
             var linenumber = parseInt(strings[1]);
             var logdata = document.getElementById(txtdiv).innerHTML;
             var logdatalines = logdata.split("<br>");
-            var divdata = []
-            for (var i = linenumber-1; i > linenumber-5; i--) {
-                if(i >= 0){
-                    divdata.push(logdatalines[i] + "<br>");
+            div.innerHTML = "";
+            for (var i = linenumber - 5; i < linenumber + 6; i++) {
+                if (i >= 0 && i <= logdatalines.length-1) {
+                    if (i == linenumber) {
+                        div.innerHTML += ("<span class='locatedline'>" + logdatalines[linenumber] + "</span><br>");
+                    } else {
+                        div.innerHTML += (logdatalines[i] + "<br>");
+                    }
                 }
-            };
-            divdata.push("<span class='locatedline'>" + logdatalines[linenumber] + "</span> <br>");
-            for (var i = linenumber + 1; i < linenumber+5; i++) {
-                if(i<= logdatalines.length){
-                    divdata.push(logdatalines[i] + "<br>");
-                }
-            };
-            div.innerHTML="";
-            for(var val of divdata){
-                div.innerHTML += val;
             }
-	    };
+
+        }
 }
 
     </script>
