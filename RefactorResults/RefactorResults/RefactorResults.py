@@ -13,12 +13,11 @@ import cStringIO
 
 
 class TRXTest(object):
-    innerTests = []
-
-    def __init__(self, name, result, errorMessage):
+    def __init__(self, name, result, errorMessage, innerTests = []):
         self.name = name
         self.result = result
         self.errorMessage = errorMessage
+        self.innerTests = list(innerTests)
 
 
 class InnerTest(object):
@@ -33,6 +32,7 @@ class InnerTest(object):
         self.endTime = endTime
         self.duration = duration
 
+    #Returns passed if tests are empty
     def calculateResult(self):
         result = "Passed"
         for subInner in self.subInnerTests:
