@@ -143,7 +143,7 @@ def createHTML(file, outDir):
                 htmlFile.write("</div>")
             htmlFile.write("<div class='innertests' onclick='oneClick(event,this)'>")
             htmlFile.write(" <i class='material-icons' style='color:" + currentColor + "' >add_box</i>")
-            htmlFile.write(innerTest.result + "<span></span>")
+            htmlFile.write(innerTest.result + "<span class='spancounter'></span>")
             htmlFile.write("<div class='innertestcontent'>")
             divCounter = 2
             prevTest = currentTest
@@ -356,6 +356,9 @@ def HTMLTemplate():
     }
 span{
       font-size:0.6em;
+    }
+    spancounter{
+        font-size:1em;
     }
     #innertestcontainer{
       margin: 0 0 0 200px;
