@@ -109,6 +109,7 @@ def createHTML(file, outDir):
     divCounter = 0
     currentTest = ""
     prevTest = ""
+    logFiles = []
     trxFile = os.path.join(outDir, file)
     htmlFile = open(os.path.join(outDir, file + ".html"), "wb")
     root = initializeTRXStructure(trxFile)
@@ -153,17 +154,25 @@ def createHTML(file, outDir):
         htmlFile.write("<span>Start: " + innerTest.startTime + "&emsp; End: "+ innerTest.endTime + "&emsp; Duration: " +
                        innerTest.duration + "</span>")
         for subInnerTest in innerTest.subInnerTests:
+            if innerTest.logfile not in logFiles:
+                logFiles.append(innerTest.logfile)
             subColor = getColorFromResult(subInnerTest.result)[0]
-            htmlFile.write("<div onclick='oneClick(event,this)'>")
+            htmlFile.write("<div onclick='oneClick(event,this);searchClick(this)'>")
             htmlFile.write("<i class='material-icons' style='color:" + subColor + "'>add_box</i>")
             htmlFile.write(subInnerTest.errorMessage)
-            htmlFile.write("<div class='innertestcontent' onclick='threeClick(event,this)'>")
-            consoleLines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
-            for line in consoleLines:
-                htmlFile.write(line + "<br>")
+            pos, lines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
+            htmlFile.write("<div class='innertestcontent " + innerTest.logfile + " " + str(pos) + "' onclick='threeClick(event,this)'>")
             htmlFile.write("</div></div>")
         htmlFile.write("</div></div>")     
-    htmlFile.write("</div></div></div></div></body></html>")
+    htmlFile.write("</div></div></div></div>")
+    for logs in logFiles:
+        htmlFile.write("<div style='display:none' id='" + logs + "'>")
+        logFile = open(os.path.join(outDir, logs), "r+")
+        logLines = logFile.readlines()
+        for logLine in logLines:
+            htmlFile.write(logLine + "<br>")
+        htmlFile.write("</div>")
+    htmlFile.write("</body></html>")
     htmlFile.close()
     prettifyHTMLandAddHeader(os.path.join(outDir, file))
 
@@ -232,20 +241,7 @@ def locateLinesInLog(filePath, timeStamp, preLines, postLines):
             lo = mid+1
         else:
             hi = mid
-    ret = []
-    for i in range(preLines+1)[::-1]:
-        if lo-i < 0:
-            continue
-        try:
-            ret.append(lines[lo-i])
-        except  :
-            continue
-    for i in range(postLines+1)[1:]:
-        try:
-            ret.append(lines[lo+i])
-        except IndexError:
-            continue
-    return ret
+    return lo, lines
 
 
 def parseErrorMessage(errorMessage):
@@ -358,23 +354,15 @@ def HTMLTemplate():
       list-style-type: square;
       font-size: 1.5em;
     }
-
-    span{
+span{
       font-size:0.6em;
     }
-
     #innertestcontainer{
       margin: 0 0 0 200px;
       padding:10px;
       font-size: 1.5em;
     }
-
-    #innertestcontainer span{
-        font-size:1em;
-    }
-
     .innertestcontent .innertestcontent {
-      font-size:0.9em;
       border:1px solid black;
       padding:5px;
       font-family:monospace;
@@ -400,6 +388,23 @@ def HTMLTemplate():
       -moz-user-select: none;
       -ms-user-select: none;
       margin-top:5px;
+    }
+    .locatedLine{
+        background-color:yellow;
+        font-size:1em;
+        font-family:monospace;
+    }
+    #biglog{
+        font-family:monospace;
+        border:1px solid black;
+        height: 50vh;
+        padding: 10px;
+        overflow:scroll;
+        position:fixed;
+        right: 10px;
+        top:10px;
+        background-color: white;
+        resize:both;
     }
 
 
@@ -453,9 +458,64 @@ def HTMLTemplate():
     {
       if(amIclicked(event, element))
       {
+          var str = element.className;
+          str = str.split(" ");
+          var thelog = document.getElementById(str[1]);
+          var theline = str[2];
+          var logdata = thelog.innerHTML.split("<br>");
+          var div = document.createElement("div");
+          for(var i = 0; i < logdata.length; i++){
+              if (i == theline){
+                    div.innerHTML += ("<span class='locatedline'>" + logdata[i] + "</span><br>");
+                    while(logdata[i].trim().split(" ")[1] === logdata[i+1].trim().split(" ")[1]){
+                        div.innerHTML +=("<span class='locatedline'>" + logdata[i+1] + "</span><br>")
+                        i = i + 1;
+                    }
+              }else{
+                  div.innerHTML += (logdata[i] + "<br>");
+              }
+          }
+          div.setAttribute('id','biglog');
+          document.body.appendChild(div);
+          var scrollto = div.getElementsByTagName("span")[0];
+          scrollto.scrollIntoView();
 
       }
+        window.addEventListener('mousedown', function(event){
+            var box = document.getElementById('biglog');
+            if (event.target != box && event.target.parentNode != box && box != null){
+                box.parentNode.removeChild(box);
+            }
+        });
     }
+
+    function searchClick(clicked) {
+        var clickedDivs = clicked.getElementsByTagName("div");
+        if (clickedDivs[0].style.display === "block" && clickedDivs[0].innerHTML.split(",").length < 3) {
+            var str = clickedDivs[0].className;
+            str = str.split(" ");
+            var txtdiv = document.getElementById(str[1]);
+            var linenumber = parseInt(str[2]);
+            var div = clickedDivs[0];
+            var logdatalines = txtdiv.innerHTML.split("<br>");
+            div.innerHTML = "";
+            for (var i = linenumber - 5; i < linenumber + 6; i++) {
+                if (i >= 0 && i <= logdatalines.length-1) {
+                    if (i == linenumber) {
+                        div.innerHTML += ("<span class='locatedline'>" + logdatalines[linenumber] + "</span><br>");
+                         while(logdatalines[i].trim().split(" ")[1] === logdatalines[i+1].trim().split(" ")[1]){
+                            div.innerHTML +=("<span class='locatedline'>" + logdatalines[i+1] + "</span><br>")
+                            i = i + 1;
+
+                        }
+                    } else {
+                        div.innerHTML += (logdatalines[i] + "<br>");
+                    }
+                }
+            }
+
+        }
+}
 
     </script>
     </head>"""
