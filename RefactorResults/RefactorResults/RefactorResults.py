@@ -357,7 +357,7 @@ def HTMLTemplate():
 span{
       font-size:0.6em;
     }
-    spancounter{
+    .spancounter{
         font-size:1em;
     }
     #innertestcontainer{
@@ -401,6 +401,7 @@ span{
         font-family:monospace;
         border:1px solid black;
         height: 50vh;
+        max-width: 60%;
         padding: 10px;
         overflow:scroll;
         position:fixed;
@@ -459,31 +460,30 @@ span{
 
     function threeClick(event, element)
     {
-      if(amIclicked(event, element))
-      {
-          var str = element.className;
-          str = str.split(" ");
-          var thelog = document.getElementById(str[1]);
-          var theline = str[2];
-          var logdata = thelog.innerHTML.split("<br>");
-          var div = document.createElement("div");
-          for(var i = 0; i < logdata.length; i++){
-              if (i == theline){
+        if(amIclicked(event, element))
+        {
+            var str = element.className;
+            str = str.split(" ");
+            var thelog = document.getElementById(str[1]);
+            var theline = str[2];
+            var logdata = thelog.innerHTML.split("<br>");
+            var div = document.createElement("div");
+            for(var i = 0; i < logdata.length; i++){
+                if (i == theline){
                     div.innerHTML += ("<span class='locatedline'>" + logdata[i] + "</span><br>");
                     while(logdata[i].trim().split(" ")[1] === logdata[i+1].trim().split(" ")[1]){
                         div.innerHTML +=("<span class='locatedline'>" + logdata[i+1] + "</span><br>")
                         i = i + 1;
                     }
-              }else{
-                  div.innerHTML += (logdata[i] + "<br>");
-              }
-          }
-          div.setAttribute('id','biglog');
-          document.body.appendChild(div);
-          var scrollto = div.getElementsByTagName("span")[0];
-          scrollto.scrollIntoView();
-
-      }
+                }else{
+                    div.innerHTML += (logdata[i] + "<br>");
+                }
+            }
+            div.setAttribute('id','biglog');
+            document.body.appendChild(div);
+            var scrollto = div.getElementsByTagName("span")[0];
+            scrollto.scrollIntoView();
+        }
         window.addEventListener('mousedown', function(event){
             var box = document.getElementById('biglog');
             if (event.target != box && event.target.parentNode != box && box != null){
