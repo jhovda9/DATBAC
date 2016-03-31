@@ -11,6 +11,12 @@ import datetime
 import matplotlib.pyplot as plt
 import cStringIO
 
+colors = {'passed': '#26C154',
+          'error': '#DF4138',
+          'failed': '#DF4138',
+          'warning': '#DF9538'
+          }
+
 
 class TRXTest(object):
     def __init__(self, name, result, errorMessage, innerTests = []):
@@ -104,7 +110,6 @@ def createTestHierarchy(root):
             baseTest.innerTests.append(createTestObject(test))
     return baseTest
 
-
 def createHTML(file, outDir):
     divCounter = 0
     currentTest = ""
@@ -117,67 +122,69 @@ def createHTML(file, outDir):
     errorList, totalTests = parseErrorMessage(root.errorMessage)
 
     # HEADER
-    htmlFile.write("<!DOCTYPE html><html><head><title>" + root.name + "</title>")
-    htmlFile.write("<body><div id='header'>")
-    htmlFile.write("<div id='iconarea'>")
-    if root.result == "Passed":
-        htmlFile.write("<i class='material-icons green'> done </i>")
-    else:
-        htmlFile.write("<i class='material-icons red'> error </i>")
-    htmlFile.write("</div><div id='textresultarea'>")
-    htmlFile.write("<h1> Title: " + root.name + "</h1>")
-    htmlFile.write("<h1> Result: " + root.result + "</h1>")
-    htmlFile.write("<h3> ErrorMessage: " + root.errorMessage + "</h3> </div>")
-    base64 = drawPieChart(errorList, totalTests)
-    htmlFile.write("<div id='summaryarea'><div id='chartarea'><div id='chart'>")
-    htmlFile.write("<img src='data:image/png;base64,%s'" %base64.getvalue().encode("base64").strip())
-    htmlFile.write("</div><div id='chartlist'><ul>")
-    htmlFile.write("</ul></div></div></div></div>")
+    if root is not None:
+        htmlFile.write("<!DOCTYPE html><html><head><title>" + root.name + "</title>")
+        htmlFile.write("<body><div id='header'>")
+        htmlFile.write("<div id='iconarea'>")
+        if root.result == "Passed":
+            htmlFile.write("<i class='material-icons green'> done </i>")
+        else:
+            htmlFile.write("<i class='material-icons red'> error </i>")
+        htmlFile.write("</div><div id='textresultarea'>")
+        htmlFile.write("<h1> Title: " + root.name + "</h1>")
+        htmlFile.write("<h1> Result: " + root.result + "</h1>")
+        htmlFile.write("<h3> ErrorMessage: " + root.errorMessage + "</h3> </div>")
+        base64 = drawPieChart(errorList, totalTests)
+        htmlFile.write("<div id='summaryarea'><div id='chartarea'><div id='chart'>")
+        htmlFile.write("<img src='data:image/png;base64,%s'" %base64.getvalue().encode("base64").strip())
+        htmlFile.write("</div><div id='chartlist'><ul>")
+        htmlFile.write("</ul></div></div></div></div>")
 
     # MAIN
-    htmlFile.write("<div id='innertestcontainer'>")
-    for innerTest in root.innerTests:
-        currentColor, currentTest = getColorFromResult(innerTest.result)
-        if currentTest != prevTest:
-            for div in range(0, divCounter):
-                htmlFile.write("</div>")
+    if root.innerTests is not None:
+        htmlFile.write("<div id='innertestcontainer'>")
+        for innerTest in root.innerTests:
+            currentColor, currentTest = getColorFromResult(innerTest.result)
+            if currentTest != prevTest:
+                for div in range(0, divCounter):
+                    htmlFile.write("</div>")
+                htmlFile.write("<div class='innertests' onclick='oneClick(event,this)'>")
+                htmlFile.write(" <i class='material-icons' style='color:" + currentColor + "' >add_box</i>")
+                htmlFile.write(innerTest.result + "<span class='spancounter'></span>")
+                htmlFile.write("<div class='innertestcontent'>")
+                divCounter = 2
+                prevTest = currentTest
             htmlFile.write("<div class='innertests' onclick='oneClick(event,this)'>")
-            htmlFile.write(" <i class='material-icons' style='color:" + currentColor + "' >add_box</i>")
-            htmlFile.write(innerTest.result + "<span class='spancounter'></span>")
+            htmlFile.write("<i class='material-icons' style=' color:" + currentColor + "' >add_box</i>")
+            htmlFile.write(innerTest.name + ", duration: " + innerTest.duration + "ms")
             htmlFile.write("<div class='innertestcontent'>")
-            divCounter = 2
-            prevTest = currentTest
-        htmlFile.write("<div class='innertests' onclick='oneClick(event,this)'>")
-        htmlFile.write("<i class='material-icons' style=' color:" + currentColor + "' >add_box</i>")
-        htmlFile.write(innerTest.name + ", duration: " + innerTest.duration + "ms")
-        htmlFile.write("<div class='innertestcontent'>")
-        htmlFile.write("<span>Start: " + innerTest.startTime + "&emsp; End: "+ innerTest.endTime + "&emsp; Duration: " +
-                       innerTest.duration + "</span>")
-        for subInnerTest in innerTest.subInnerTests:
-            if innerTest.logfile not in logFiles:
-                logFiles.append(innerTest.logfile)
-            subColor = getColorFromResult(subInnerTest.result)[0]
-            htmlFile.write("<div onclick='oneClick(event,this);searchClick(this)'>")
-            htmlFile.write("<i class='material-icons' style='color:" + subColor + "'>add_box</i>")
-            htmlFile.write(subInnerTest.errorMessage)
-            pos, lines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
-            htmlFile.write("<div class='innertestcontent " + innerTest.logfile + " " + str(pos) + "' onclick='threeClick(event,this)'>")
+            htmlFile.write("<span>Start: " + innerTest.startTime + "&emsp; End: "+ innerTest.endTime + "&emsp; Duration: " +
+                           innerTest.duration + "</span>")
+            for subInnerTest in innerTest.subInnerTests:
+                if innerTest.logfile not in logFiles:
+                    logFiles.append(innerTest.logfile)
+                subColor = getColorFromResult(subInnerTest.result)[0]
+                htmlFile.write("<div onclick='oneClick(event,this);searchClick(this)'>")
+                htmlFile.write("<i class='material-icons' style='color:" + subColor + "'>add_box</i>")
+                htmlFile.write(subInnerTest.errorMessage)
+                pos, lines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
+                htmlFile.write("<div class='innertestcontent " + innerTest.logfile + " " + str(pos) + "' onclick='threeClick(event,this)'>")
+                htmlFile.write("</div></div>")
             htmlFile.write("</div></div>")
-        htmlFile.write("</div></div>")     
-    htmlFile.write("</div></div></div></div>")
-    for logs in logFiles:
-        htmlFile.write("<div style='display:none' id='" + logs + "'>")
-        logFile = open(os.path.join(outDir, logs), "r+")
-        logLines = logFile.readlines()
-        for logLine in logLines:
-            htmlFile.write(logLine + "<br>")
-        htmlFile.write("</div>")
+        htmlFile.write("</div></div></div></div>")
+        for logs in logFiles:
+            htmlFile.write("<div style='display:none' id='" + logs + "'>")
+            logFile = open(os.path.join(outDir, logs), "r+")
+            logLines = logFile.readlines()
+            for logLine in logLines:
+                htmlFile.write(logLine + "<br>")
+            htmlFile.write("</div>")
     htmlFile.write("</body></html>")
     htmlFile.close()
-    prettifyHTMLandAddHeader(os.path.join(outDir, file))
+    prettifyHTMLandAddTemplate(os.path.join(outDir, file))
 
 
-def prettifyHTMLandAddHeader(file):
+def prettifyHTMLandAddTemplate(file):
     file = open(file + ".html","r+")
     prevHtml = file.read()
     soup = BS(prevHtml)
@@ -281,15 +288,13 @@ def drawPieChart(errorList, totalTests):
 
 
 def getColorFromResult(result):
+    global colors
     result = str.lower(result)
-    if result == 'passed':
-        return '#26C154', result
-    elif result == 'error' or result =='failed':
-        return '#DF4138', result
-    elif result == 'warning':
-        return 'orange', result
+    if result in colors:
+        color = colors[result]
     else:
-        return 'blue', result
+        color = '#4138df'
+    return color, result
 
 
 
