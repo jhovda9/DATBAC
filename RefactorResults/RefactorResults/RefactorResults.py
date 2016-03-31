@@ -10,7 +10,7 @@ import sys
 import datetime
 import matplotlib.pyplot as plt
 import cStringIO
-
+import TestDef
 
 class TRXTest(object):
     def __init__(self, name, result, errorMessage, innerTests = []):
@@ -36,7 +36,7 @@ class InnerTest(object):
     def calculateResult(self):
         result = "Passed"
         for subInner in self.subInnerTests:
-            if subInner.result != "Passed":
+            if subInner.result not in TestDef.TestInPassedGroup:
                 result = subInner.result
                 break
         self.result = result
@@ -83,10 +83,18 @@ def generateTestReport(outDir):
 
 
 def findTRX(outDir):
-    for file in os.listdir(outDir):
-        if file.endswith(".trx"):
-            return file
-
+    #What if there are multiple TRX files?
+    if os.path.exists(outDir):
+        files = []
+        for file in os.listdir(outDir):
+            if file.endswith(".trx"):
+                files.append(file)
+        if len(files) == 1:
+            return files[0]
+        else:
+            sys.exit("Directory contains none or multiple TRX files")
+    else:
+        sys.exit('Directory "%s" does not exist' % outDir)
 
 def createTestObject(testElement):
     detailedResultsFile = "No file exists"

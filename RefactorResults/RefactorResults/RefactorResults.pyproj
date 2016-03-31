@@ -35,6 +35,7 @@
     </Compile>
     <Compile Include="RefactorResults.py" />
     <Compile Include="SummaryResult.py" />
+    <Compile Include="TestDef.py" />
     <Compile Include="testrunner.py" />
   </ItemGroup>
   <ItemGroup>
