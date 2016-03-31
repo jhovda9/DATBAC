@@ -179,7 +179,8 @@ def createHTML(file, outDir):
             for logLine in logLines:
                 htmlFile.write(logLine + "<br>")
             htmlFile.write("</div>")
-    htmlFile.write("</body></html>")
+        htmlFile.write("</body></html>")
+
     htmlFile.close()
     prettifyHTMLandAddTemplate(os.path.join(outDir, file))
 
