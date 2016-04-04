@@ -67,7 +67,7 @@ def initializeTRXStructure(path):
 
 
 def parseInnerTest(trxTest, outdir):
-    
+
     for inner in trxTest.innerTests:
         root = ET.parse(os.path.join(outdir, inner.detailedFile))
         inner.logfile = root.find("logfile").text
@@ -84,7 +84,7 @@ def generateTestReport(outDir):
     if trxFile == None:
         print "No .trx file found in " + outDir
         return
-        
+
     createHTML(trxFile,outDir)
 
 
@@ -150,7 +150,7 @@ def createHTML(file, outDir):
                     htmlFile.write("</div>")
                 htmlFile.write("<div class='innertests' onclick='oneClick(event,this)'>")
                 htmlFile.write(" <i class='material-icons' style='color:" + currentColor + "' >add_box</i>")
-                htmlFile.write(innerTest.result + "<span class='spancounter'></span>")
+                htmlFile.write("<span class='spancounter'></span>" + innerTest.result  )
                 htmlFile.write("<div class='innertestcontent'>")
                 divCounter = 2
                 prevTest = currentTest
@@ -158,8 +158,9 @@ def createHTML(file, outDir):
             htmlFile.write("<i class='material-icons' style=' color:" + currentColor + "' >add_box</i>")
             htmlFile.write(innerTest.name + ", duration: " + innerTest.duration + "ms")
             htmlFile.write("<div class='innertestcontent'>")
-            htmlFile.write("<span>Start: " + innerTest.startTime + "&emsp; End: "+ innerTest.endTime + "&emsp; Duration: " +
-                           innerTest.duration + "</span>")
+            htmlFile.write("<span>Start: " + innerTest.startTime + "&emsp; End: " + innerTest.endTime +
+                           "&emsp; Duration: " + innerTest.duration + "&emsp; Logfile: " +
+                           "<a href='" + innerTest.logfile + "' target='_blank'>" + innerTest.logfile + "</a></span>")
             for subInnerTest in innerTest.subInnerTests:
                 if innerTest.logfile not in logFiles:
                     logFiles.append(innerTest.logfile)
@@ -167,8 +168,9 @@ def createHTML(file, outDir):
                 htmlFile.write("<div onclick='oneClick(event,this);searchClick(this)'>")
                 htmlFile.write("<i class='material-icons' style='color:" + subColor + "'>add_box</i>")
                 htmlFile.write(subInnerTest.errorMessage)
-                pos, lines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
-                htmlFile.write("<div class='innertestcontent " + innerTest.logfile + " " + str(pos) + "' onclick='threeClick(event,this)'>")
+                pos, lines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp)
+                htmlFile.write("<div class='innertestcontent " + innerTest.logfile + " " +
+                               str(pos) + "' onclick='threeClick(event,this)'>")
                 htmlFile.write("</div></div>")
             htmlFile.write("</div></div>")
         htmlFile.write("</div></div></div></div>")
@@ -233,7 +235,7 @@ def createPDF(file, outDir):
     #c.save()
 
 
-def locateLinesInLog(filePath, timeStamp, preLines, postLines):
+def locateLinesInLog(filePath, timeStamp):
     fil = open(filePath, "r+")
     lines = fil.readlines()
     stamp = datetime.datetime.strptime(timeStamp, "%Y-%m-%d %H:%M:%S,%f")
@@ -429,7 +431,7 @@ span{
         for (var i = 0; i < outerdivchildren.length; i++) {
             var incnumber = outerdivchildren[i].children[2].children.length;
             tonumber += incnumber;
-            var str = fromnumber + "-" + tonumber;
+            var str = "Test " + fromnumber + "-" + tonumber + ": ";
             outerdivchildren[i].getElementsByTagName("span")[0].innerHTML = str;
             fromnumber+=incnumber;
         }
@@ -452,7 +454,7 @@ span{
     {
       if(amIclicked(event, element))
       {
-        
+
         if(element.getElementsByTagName("div")[0].style.display === "none"||element.getElementsByTagName("div")[0].style.display === ''){
           element.getElementsByTagName("div")[0].style.display = "block";
           element.getElementsByTagName("i")[0].innerHTML = "indeterminate_check_box";
