@@ -79,13 +79,21 @@ def parseInnerTest(trxTest, outdir):
                                                     subinnertest.find("endtime").text))
 
 
-def generateTestReport(outDir):
+def generateTestReport(outDir, filetype):
     trxFile = findTRX(outDir)
     if trxFile == None:
         print "No .trx file found in " + outDir
         return
-
-    createHTML(trxFile,outDir)
+    trxRoot = initializeTRXStructure(trxFile)
+    parseInnerTest(trxRoot, outDir)
+    filetype = filetype.lower()
+    if filetype == "-html":
+        createHTML(trxFile,outDir, trxRoot)
+    elif filetype == "-pdf":
+        createPDF(trxFile,outDir, trxRoot)
+    else:
+        displayHelp()
+        sys.exit("invalid flag: {}".format(filetype))
 
 
 def findTRX(outDir):
@@ -110,30 +118,29 @@ def createTestHierarchy(root):
             baseTest.innerTests.append(createTestObject(test))
     return baseTest
 
-def createHTML(file, outDir):
+
+def createHTML(file, outDir, trxRoot):
     divCounter = 0
     currentTest = ""
     prevTest = ""
     logFiles = []
     trxFile = os.path.join(outDir, file)
     htmlFile = open(os.path.join(outDir, file + ".html"), "wb")
-    root = initializeTRXStructure(trxFile)
-    parseInnerTest(root, outDir)
-    errorList, totalTests = parseErrorMessage(root.errorMessage)
+    errorList, totalTests = parseErrorMessage(trxRoot.errorMessage)
 
     # HEADER
-    if root is not None:
-        htmlFile.write("<!DOCTYPE html><html><head><title>" + root.name + "</title>")
+    if trxRoot is not None:
+        htmlFile.write("<!DOCTYPE html><html><head><title>" + trxRoot.name + "</title>")
         htmlFile.write("<body><div id='header'>")
         htmlFile.write("<div id='iconarea'>")
-        if root.result == "Passed":
+        if trxRoot.result == "Passed":
             htmlFile.write("<i class='material-icons green'> done </i>")
         else:
             htmlFile.write("<i class='material-icons red'> error </i>")
         htmlFile.write("</div><div id='textresultarea'>")
-        htmlFile.write("<h1> Title: " + root.name + "</h1>")
-        htmlFile.write("<h1> Result: " + root.result + "</h1>")
-        htmlFile.write("<h3> ErrorMessage: " + root.errorMessage + "</h3> </div>")
+        htmlFile.write("<h1> Title: " + trxRoot.name + "</h1>")
+        htmlFile.write("<h1> Result: " + trxRoot.result + "</h1>")
+        htmlFile.write("<h3> ErrorMessage: " + trxRoot.errorMessage + "</h3> </div>")
         base64 = drawPieChart(errorList, totalTests)
         htmlFile.write("<div id='summaryarea'><div id='chartarea'><div id='chart'>")
         htmlFile.write("<img src='data:image/png;base64,%s'" %base64.getvalue().encode("base64").strip())
@@ -141,9 +148,9 @@ def createHTML(file, outDir):
         htmlFile.write("</ul></div></div></div></div>")
 
     # MAIN
-    if root.innerTests is not None:
+    if trxRoot.innerTests is not None:
         htmlFile.write("<div id='innertestcontainer'>")
-        for innerTest in root.innerTests:
+        for innerTest in trxRoot.innerTests:
             currentColor, currentTest = getColorFromResult(innerTest.result)
             if currentTest != prevTest:
                 for div in range(0, divCounter):
@@ -199,14 +206,13 @@ def prettifyHTMLandAddTemplate(file):
     file.close()
 
 
-def createPDF(file, outDir):
+def createPDF(file, outDir, trxRoot):
     headers = ["Test name", "Result", "Innertest", "Innertest Result"]
-    root = createTestHierarchy(ET.fromstring(open(file, "r").read()))
     table = []
     tableStyle = TableStyle([('Grid'),(0,0),(-1,-1)], 1, green)
     table.append(headers)
-    table.append([root.name, str(root.result), "place", "place"])
-    for innerTest in root.innerTests:
+    table.append([trxRoot.name, str(trxRoot.result), "place", "place"])
+    for innerTest in trxRoot.innerTests:
         table.append(["place", "place", innerTest.name, str(innerTest.result)])
         table.append(["place", "place", innerTest.name, str(innerTest.result)])
         table.append(["place", "place", innerTest.name, str(innerTest.result)])
@@ -532,10 +538,22 @@ span{
 
     </script>
     </head>"""
-
+def displayHelp():
+    print "\t How to use\n"
+    print "\t\t " + os.path.basename(__file__) + " filepath -filetype"
+    print "\t\t Filepath must point to folder containing .trx file"
+    print "\t\t Valid filetypes: -html, -pdf. Default is -html\n"
 
 def main():
-    generateTestReport( sys.argv[1] )
+    if len(sys.argv) == 1:
+        displayHelp()
+        sys.exit("No arguments given")
+    if len(sys.argv) == 3:
+        fileType = sys.argv[2]
+    else:
+        fileType = "-html"
+
+    generateTestReport( sys.argv[1], fileType)
 
 if __name__ == "__main__":
     sys.exit(main())
