@@ -476,17 +476,19 @@ span{
             var theline = str[2];
             var logdata = thelog.innerHTML.split("<br>");
             var div = document.createElement("div");
+            var logstring = "";
             for(var i = 0; i < logdata.length; i++){
                 if (i == theline){
-                    div.innerHTML += ("<span class='locatedline'>" + logdata[i] + "</span><br>");
+                    logstring += ("<span class='locatedline'>" + logdata[i] + "</span><br>");
                     while(logdata[i].trim().split(" ")[1] === logdata[i+1].trim().split(" ")[1]){
-                        div.innerHTML +=("<span class='locatedline'>" + logdata[i+1] + "</span><br>")
+                        logstring +=("<span class='locatedline'>" + logdata[i+1] + "</span><br>")
                         i = i + 1;
                     }
                 }else{
-                    div.innerHTML += (logdata[i] + "<br>");
+                    logstring += (logdata[i] + "<br>");
                 }
             }
+            div.innerHTML = logstring;
             div.setAttribute('id','biglog');
             document.body.appendChild(div);
             var scrollto = div.getElementsByTagName("span")[0];
