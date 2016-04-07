@@ -10,6 +10,7 @@ import sys
 import datetime
 import matplotlib.pyplot as plt
 import cStringIO
+import re
 
 colors = {'passed': '#26C154',
           'error': '#DF4138',
@@ -67,7 +68,6 @@ def initializeTRXStructure(path):
 
 
 def parseInnerTest(trxTest, outdir):
-
     for inner in trxTest.innerTests:
         root = ET.parse(os.path.join(outdir, inner.detailedFile))
         inner.logfile = root.find("logfile").text
@@ -79,21 +79,20 @@ def parseInnerTest(trxTest, outdir):
                                                     subinnertest.find("endtime").text))
 
 
-def generateTestReport(outDir, filetype):
+def generateTestReport(outDir, fileType):
     trxFile = findTRX(outDir)
     if trxFile == None:
         print "No .trx file found in " + outDir
         return
-    trxRoot = initializeTRXStructure(trxFile)
+    trxRoot = initializeTRXStructure(os.path.join(outDir, trxFile))
     parseInnerTest(trxRoot, outDir)
-    filetype = filetype.lower()
-    if filetype == "-html":
-        createHTML(trxFile,outDir, trxRoot)
-    elif filetype == "-pdf":
-        createPDF(trxFile,outDir, trxRoot)
+    if fileType.lower() == "-html":
+        createHTML(trxFile, outDir, trxRoot)
+    elif fileType.lower() == "-pdf":
+        createPDF(trxFile, outDir, trxRoot)
     else:
         displayHelp()
-        sys.exit("invalid flag: {}".format(filetype))
+        sys.exit("invalid flag: {}".format(fileType))
 
 
 def findTRX(outDir):
@@ -124,7 +123,6 @@ def createHTML(file, outDir, trxRoot):
     currentTest = ""
     prevTest = ""
     logFiles = []
-    trxFile = os.path.join(outDir, file)
     htmlFile = open(os.path.join(outDir, file + ".html"), "wb")
     errorList, totalTests = parseErrorMessage(trxRoot.errorMessage)
 
@@ -262,13 +260,17 @@ def locateLinesInLog(filePath, timeStamp):
 
 def parseErrorMessage(errorMessage):
     valueString = []
-    pairString = errorMessage[:-1].split("(")[1].split(",")
-    totalNumberofTests = int(pairString[0].split(":")[1].split("/")[1].strip())
-    for value in pairString:
-        result = value.split(":")[0].strip()
-        number = int(value.split(":")[1].split("/")[0].strip())
-        valueString.append([result, number])
-    return valueString, totalNumberofTests
+    totalNumberOfTests = 0
+    pairString = re.findall('\((.*?)\)', errorMessage)
+    for pairs in pairString:
+        if "passed" in pairs.lower():
+            for value in pairs.split(","):
+                result = value.split(":")[0].strip()
+                number = int(value.split(":")[1].split("/")[0])
+                totalNumberOfTests += number
+                valueString.append([result, number])
+            return valueString, totalNumberOfTests
+    print "Error: Malformed or ErrorMessage not available"
 
 
 def drawPieChart(errorList, totalTests):
@@ -553,7 +555,7 @@ def main():
     else:
         fileType = "-html"
 
-    generateTestReport( sys.argv[1], fileType)
+    generateTestReport(sys.argv[1], fileType)
 
 if __name__ == "__main__":
     sys.exit(main())
