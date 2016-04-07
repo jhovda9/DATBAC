@@ -10,13 +10,13 @@ import sys
 import datetime
 import matplotlib.pyplot as plt
 import cStringIO
-import re
 
 colors = {'passed': '#26C154',
           'error': '#DF4138',
           'failed': '#DF4138',
           'warning': '#DF9538'
           }
+testCounters = {}
 
 
 class TRXTest(object):
@@ -39,14 +39,6 @@ class InnerTest(object):
         self.endTime = endTime
         self.duration = duration
 
-    #Returns passed if tests are empty
-    def calculateResult(self):
-        result = "Passed"
-        for subInner in self.subInnerTests:
-            if subInner.result != "Passed":
-                result = subInner.result
-                break
-        self.result = result
 
 
 class SubInnerTest(object):
@@ -64,7 +56,15 @@ def initializeTRXStructure(path):
         testObject.innerTests.append(InnerTest(innerTest.find("TestName").text, innerTest.find("TestResult").text,
                                                innerTest.find("ErrorMessage").text,
                                                innerTest.find("DetailedResultsFile").text))
+        testCounter(innerTest.find("TestResult").text)
     return testObject
+
+def testCounter(result):
+    global testCounters
+    if result not in testCounters:
+        testCounters[result] = 1
+    else:
+        testCounters[result] += 1
 
 
 def parseInnerTest(trxTest, outdir):
@@ -124,7 +124,6 @@ def createHTML(file, outDir, trxRoot):
     prevTest = ""
     logFiles = []
     htmlFile = open(os.path.join(outDir, file + ".html"), "wb")
-    errorList, totalTests = parseErrorMessage(trxRoot.errorMessage)
 
     # HEADER
     if trxRoot is not None:
@@ -139,7 +138,7 @@ def createHTML(file, outDir, trxRoot):
         htmlFile.write("<h1> Title: " + trxRoot.name + "</h1>")
         htmlFile.write("<h1> Result: " + trxRoot.result + "</h1>")
         htmlFile.write("<h3> ErrorMessage: " + trxRoot.errorMessage + "</h3> </div>")
-        base64 = drawPieChart(errorList, totalTests)
+        base64 = drawPieChart()
         htmlFile.write("<div id='summaryarea'><div id='chartarea'><div id='chart'>")
         htmlFile.write("<img src='data:image/png;base64,%s'" %base64.getvalue().encode("base64").strip())
         htmlFile.write("</div><div id='chartlist'><ul>")
@@ -155,7 +154,7 @@ def createHTML(file, outDir, trxRoot):
                     htmlFile.write("</div>")
                 htmlFile.write("<div class='innertests' onclick='oneClick(event,this)'>")
                 htmlFile.write(" <i class='material-icons' style='color:" + currentColor + "' >add_box</i>")
-                htmlFile.write("<span class='spancounter'></span>" + innerTest.result  )
+                htmlFile.write("<span class='spancounter'></span>" + innerTest.result)
                 htmlFile.write("<div class='innertestcontent'>")
                 divCounter = 2
                 prevTest = currentTest
@@ -258,31 +257,19 @@ def locateLinesInLog(filePath, timeStamp):
     return lo, lines
 
 
-def parseErrorMessage(errorMessage):
-    valueString = []
-    totalNumberOfTests = 0
-    pairString = re.findall('\((.*?)\)', errorMessage)
-    for pairs in pairString:
-        if "passed" in pairs.lower():
-            for value in pairs.split(","):
-                result = value.split(":")[0].strip()
-                number = int(value.split(":")[1].split("/")[0])
-                totalNumberOfTests += number
-                valueString.append([result, number])
-            return valueString, totalNumberOfTests
-    print "Error: Malformed or ErrorMessage not available"
-
-
-def drawPieChart(errorList, totalTests):
+def drawPieChart():
+    global testCounters
     sizes = []
     colors = []
     labels = []
-    for message in errorList:
-        if message[1] != 0:
-            sizes.append(message[1])
-            colors.append(getColorFromResult(message[0])[0])
-            percentage = "%.2f%%" % (100 * float(message[1])/float(totalTests))
-            labels.append("{} {} {}".format(message[1], message[0], "(" + str(percentage)+ ")"))
+    totalTests = 0
+    for key, counter in testCounters.iteritems():
+        totalTests += counter
+    for test, counter in testCounters.iteritems():
+        sizes.append(counter)
+        colors.append(getColorFromResult(test)[0])
+        percentage = "%.2f%%" % (100 * float(counter)/float(totalTests))
+        labels.append("{} {} {}".format(counter, test, "(" + str(percentage) + ")"))
     plt.figure(figsize=(4, 1))
     pieWedgesCollection = plt.pie(sizes, colors=colors)[0]
     for wedge in pieWedgesCollection:
