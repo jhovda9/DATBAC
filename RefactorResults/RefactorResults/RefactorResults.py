@@ -118,6 +118,10 @@ def createTestHierarchy(root):
             baseTest.innerTests.append(createTestObject(test))
     return baseTest
 
+def returnEmptyIfNone(s):
+    if s is None:
+        return ''
+    return str(s)
 
 def createHTML(file, outDir, trxRoot):
     divCounter = 0
@@ -128,7 +132,7 @@ def createHTML(file, outDir, trxRoot):
 
     # HEADER
     if trxRoot is not None:
-        htmlFile.write("<!DOCTYPE html><html><head><title>" + trxRoot.name + "</title>")
+        htmlFile.write("<!DOCTYPE html><html><head><title>" + returnEmptyIfNone(trxRoot.name) + "</title>")
         htmlFile.write("<body><div id='header'>")
         htmlFile.write("<div id='iconarea'>")
         if trxRoot.result == "Passed":
@@ -136,12 +140,13 @@ def createHTML(file, outDir, trxRoot):
         else:
             htmlFile.write("<i class='material-icons red'> error </i>")
         htmlFile.write("</div><div id='textresultarea'>")
-        htmlFile.write("<h1> Title: " + trxRoot.name + "</h1>")
-        htmlFile.write("<h1> Result: " + trxRoot.result + "</h1>")
-        htmlFile.write("<h3> ErrorMessage: " + trxRoot.errorMessage + "</h3> </div>")
+        htmlFile.write("<h1> Title: " + returnEmptyIfNone(trxRoot.name) + "</h1>")
+        htmlFile.write("<h1> Result: " + returnEmptyIfNone(trxRoot.result) + "</h1>")
+        htmlFile.write("<h3> ErrorMessage: " + returnEmptyIfNone(trxRoot.errorMessage) + "</h3> </div>")
         base64 = drawPieChart()
-        htmlFile.write("<div id='summaryarea'><div id='chartarea'><div id='chart'>")
-        htmlFile.write("<img src='data:image/png;base64,%s'" %base64.getvalue().encode("base64").strip())
+        if base64 is not None:
+            htmlFile.write("<div id='summaryarea'><div id='chartarea'><div id='chart'>")
+            htmlFile.write("<img src='data:image/png;base64,%s'" %base64.getvalue().encode("base64").strip())
         htmlFile.write("</div><div id='chartlist'><ul>")
         htmlFile.write("</ul></div></div></div></div>")
 
@@ -155,53 +160,57 @@ def createHTML(file, outDir, trxRoot):
                     htmlFile.write("</div>")
                 htmlFile.write("<div class='innertests' onclick='oneClick(event,this)'>")
                 htmlFile.write(" <i class='material-icons' style='color:" + currentColor + "' >add_box</i>")
-                htmlFile.write("<span class='spancounter'></span>" + innerTest.result)
+                htmlFile.write("<span class='spancounter'></span>" + returnEmptyIfNone(innerTest.result))
                 htmlFile.write("<div class='innertestcontent'>")
                 divCounter = 2
                 prevTest = currentTest
             htmlFile.write("<div class='innertests' onclick='oneClick(event,this)'>")
             htmlFile.write("<i class='material-icons' style=' color:" + currentColor + "' >add_box</i>")
-            htmlFile.write(innerTest.name + ", duration: " + innerTest.duration + "ms")
+            htmlFile.write(returnEmptyIfNone(innerTest.name) + ", duration: " + returnEmptyIfNone(innerTest.duration) +
+                           "ms")
             htmlFile.write("<div class='innertestcontent'>")
-            htmlFile.write("<span>Start: " + innerTest.startTime + "&emsp; End: " + innerTest.endTime +
-                           "&emsp; Duration: " + innerTest.duration + "&emsp; Logfile: " +
-                           "<a href='" + innerTest.logfile + "' target='_blank'>" + innerTest.logfile + "</a></span>")
+            htmlFile.write("<span>Start: " + returnEmptyIfNone(innerTest.startTime) + "&emsp; End: " +
+                           returnEmptyIfNone(innerTest.endTime) + "&emsp; Duration: " +
+                           returnEmptyIfNone(innerTest.duration) + "&emsp; Logfile: " +
+                           "<a href='" + returnEmptyIfNone(innerTest.logfile) + "' target='_blank'>" +
+                           returnEmptyIfNone(innerTest.logfile) + "</a></span>")
             for subInnerTest in innerTest.subInnerTests:
-                if innerTest.logfile not in logFiles:
-                    logFiles.append(innerTest.logfile)
-                subColor = getColorFromResult(subInnerTest.result)[0]
-                htmlFile.write("<div onclick='oneClick(event,this);searchClick(this)'>")
-                htmlFile.write("<i class='material-icons' style='color:" + subColor + "'>add_box</i>")
-                htmlFile.write(subInnerTest.errorMessage)
-                pos = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp)
-                htmlFile.write("<div class='innertestcontent " + innerTest.logfile + " " +
-                               str(pos) + "' onclick='threeClick(event,this)'>")
-                htmlFile.write("</div></div>")
+                if subInnerTest is not None:
+                    if innerTest.logfile not in logFiles:
+                        logFiles.append(innerTest.logfile)
+                    subColor = getColorFromResult(subInnerTest.result)[0]
+                    htmlFile.write("<div onclick='oneClick(event,this);searchClick(this)'>")
+                    htmlFile.write("<i class='material-icons' style='color:" + subColor + "'>add_box</i>")
+                    htmlFile.write(returnEmptyIfNone(subInnerTest.errorMessage))
+                    pos = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp)
+                    htmlFile.write("<div class='innertestcontent " + innerTest.logfile + " " +
+                                   str(pos) + "' onclick='threeClick(event,this)'>")
+                    htmlFile.write("</div></div>")
             htmlFile.write("</div></div>")
         htmlFile.write("</div></div></div></div>")
         for logs in logFiles:
             htmlFile.write("<div style='display:none' id='" + logs + "'>")
-            logFile = open(os.path.join(outDir, logs), "r+")
-            logLines = logFile.readlines()
-            for logLine in logLines:
-                htmlFile.write(logLine + "<br>")
-            htmlFile.write("</div>")
+            with open(os.path.join(outDir, logs), "r+") as logFile:
+                logLines = logFile.readlines()
+                for logLine in logLines:
+                    htmlFile.write(logLine + "<br>")
+                htmlFile.write("</div>")
         htmlFile.write("</body></html>")
 
     htmlFile.close()
     prettifyHTMLandAddTemplate(os.path.join(outDir, file))
 
 
-def prettifyHTMLandAddTemplate(file):
-    file = open(file + ".html","r+")
-    prevHtml = file.read()
+def prettifyHTMLandAddTemplate(htmlFile):
+    htmlFile = open(htmlFile + ".html", "r+")
+    prevHtml = htmlFile.read()
     soup = BS(prevHtml)
     newHTML = soup.prettify()
-    file.seek(0)
-    file.write(HTMLTemplate())
-    file.write(newHTML)
-    file.truncate()
-    file.close()
+    htmlFile.seek(0)
+    htmlFile.write(HTMLTemplate())
+    htmlFile.write(newHTML)
+    htmlFile.truncate()
+    htmlFile.close()
 
 
 def createPDF(file, outDir, trxRoot):
@@ -311,7 +320,6 @@ def getColorFromResult(result):
     return color, result
 
 
-
 def HTMLTemplate():
     return """
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -373,7 +381,7 @@ def HTMLTemplate():
       list-style-type: square;
       font-size: 1.5em;
     }
-span{
+    span{
       font-size:0.6em;
     }
     .spancounter{
@@ -491,9 +499,11 @@ span{
             for(var i = 0; i < logdata.length; i++){
                 if (i == theline){
                     logstring += ("<span class='locatedline'>" + logdata[i] + "</span><br>");
-                    while(logdata[i].trim().split(" ")[1] === logdata[i+1].trim().split(" ")[1]){
-                        logstring +=("<span class='locatedline'>" + logdata[i+1] + "</span><br>")
-                        i = i + 1;
+                    if(logdata[i+1]){
+                        while(logdata[i].trim().split(" ")[1] === logdata[i+1].trim().split(" ")[1]){
+                            logstring +=("<span class='locatedline'>" + logdata[i+1] + "</span><br>")
+                            i = i + 1;
+                        }
                     }
                 }else{
                     logstring += (logdata[i] + "<br>");
@@ -522,32 +532,37 @@ span{
             var linenumber = parseInt(str[2]);
             var div = clickedDivs[0];
             var logdatalines = txtdiv.innerHTML.split("<br>");
-            div.innerHTML = "";
+            var logstring = ""
             for (var i = linenumber - 5; i < linenumber + 6; i++) {
                 if (i >= 0 && i <= logdatalines.length-1) {
                     if (i == linenumber) {
-                        div.innerHTML += ("<span class='locatedline'>" + logdatalines[linenumber] + "</span><br>");
-                         while(logdatalines[i].trim().split(" ")[1] === logdatalines[i+1].trim().split(" ")[1]){
-                            div.innerHTML +=("<span class='locatedline'>" + logdatalines[i+1] + "</span><br>")
-                            i = i + 1;
-
+                        logstring += ("<span class='locatedline'>" + logdatalines[linenumber] + "</span><br>");
+                        if (logdatalines[i+1]) {
+                            while(logdatalines[i].trim().split(" ")[1] === logdatalines[i+1].trim().split(" ")[1]){
+                                logstring +=("<span class='locatedline'>" + logdatalines[i+1] + "</span><br>")
+                                i = i + 1;
+                            }
                         }
                     } else {
-                        div.innerHTML += (logdatalines[i] + "<br>");
+                        logstring += (logdatalines[i] + "<br>");
                     }
                 }
             }
+            div.innerHTML = logstring;
 
         }
 }
 
     </script>
     </head>"""
+
+
 def displayHelp():
-    print "\t How to use\n"
-    print "\t\t " + os.path.basename(__file__) + " filepath -filetype"
-    print "\t\t Filepath must point to folder containing .trx file"
-    print "\t\t Valid filetypes: -html, -pdf. Default is -html\n"
+    print "\n\t How to use:\n"
+    print "\t " + os.path.basename(__file__) + " filepath -filetype"
+    print "\t Filepath must point to folder containing .trx file"
+    print "\t Valid filetypes: -html, -pdf. Default is -html\n"
+
 
 def main():
     if len(sys.argv) == 1:
@@ -559,6 +574,7 @@ def main():
         fileType = "-html"
 
     generateTestReport(sys.argv[1], fileType)
+
 
 if __name__ == "__main__":
     sys.exit(main())
