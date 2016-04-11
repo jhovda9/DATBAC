@@ -10,7 +10,7 @@ import datetime
 import timeit
 import Tkinter as TK
 #from time import strptime
-
+"""
 gui = TK.Tk()
 topFrame = TK.Frame(gui)
 topFrame.pack(side = "top", fill = "x", expand = 1)
@@ -50,4 +50,47 @@ b5 = TK.Button(frameb5, text = "result 5")
 b5.pack(side = "left")
 l5 = TK.Label(frameb5, text = "Error X/X")
 l5.pack(side = "right")
-gui.mainloop()
+gui.mainloop()"""
+
+filepath = "D:Desktop/AnalogIoCcpu.txt"
+timestamp = "2016-02-22 09:34:08,211"
+
+def locateLinesInLog(filePath, timeStamp):
+    fil = open(filePath, "r+")
+    lines = fil.readlines()
+    fil.close()
+    stamp = datetime.datetime.strptime(timeStamp, "%Y-%m-%d %H:%M:%S,%f")
+    lo = 0
+    hi = len(lines)
+    removedInRow = 0
+    addedCusRemoved = 0
+    while lo < hi:
+        if len(lines) < 2:
+            return -1
+        mid = (hi + lo)/2
+        try:
+            currStamp = datetime.datetime.strptime(lines[mid][0:23],"%Y-%m-%d %H:%M:%S,%f")
+        except ValueError:
+            lines.pop(mid)
+            removedInRow += 1
+            hi -= 1
+            continue
+        if currStamp < stamp:
+            lo = mid+1
+            addedCusRemoved += removedInRow
+            removedInRow = 0
+        else:
+            hi = mid
+            if currStamp == stamp:
+                addedCusRemoved += removedInRow
+                removedInRow = 0
+            else:
+                removedInRow = 0
+    addedCusRemoved += removedInRow
+    return lo + addedCusRemoved
+
+lo = locateLinesInLog(filepath, timestamp)
+file = open("D:Desktop/AnalogIoCcpu.txt", "r+")
+lines = file.readlines()
+file.close()
+print lo, lines[lo]

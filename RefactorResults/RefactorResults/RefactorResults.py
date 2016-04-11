@@ -49,7 +49,8 @@ class SubInnerTest(object):
 
 
 def initializeTRXStructure(path):
-    testElement = ET.parse(path)
+    parser = ET.XMLParser(encoding="utf-8")
+    testElement = ET.parse(path, parser = parser)
     testObject = TRXTest(testElement.find("TestName").text, testElement.find("TestResult").text,
                          testElement.find("ErrorMessage").text)
     for innerTest in testElement.find("InnerTests").iter("InnerTest"):
@@ -172,7 +173,7 @@ def createHTML(file, outDir, trxRoot):
                 htmlFile.write("<div onclick='oneClick(event,this);searchClick(this)'>")
                 htmlFile.write("<i class='material-icons' style='color:" + subColor + "'>add_box</i>")
                 htmlFile.write(subInnerTest.errorMessage)
-                pos, lines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp)
+                pos = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp)
                 htmlFile.write("<div class='innertestcontent " + innerTest.logfile + " " +
                                str(pos) + "' onclick='threeClick(event,this)'>")
                 htmlFile.write("</div></div>")
@@ -241,21 +242,36 @@ def createPDF(file, outDir, trxRoot):
 def locateLinesInLog(filePath, timeStamp):
     fil = open(filePath, "r+")
     lines = fil.readlines()
+    fil.close()
     stamp = datetime.datetime.strptime(timeStamp, "%Y-%m-%d %H:%M:%S,%f")
     lo = 0
     hi = len(lines)
+    removedInRow = 0
+    addedCusRemoved = 0
     while lo < hi:
+        if len(lines) < 2:
+            return -1
         mid = (hi + lo)/2
         try:
             currStamp = datetime.datetime.strptime(lines[mid][0:23],"%Y-%m-%d %H:%M:%S,%f")
         except ValueError:
-            mid = mid - 1
+            lines.pop(mid)
+            removedInRow += 1
+            hi -= 1
+            continue
         if currStamp < stamp:
             lo = mid+1
+            addedCusRemoved += removedInRow
+            removedInRow = 0
         else:
             hi = mid
-    return lo, lines
-
+            if currStamp == stamp:
+                addedCusRemoved += removedInRow
+                removedInRow = 0
+            else:
+                removedInRow = 0
+    addedCusRemoved += removedInRow
+    return lo + addedCusRemoved
 
 def drawPieChart():
     global testCounters
