@@ -14,8 +14,17 @@ import cStringIO
 colors = {'passed': '#26C154',
           'error': '#DF4138',
           'failed': '#DF4138',
-          'warning': '#DF9538'
+          'warning': '#DF9538',
+          'other': '#4138df'
           }
+icons = {'testpass': 'iVBORw0KGgoAAAANSUhEUgAAAIsAAABpCAYAAAAKldB2AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAAPrSURBVHhe7d2/axRBGMbx/DUKYqMIFora2IilIhYqCEqEgAQbG0GsLAQrGxEL/5OEeEEtVfzxz5z3rky4vX3ubndm3pl3Zp7ic7l97rjNsl8IaZKd+XxOjTp3dG9++uD2/NWfj4tD/J5lcKT6SSinDm51xgYDR6rbcihTgoEj1QuF4mwLBo5Up02hOJuCGQxUpzGhOOuC6R1QnaaE4qBgeh9K9fEJxVkNZvDhVI+QUJzlYOBJqHwxQnFcMPBEVLaYoThXj3fxyahcGqFcnj1efDR/DFVFMxQxOCGVSTsU0TshlSlFKKJ3QOVJFYoYDFSOC58fwJsdYl0oAo5kX+pQBBzJthyhCDiSXblCEXAkm3KGIuBI9uQORcCRbLEQioAj2XFx9hDe7BA+oQg4kg2WQhFwpPyshSLgSHlZDEXAkfKxGoqAI+VhORQBR0rPeigCjpRWCaEIOFI6l2aP4M0OoRGKgCOlUVIoAo6kr7RQBBxJV4mhCDiSnlJDEXAkHSWHIuBI8ZUeioAjxVVDKAKOFI/cVHSzQ+QIRcCR4qgpFAFHCldbKAKOFKbGUAQcyV+toQg4kp+aQxFwpOlqD0XAkaZpIRQBRxqvlVAEHGmclkIRcKTtWgtFwBHZ+/5m8QW/1poWQxFwXPX0x9vuryyfObyzOMTvaUWroQg4Lnv+810XiruwloNpORQBR+fl7w+9UJwWg2k9FAFHsS4Up6VgGMp/cJT/ALEpFKeFYK4dP4HXHqLEUMRgeP33UxcBukik5mAYSt9gmBKKU2MwDGWod+ATilNTMAwFO3kSEopTQzAMZb3u4ezhXXiRPkoOhqFstvVXZB8lBsNQtuseXvx633Qw17/swWsIUVso4uRJq8EwlPF6B60Fw1CmGQytBMNQpoNj7cEwFD9wFLUGw1D8wdGpLRiGEgaOy2oJhqGEg+Oq0oO58W0ffg8hWgtFwBEpNRiGEg8c1yktGIYSFxw3KSUYhhIfHLexHgxD0QHHMawGw1D0wHEsa8EwFF1wnMJKMAxFHxynyh3Mza/P4GeEYChDcPSRKxiGkg4cfaUOhqGkBccQqYJhKOnBMZR2MAwlDzjGoBXM+aP78LUQDGUcOMaiEUxsDGU8OMZkORiGMg0cY7MYDEOZDo4aLAXDUPzAUYuFYBiKPzhqyhkMQwkDR205gmEo4eCYQspgGEoccEwlRTAMJR44pqQZDEOJC46paQTDUOKDYw4xg2EoOuCYS4xgGIoeOOYUEgxD0QXH3HyCYSj64GjBlGAYShpwtGJMMAwlHThasikYhpIWHK1BwTCU9OBo0XIwDCUPOFolwVw53l08xa+TpvnOP9N0RctZvjZJAAAAAElFTkSuQmCC',
+         'testfail': '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',
+         'error': 'iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAABaSURBVDhPY/j//z/DAzeL//cdycRuGUAj/jMwPPbBIkkq9pn3n+ERNgmScQ/dDOoB+x+ECakbOQYhNBLC6PpoZRA6HkaBjY6pZhCxmJoGUa0YAfmf8oLtPwMAwsMZ2E1CMc0AAAAASUVORK5CYII=',
+         'failed': 'iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAABaSURBVDhPY/j//z/DAzeL//cdycRuGUAj/jMwPPbBIkkq9pn3n+ERNgmScQ/dDOoB+x+ECakbOQYhNBLC6PpoZRA6HkaBjY6pZhCxmJoGUa0YAfmf8oLtPwMAwsMZ2E1CMc0AAAAASUVORK5CYII=',
+         'warning': 'iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAABYSURBVDhPY/j//z/Dg6kW/++TjTOARvxnYHg8A5skiXjGvP8Mj7BJkIx76GZQD9j/IExI3cgxCKGREEbXRyuD0PEwCmx0TDWDiMXUNIhqxQjI/5QXbP8ZAKH+dtRVhEDRAAAAAElFTkSuQmCC',
+         'passed': 'iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAABYSURBVDhPY/j//z9D5MGQ/2pk4yKgEf8ZGCYfwiZJIj405z9DAzYJkvF0uhk0Hex/ECakbuQYhNBICKPro5VB6HgYBTY6pppBxGJqGkS1YgTkf8oLtv8MAHM2ANZQJ/u9AAAAAElFTkSuQmCC',
+         'other': 'iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAABaSURBVDhPY/j//z9DkvP9/44WZGLnB0Aj/jMw9PtjkSQV+z/5z9CJTYJk/JhuBj0G+x+ECakbOQYhNBLC6PpoZRA6HkaBjY6pZhCxmJoGUa0YAfmf8oLtPwMA2RQYzLYTEH4AAAAASUVORK5CYII='
+        }
 testCounters = {}
 
 
@@ -119,6 +128,7 @@ def returnEmptyIfNone(s):
     return str(s)
 
 def createHTML(file, outDir, trxRoot):
+    global icons
     divCounter = 0
     currentTest = ""
     prevTest = ""
@@ -131,9 +141,9 @@ def createHTML(file, outDir, trxRoot):
         htmlFile.write("<body><div id='header'>")
         htmlFile.write("<div id='iconarea'>")
         if trxRoot.result == "Passed":
-            htmlFile.write("<i class='material-icons green'> done </i>")
+            htmlFile.write("<img src='data:image/png;base64," + icons['testpass'] + "'/>")
         else:
-            htmlFile.write("<i class='material-icons red'> error </i>")
+            htmlFile.write("<img src='data:image/png;base64," + icons['testfail'] + "'/>")
         htmlFile.write("</div><div id='textresultarea'>")
         htmlFile.write("<h1> Title: " + returnEmptyIfNone(trxRoot.name) + "</h1>")
         htmlFile.write("<h1> Result: " + returnEmptyIfNone(trxRoot.result) + "</h1>")
@@ -154,13 +164,15 @@ def createHTML(file, outDir, trxRoot):
                 for div in range(0, divCounter):
                     htmlFile.write("</div>")
                 htmlFile.write("<div class='innertests' onclick='oneClick(event,this)'>")
-                htmlFile.write(" <i class='material-icons' style='color:" + currentColor + "' >add_box</i>")
+                htmlFile.write("<img class='" + currentTest + "' src='data:image/png;base64," + currentColor + "'/>")
                 htmlFile.write("<span class='spancounter'></span>" + returnEmptyIfNone(innerTest.result))
+                if str.lower(innerTest.result) != 'passed':
+                    htmlFile.write(" - " + returnEmptyIfNone(innerTest.name))
                 htmlFile.write("<div class='innertestcontent'>")
                 divCounter = 2
                 prevTest = currentTest
             htmlFile.write("<div class='innertests' onclick='oneClick(event,this)'>")
-            htmlFile.write("<i class='material-icons' style=' color:" + currentColor + "' >add_box</i>")
+            htmlFile.write("<img class='" + currentTest + "' src='data:image/png;base64," + currentColor + "'/>")
             htmlFile.write(returnEmptyIfNone(innerTest.name) + ", duration: " + returnEmptyIfNone(innerTest.duration) +
                            "ms")
             htmlFile.write("<div class='innertestcontent'>")
@@ -173,9 +185,9 @@ def createHTML(file, outDir, trxRoot):
                 if subInnerTest is not None:
                     if innerTest.logfile not in logFiles:
                         logFiles.append(innerTest.logfile)
-                    subColor = getColorFromResult(subInnerTest.result)[0]
+                    subColor, subTest = getColorFromResult(subInnerTest.result)
                     htmlFile.write("<div onclick='oneClick(event,this);searchClick(this)'>")
-                    htmlFile.write("<i class='material-icons' style='color:" + subColor + "'>add_box</i>")
+                    htmlFile.write("<img class='" + subTest + "' src='data:image/png;base64," + subColor + "'/>")
                     htmlFile.write(returnEmptyIfNone(subInnerTest.errorMessage))
                     pos = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp)
                     htmlFile.write("<div class='innertestcontent " + innerTest.logfile + " " +
@@ -279,19 +291,23 @@ def locateLinesInLog(filePath, timeStamp):
 
 def drawPieChart():
     global testCounters
+    global colors
     sizes = []
-    colors = []
+    chartcolors = []
     labels = []
     totalTests = 0
     for key, counter in testCounters.iteritems():
         totalTests += counter
     for test, counter in testCounters.iteritems():
         sizes.append(counter)
-        colors.append(getColorFromResult(test)[0])
+        if str.lower(test) in colors:
+            chartcolors.append(colors[str.lower(test)])
+        else:
+            chartcolors.append(colors['other'])
         percentage = "%.2f%%" % (100 * float(counter)/float(totalTests))
         labels.append("{} {} {}".format(counter, test, "(" + str(percentage) + ")"))
     plt.figure(figsize=(4, 1))
-    pieWedgesCollection = plt.pie(sizes, colors=colors)[0]
+    pieWedgesCollection = plt.pie(sizes, colors=chartcolors)[0]
     for wedge in pieWedgesCollection:
         wedge.set_lw(0)
     plt.axis('equal')
@@ -306,16 +322,23 @@ def drawPieChart():
 
 
 def getColorFromResult(result):
-    global colors
+    global icons
     result = str.lower(result)
-    if result in colors:
-        color = colors[result]
+    if result in icons:
+        color = icons[result]
     else:
-        color = '#4138df'
+        color = icons['other']
     return color, result
 
 
 def HTMLTemplate():
+    global icons
+    iconsForJS = {'passed': 'iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAABPSURBVDhPY/j//z9D5MGQ/2pk4yKgEf8ZGCYfwiZJIj405z9DAzYJkvH0UYMIYtoZNB2cJojB6PpoZRC5eNQgwpiaBlGtGAGlCcoLtv8MAGpW768pGjUHAAAAAElFTkSuQmCC',
+                  'other': 'iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAABRSURBVDhPY/j//z9DkvP9/44WZGLnB0Aj/jMw9PtjkSQV+z/5z9CJTYJk/HjUIIKYdgY9BqcJYjC6PloZRC4eNYgwpqZBVCtGQGmC8oLtPwMA+OUMDFAYXwwAAAAASUVORK5CYII=',
+                  'warning': 'iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAABPSURBVDhPY/j//z/Dg6kW/++TjTOARvxnYHg8A5skiXjGvP8Mj7BJkIx7Rg0iiGlnUA84TRCD0fXRyiBy8ahBhDE1DaJaMQJKE5QXbP8ZAFl2bvxyi2akAAAAAElFTkSuQmCC',
+                  'failed': 'iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAABPSURBVDhPY/j//z/Dg6kW/++TjTOARvxnYHg8A5skiXjGvP8Mj7BJkIx7Rg0iiGlnUA84TRCD0fXRyiBy8ahBhDE1DaJaMQJKE5QXbP8ZAFl2bvxyi2akAAAAAElFTkSuQmCC',
+                  'error': 'iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAABRSURBVDhPY/j//z/DAzeL//cdycRuGUAj/jMwPPbBIkkq9pn3n+ERNgmScc+oQQQx7QzqAacJYjC6PloZRC4eNYgwpqZBVCtGQGmC8oLtPwMA/YkMwOzZCVcAAAAASUVORK5CYII='
+                  }
     return """
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -332,21 +355,16 @@ def HTMLTemplate():
         display:inline-block;
         max-width:50%;
     }
-    #iconarea .material-icons{
-      font-size: 190px;
+
+    #iconarea img{
+        height: 160px;
+        margin-left: 14px;
     }
-
-    .material-icons.red { color: #DF4138; }
-    .material-icons.green { color: #26C154; }
-    .material-icons.orange { color: orange; }
-    .material-icons.blue { color: blue; }
-
     #header{
       margin: 25px 0 25px 0;
       display:inline-block;
       width:100%;
     }
-
     #summaryarea{
       height: auto;
       overflow: hidden;
@@ -442,7 +460,17 @@ def HTMLTemplate():
 
     </style>
     <script type="text/javascript">
-
+    """ + "var passed = '" + icons['passed'] + "';\n" +\
+           "var passednon = '" + iconsForJS['passed'] + "';\n" +\
+           "var error = '" + icons['error'] + "';\n" +\
+           "var errornon = '" + iconsForJS['error'] + "';\n" +\
+            "var failed = '" + icons['error'] + "';\n" +\
+            "var failednon = '" + iconsForJS['error'] + "';\n" +\
+           "var warning = '" + icons['warning'] + "';\n" +\
+           "var warningnon = '" + iconsForJS['warning'] + "';\n" +\
+           "var other = '" + icons['other'] + "';\n" +\
+           "var othernon = '" + iconsForJS['other'] + "';\n" + """
+           var listofresults = ['passed','error','failed','warning'];
     window.onload = function () {
         var outerdiv = document.getElementById("innertestcontainer");
         var outerdivchildren = outerdiv.children;
@@ -474,15 +502,23 @@ def HTMLTemplate():
     {
       if(amIclicked(event, element))
       {
-
+        var thetype = element.getElementsByTagName("img")[0].className;
+        if(listofresults.indexOf(thetype) < 0){
+            var thetype = "other";
+        }
         if(element.getElementsByTagName("div")[0].style.display === "none"||element.getElementsByTagName("div")[0].style.display === ''){
           element.getElementsByTagName("div")[0].style.display = "block";
-          element.getElementsByTagName("i")[0].innerHTML = "indeterminate_check_box";
+          var thebase64 = eval(thetype + "non");
+          var base64img = "data:image/png;base64,";
+          var source = base64img + thebase64;
+          element.getElementsByTagName("img")[0].setAttribute("src",source);
         } else {
           element.getElementsByTagName("div")[0].style.display = "none";
-          element.getElementsByTagName("i")[0].innerHTML = "add_box";
+            var thebase64 = eval(thetype);
+            var base64img = "data:image/png;base64,";
+            var source = base64img + thebase64;
+          element.getElementsByTagName("img")[0].setAttribute("src",source);
         }
-
       }
     }
 
