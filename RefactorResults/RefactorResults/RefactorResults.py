@@ -80,20 +80,15 @@ def parseInnerTest(trxTest, outdir):
                                                     subinnertest.find("endtime").text))
 
 
-def generateTestReport(outDir, fileType):
+def generateTestReport(outDir):
     trxFile = findTRX(outDir)
     if trxFile == None:
         print "No .trx file found in " + outDir
         return
     trxRoot = initializeTRXStructure(os.path.join(outDir, trxFile))
     parseInnerTest(trxRoot, outDir)
-    if fileType.lower() == "-html":
-        createHTML(trxFile, outDir, trxRoot)
-    elif fileType.lower() == "-pdf":
-        createPDF(trxFile, outDir, trxRoot)
-    else:
-        displayHelp()
-        sys.exit("invalid flag: {}".format(fileType))
+    createHTML(trxFile, outDir, trxRoot)
+
 
 
 def findTRX(outDir):
@@ -172,8 +167,8 @@ def createHTML(file, outDir, trxRoot):
             htmlFile.write("<span>Start: " + returnEmptyIfNone(innerTest.startTime) + "&emsp; End: " +
                            returnEmptyIfNone(innerTest.endTime) + "&emsp; Duration: " +
                            returnEmptyIfNone(innerTest.duration) + "&emsp; Logfile: " +
-                           "<a href='" + returnEmptyIfNone(innerTest.logfile) + "' target='_blank'>" +
-                           returnEmptyIfNone(innerTest.logfile) + "</a></span>")
+                           "<span class='displaylogspan' onclick='displayLog(event,this)'>" +
+                           returnEmptyIfNone(innerTest.logfile) + "</span></span>")
             for subInnerTest in innerTest.subInnerTests:
                 if subInnerTest is not None:
                     if innerTest.logfile not in logFiles:
@@ -322,6 +317,7 @@ def getColorFromResult(result):
 
 def HTMLTemplate():
     return """
+
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style type="text/css">
     *{
@@ -437,6 +433,11 @@ def HTMLTemplate():
         background-color: white;
         resize:both;
     }
+    .displaylogspan{
+        color: blue;
+        text-decoration: underline;
+        font-size: 1em;
+    }
 
 
     </style>
@@ -485,19 +486,29 @@ def HTMLTemplate():
       }
     }
 
-    function threeClick(event, element)
-    {
-        if(amIclicked(event, element))
-        {
-            var str = element.className;
-            str = str.split(" ");
-            var thelog = document.getElementById(str[1]);
-            var theline = str[2];
-            var logdata = thelog.innerHTML.split("<br>");
-            var div = document.createElement("div");
-            var logstring = "";
+    function returnLogLines(log, linenumber){
+        var thelog = document.getElementById(log);
+        var logdata = thelog.innerHTML.split("<br>");
+        var logstring = "";
+        if (linenumber >= 0) {
+            for (var i = linenumber - 5; i < linenumber + 6; i++) {
+                if (i >= 0 && i <= logdata.length-1) {
+                    if (i == linenumber) {
+                        logstring += ("<span class='locatedline'>" + logdata[linenumber] + "</span><br>");
+                        if (logdata[i+1]) {
+                            while(logdata[i].trim().split(" ")[1] === logdata[i+1].trim().split(" ")[1]){
+                                logstring +=("<span class='locatedline'>" + logdata[i+1] + "</span><br>");
+                                i = i + 1;
+                            }
+                        }
+                    } else {
+                        logstring += (logdata[i] + "<br>");
+                    }
+                }
+            }
+        } else {
             for(var i = 0; i < logdata.length; i++){
-                if (i == theline){
+                if (i == linenumber){
                     logstring += ("<span class='locatedline'>" + logdata[i] + "</span><br>");
                     if(logdata[i+1]){
                         while(logdata[i].trim().split(" ")[1] === logdata[i+1].trim().split(" ")[1]){
@@ -509,7 +520,20 @@ def HTMLTemplate():
                     logstring += (logdata[i] + "<br>");
                 }
             }
-            div.innerHTML = logstring;
+        }
+        return logstring;
+    }
+
+    function threeClick(event, element)
+    {
+        if(amIclicked(event, element))
+        {
+            var str = element.className;
+            str = str.split(" ");
+            var thelog = str[1];
+            var theline = str[2];
+            var div = document.createElement("div");
+            div.innerHTML = returnLogLines(thelog, theline);
             div.setAttribute('id','biglog');
             document.body.appendChild(div);
             var scrollto = div.getElementsByTagName("span")[0];
@@ -528,52 +552,35 @@ def HTMLTemplate():
         if (clickedDivs[0].style.display === "block" && clickedDivs[0].innerHTML.split(",").length < 3) {
             var str = clickedDivs[0].className;
             str = str.split(" ");
-            var txtdiv = document.getElementById(str[1]);
-            var linenumber = parseInt(str[2]);
+            var thelog = str[1];
+            var theline = parseInt(str[2]);
             var div = clickedDivs[0];
-            var logdatalines = txtdiv.innerHTML.split("<br>");
-            var logstring = ""
-            for (var i = linenumber - 5; i < linenumber + 6; i++) {
-                if (i >= 0 && i <= logdatalines.length-1) {
-                    if (i == linenumber) {
-                        logstring += ("<span class='locatedline'>" + logdatalines[linenumber] + "</span><br>");
-                        if (logdatalines[i+1]) {
-                            while(logdatalines[i].trim().split(" ")[1] === logdatalines[i+1].trim().split(" ")[1]){
-                                logstring +=("<span class='locatedline'>" + logdatalines[i+1] + "</span><br>")
-                                i = i + 1;
-                            }
-                        }
-                    } else {
-                        logstring += (logdatalines[i] + "<br>");
-                    }
-                }
-            }
-            div.innerHTML = logstring;
-
+            div.innerHTML = returnLogLines(thelog, theline)
         }
+}
+    function displayLog(event, element) {
+        if(amIclicked(event, element)){
+            var log = element.innerText;
+            var div = document.createElement("div");
+            div.innerHTML = returnLogLines(log, -1);
+            div.setAttribute('id','biglog');
+            document.body.appendChild(div);
+        }
+        window.addEventListener('mousedown', function(event){
+            var box = document.getElementById('biglog');
+            if (event.target != box && event.target.parentNode != box && box != null){
+                box.parentNode.removeChild(box);
+            }
+        });
 }
 
     </script>
     </head>"""
 
 
-def displayHelp():
-    print "\n\t How to use:\n"
-    print "\t " + os.path.basename(__file__) + " filepath -filetype"
-    print "\t Filepath must point to folder containing .trx file"
-    print "\t Valid filetypes: -html, -pdf. Default is -html\n"
-
 
 def main():
-    if len(sys.argv) == 1:
-        displayHelp()
-        sys.exit("No arguments given")
-    if len(sys.argv) == 3:
-        fileType = sys.argv[2]
-    else:
-        fileType = "-html"
-
-    generateTestReport(sys.argv[1], fileType)
+    generateTestReport(sys.argv[1])
 
 
 if __name__ == "__main__":
