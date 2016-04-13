@@ -407,7 +407,8 @@ def HTMLTemplate():
             font-family: monospace;
             overflow-y: scroll;
             border: 1px solid black;
-            margin-left: 25px;
+            padding: 5px;
+            margin: 0 5px 5px 25px;
             display: none;
             font-size: 0.9em;
         }
@@ -426,7 +427,7 @@ def HTMLTemplate():
         #biglog{
             font-family: monospace;
             border: 1px solid black;
-            height: 50vh;
+            height: 60vh;
             max-width: 60%;
             padding: 10px;
             overflow: scroll;
