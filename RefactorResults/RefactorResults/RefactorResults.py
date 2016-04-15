@@ -128,6 +128,7 @@ def returnEmptyIfNone(s):
         return ''
     return str(s)
 
+
 def createHTML(file, outDir, trxRoot):
     global base64Icons
     divCounter = 0
@@ -145,34 +146,36 @@ def createHTML(file, outDir, trxRoot):
             htmlFile.write("<img src='data:image/png;base64," + base64Icons['testpass'] + "'/>")
         else:
             htmlFile.write("<img src='data:image/png;base64," + base64Icons['testfail'] + "'/>")
-        htmlFile.write("</div><div id='textresultarea'>")
+        htmlFile.write("</div>")
+        base64chart = drawBase64PieChart()
+        if base64chart is not None:
+            htmlFile.write("<div id='chart'>")
+            htmlFile.write("<img src='data:image/png;base64,%s'\></div>" %base64chart.getvalue().encode("base64").strip())
+        htmlFile.write("<div id='textresultarea'>")
         htmlFile.write("<h1> Title: " + returnEmptyIfNone(trxRoot.name) + "</h1>")
         htmlFile.write("<h1> Result: " + returnEmptyIfNone(trxRoot.result) + "</h1>")
         htmlFile.write("<h3> ErrorMessage: " + returnEmptyIfNone(trxRoot.errorMessage) + "</h3> </div>")
-        base64 = drawPieChart()
-        if base64 is not None:
-            htmlFile.write("<div id='summaryarea'><div id='chartarea'><div id='chart'>")
-            htmlFile.write("<img src='data:image/png;base64,%s'" %base64.getvalue().encode("base64").strip())
-        htmlFile.write("</div></div></div></div>")
+
+        htmlFile.write("</div>")
 
     # MAIN
     if trxRoot.innerTests is not None:
         htmlFile.write("<div id='innertestcontainer'>")
         for innerTest in trxRoot.innerTests:
-            currentColor, currentTest = getColorFromResult(innerTest.result)
+            currentColor, currentTest = getColorAndResultFromResult(innerTest.result)
             if currentTest != prevTest:
                 for div in range(0, divCounter):
                     htmlFile.write("</div>")
-                htmlFile.write("<div class='innertests' onclick='oneClick(event,this)'>")
-                htmlFile.write("<img class='" + currentTest + "' src='data:image/png;base64," + currentColor + "'/>")
+                htmlFile.write("<div class='innertests'>")
+                htmlFile.write("<img class='imageicon " + currentTest + "' src='data:image/png;base64," + currentColor + "' onclick='oneClick(event,this)'/>")
                 htmlFile.write("<span class='spancounter'></span>" + returnEmptyIfNone(innerTest.result))
                 if str.lower(innerTest.result) != 'passed':
-                    htmlFile.write(" - " + returnEmptyIfNone(innerTest.name))
+                    htmlFile.write("<span class='firsterrorspan'> - First error: '" + returnEmptyIfNone(innerTest.name) + "'</span>")
                 htmlFile.write("<div class='innertestcontent'>")
                 divCounter = 2
                 prevTest = currentTest
-            htmlFile.write("<div class='innertests' onclick='oneClick(event,this)'>")
-            htmlFile.write("<img class='" + currentTest + "' src='data:image/png;base64," + currentColor + "'/>")
+            htmlFile.write("<div class='innertests'>")
+            htmlFile.write("<img class='imageicon " + currentTest + "' src='data:image/png;base64," + currentColor + "' onclick='oneClick(event,this)'/>")
             htmlFile.write(returnEmptyIfNone(innerTest.name) + ", duration: " + returnEmptyIfNone(innerTest.duration) +
                            "ms")
             htmlFile.write("<div class='innertestcontent subinnertestcontent'>")
@@ -185,9 +188,9 @@ def createHTML(file, outDir, trxRoot):
                 if subInnerTest is not None:
                     if innerTest.logfile not in logFiles:
                         logFiles.append(innerTest.logfile)
-                    subColor, subTest = getColorFromResult(subInnerTest.result)
-                    htmlFile.write("<div onclick='oneClick(event,this);searchClick(this)'>")
-                    htmlFile.write("<img class='" + subTest + "' src='data:image/png;base64," + subColor + "'/>")
+                    subColor, subTest = getColorAndResultFromResult(subInnerTest.result)
+                    htmlFile.write("<div>")
+                    htmlFile.write("<img class='imageicon " + subTest + "' src='data:image/png;base64," + subColor + "'onclick='oneClick(event,this); searchClick(this)'/>")
                     htmlFile.write(returnEmptyIfNone(subInnerTest.errorMessage))
                     pos = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp)
                     htmlFile.write("<div class='logcontent " + innerTest.logfile + " " +
@@ -216,7 +219,6 @@ def prettifyHTMLandAddTemplate(htmlFile):
     htmlFile.seek(0)
     htmlFile.write(HTMLTemplate())
     htmlFile.write(newHTML)
-    htmlFile.truncate()
     htmlFile.close()
 
 
@@ -289,23 +291,24 @@ def locateLinesInLog(filePath, timeStamp):
     addedCusRemoved += removedInRow
     return lo + addedCusRemoved
 
-def drawPieChart():
+def drawBase64PieChart():
     global testCounters
     global colors
     sizes = []
     chartcolors = []
     labels = []
     totalTests = 0
-    for key, counter in testCounters.iteritems():
-        totalTests += counter
-    for test, counter in testCounters.iteritems():
-        sizes.append(counter)
-        if str.lower(test) in colors:
-            chartcolors.append(colors[str.lower(test)])
-        else:
-            chartcolors.append(colors['other'])
-        percentage = "%.2f%%" % (100 * float(counter)/float(totalTests))
-        labels.append("{} {} {}".format(counter, test, "(" + str(percentage) + ")"))
+    if len(testCounters) != 0 :
+        for test, counter in testCounters.iteritems():
+            totalTests += counter
+        for test, counter in testCounters.iteritems():
+            sizes.append(counter)
+            if str.lower(test) in colors:
+                chartcolors.append(colors[str.lower(test)])
+            else:
+                chartcolors.append(colors['other'])
+            percentage = "%.2f%%" % (100 * float(counter)/float(totalTests))
+            labels.append("{} {} {}".format(counter, test, "(" + str(percentage) + ")"))
     plt.figure(figsize=(4, 1))
     pieWedgesCollection = plt.pie(sizes, colors=chartcolors)[0]
     for wedge in pieWedgesCollection:
@@ -321,7 +324,7 @@ def drawPieChart():
     return sio
 
 
-def getColorFromResult(result):
+def getColorAndResultFromResult(result):
     global base64Icons
     result = str.lower(result)
     if result in base64Icons:
@@ -344,43 +347,43 @@ def HTMLTemplate():
 <html>
 <head>
     <style type="text/css">
-        *{
+       *{
             font-family: arial, sans-serif;
         }
         body{
             overflow-y: scroll;
             background-color: #F4F5F9;
-            min-width: 560px;
+            min-width: 1000px
+        }
+                #header{
+            border-bottom: 1px solid black;
+            min-height: 205px;
         }
         #textresultarea{
-            display: inline-block;
-            max-width: 50%;
+            margin-left: 250px;
+            margin-right: 540px;
+            height: 100%;
+            min-height: 205px;
+            padding: 0 25px 0 0;
+            border-right: 1px solid black;
+        }
+        #iconarea{
+            float: left;
+            width: 200px;
+            height: 200px;
+            margin-left: 25px;
+            margin-top: 20px;
         }
         #iconarea img{
             height: 160px;
             margin-left: 14px;
         }
-        #header{
-            margin: 25px 0 25px 0;
-            display: inline-block;
-            width: 100%;
-        }
-        #summaryarea{
-            border: 1px solid black;
-            border-left: none;
-            border-right: none;
-        }
-        #iconarea{
-            display: inline-block;
-            min-width: 200px;
-            margin-left: 25px;
-        }
+
         #chart{
-            display: inline-block;
-        }
-        #chartlist{
-            display: inline-block;
             float: right;
+            width: 505px;
+            height: 205px;
+            margin-right: 25px;
         }
         .detailspan{
             font-size: 0.6em;
@@ -389,7 +392,7 @@ def HTMLTemplate():
             font-size: 1em;
         }
         #innertestcontainer{
-            margin: 0 0 0 200px;
+            margin: 30px 40px 40px 40px;
             padding: 10px;
             font-size: 1.5em;
         }
@@ -398,11 +401,16 @@ def HTMLTemplate():
             margin-left: 50px;
             font-size: 0.9em;
         }
+        .imageicon{
+            cursor: pointer;
+        }
         .subinnertestcontent {
             border: 1px solid black;
+            border-radius: 5px;
             padding-left: 5px;
         }
         .logcontent{
+            cursor: pointer;
             background-color: white;
             font-family: monospace;
             overflow-y: scroll;
@@ -413,11 +421,10 @@ def HTMLTemplate():
             font-size: 0.9em;
         }
         .innertests{
-            cursor: pointer;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             margin-top: 5px;
+            border: 1px solid black;
+            border-radius: 5px;
+            padding: 5px;
         }
         .locatedline{
             background-color: yellow;
@@ -425,6 +432,7 @@ def HTMLTemplate():
             font-family: monospace;
         }
         #biglog{
+            cursor: auto;
             font-family: monospace;
             border: 1px solid black;
             height: 60vh;
@@ -437,12 +445,17 @@ def HTMLTemplate():
             resize: both;
             background-color: white;
         }
+        .firsterrorspan{
+            font-size: 0.7em;
+        }
         .displaylogspan{
+            cursor: pointer;
             color: blue;
             text-decoration: underline;
             font-size: 1em;
         }
         #overlay{
+            cursor: pointer;
             width: 100%;
             height: 100%;
             position: fixed;
@@ -462,7 +475,7 @@ def HTMLTemplate():
            "\tvar warningnon = '" + iconsForJS['warning'] + "';\n" +\
            "\tvar other = '" + base64Icons['other'] + "';\n" +\
            "\tvar othernon = '" + iconsForJS['other'] + "';\n" +\
-           "\tvar listofresults = ['passed','error','failed','warning']\n;"+\
+           "\tvar listofresults = ['passed','error','failed','warning'];\n"+\
         """
         window.onload = function () {
             var outerdiv = document.getElementById("innertestcontainer");
@@ -470,7 +483,8 @@ def HTMLTemplate():
             var fromnumber = 1;
             var tonumber = 0;
             for (var i = 0; i < outerdivchildren.length; i++) {
-                var incnumber = outerdivchildren[i].children[2].children.length;
+                var div = outerdivchildren[i].getElementsByTagName("div")[0];
+                var incnumber = div.children.length;
                 tonumber += incnumber;
                 var str = "Test " + fromnumber + "-" + tonumber + ": ";
                 outerdivchildren[i].getElementsByTagName("span")[0].innerHTML = str;
@@ -496,20 +510,21 @@ def HTMLTemplate():
             if(amIclicked(event, element))
             {
                 var base64img = "data:image/png;base64,";
-                var thetype = element.getElementsByTagName("img")[0].className;
+                var thetype = element.classList[1];
                 if(listofresults.indexOf(thetype) < 0){
                     thetype = "other";
                 }
-                if(element.getElementsByTagName("div")[0].style.display === "none"||element.getElementsByTagName("div")[0].style.display === ''){
-                    element.getElementsByTagName("div")[0].style.display = "block";
+                var div = element.parentNode.getElementsByTagName("div")[0];
+                if(div.style.display === "none" || div.style.display === ''){
+                    div.style.display = "block";
                     var thebase64 = eval(thetype + "non");
                     var source = base64img + thebase64;
-                    element.getElementsByTagName("img")[0].setAttribute("src",source);
+                    element.setAttribute("src",source);
                 } else {
-                    element.getElementsByTagName("div")[0].style.display = "none";
+                    div.style.display = "none";
                     var thebase64 = eval(thetype);
                     var source = base64img + thebase64;
-                    element.getElementsByTagName("img")[0].setAttribute("src",source);
+                    element.setAttribute("src",source);
                 }
             }
         }
@@ -518,7 +533,6 @@ def HTMLTemplate():
             var thelog = document.getElementById(log);
             var logdata = thelog.innerHTML.split("<br>");
             var logstring = "";
-            console.log(log + linenumber);
             if(!printwholelog && linenumber >= 0){
                 for (var i = linenumber - 5; i < linenumber + 6; i++) {
                     if (i >= 0 && i <= logdata.length-1) {
@@ -585,7 +599,7 @@ def HTMLTemplate():
             });
         }
         function searchClick(clicked) {
-            var clickedDivs = clicked.getElementsByTagName("div");
+            var clickedDivs = clicked.parentNode.getElementsByTagName("div");
             if (clickedDivs[0].style.display === "block" && clickedDivs[0].innerHTML.split(",").length < 3) {
                 var str = clickedDivs[0].className;
                 str = str.split(" ");
