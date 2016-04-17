@@ -94,6 +94,7 @@ def initializeTRXStructure(path):
                 detailedResultsFile = elem.text
         inner = InnerTest(name, result, errorMessage, detailedResultsFile)
         trxTest.innerTests.append(inner)
+        testCounter(result)
     return trxTest
 
 
