@@ -22,7 +22,7 @@ class TRXTest(object):
 
 class InnerTest(object):
     def __init__(self, name, result, errorMessage, detailedFile, subInnerTests = [], startTime = "", endTime = "",
-                 duration = ""):
+                 duration = "", logFile = ""):
         self.name = name
         self.result = result
         self.errorMessage = errorMessage
@@ -31,6 +31,7 @@ class InnerTest(object):
         self.startTime = startTime
         self.endTime = endTime
         self.duration = duration
+        self.logFile = logFile
 
     #Returns passed if tests are empty
     def calculateResult(self):
@@ -51,26 +52,81 @@ class SubInnerTest(object):
 
 def initializeTRXStructure(path):
     testElement = ET.parse(path)
-    testObject = TRXTest(testElement.find("TestName").text, testElement.find("TestResult").text,
-                         testElement.find("ErrorMessage").text)
-    for innerTest in testElement.find("InnerTests").iter("InnerTest"):
-        testObject.innerTests.append(InnerTest(innerTest.find("TestName").text, innerTest.find("TestResult").text,
-                                               innerTest.find("ErrorMessage").text,
-                                               innerTest.find("DetailedResultsFile").text))
-    return testObject
+    name = ""
+    result = ""
+    errorMessage = ""
+    innertestRoot = None
+    for elem in testElement.findall("*"):
+        tag = elem.tag.lower()
+        if tag == "testname" or tag == "name":
+            name = elem.text
+        elif tag == "testresult" or tag == "result":
+            result = elem.text
+        elif tag == "errormessage":
+            errorMessage = elem.text
+        elif tag == "innertests" or tag == "subtests" or tag == "tests":
+            innertestsRoot = elem
+    trxTest = TRXTest(name, result, errorMessage)
+
+    for innertest in innertestsRoot.findall('*'):
+        name = ""
+        result = ""
+        errorMessage = ""
+        detailedResultsFile = ""
+        for elem in innertest.findall("*"):
+            tag = elem.tag.lower()
+            if tag == "testname" or tag == "name":
+                name = elem.text
+            elif tag == "testresult" or tag == "result":
+                result = elem.text
+            elif tag == "errormessage":
+                errorMessage = elem.text
+            elif tag == "detailedresultsfile" or tag == "resultsfile" or tag == "file" or tag == "detailedfile":
+                detailedResultsFile = elem.text
+        inner = InnerTest(name, result, errorMessage, detailedResultsFile)
+        trxTest.innerTests.append(inner)
+    return trxTest
+
 
 
 def parseInnerTest(trxTest, outdir):
-    
-    for inner in trxTest.innerTests:
-        root = ET.parse(os.path.join(outdir, inner.detailedFile))
-        inner.logfile = root.find("logfile").text
-        inner.startTime = root.find("starttime").text
-        inner.endTime = root.find("endtime").text
-        inner.duration = root.find("duration").text
-        for subinnertest in root.findall("subinnertest"):
-            inner.subInnerTests.append(SubInnerTest(subinnertest.find("result").text, subinnertest.find("text").text,
-                                                    subinnertest.find("endtime").text))
+    for innerTest in trxTest.innerTests:
+        logFile = ""
+        startTime = ""
+        endTime = ""
+        duration = ""
+        subInnerTests = []
+        root = ET.parse(os.path.join(outdir, innerTest.detailedFile))
+        for elem in root.findall('*'):
+            tag = elem.tag.lower()
+            if tag == "logfile" or tag == "log" or tag == "file":
+                logFile = elem.text
+            elif tag == "starttime" or tag == "start":
+                startTime == elem.text
+            elif tag == "endtime" or tag == "end" or tag == "stop":
+                endTime = elem.text
+            elif tag == "duration":
+                duration = elem.text
+            elif tag == "subinnertest":
+                subInnerTests.append(elem)
+        innerTest.logFile = logFile
+        innerTest.startTime = startTime
+        innerTest.endTime = endTime
+        innerTest.duration = duration
+        for subInnerTest in subInnerTests:
+            text = ""
+            result = ""
+            endTime = ""
+            for elem in subInnerTest.findall('*'):
+                tag = elem.tag.lower()
+                if tag == "text" or tag == "message":
+                    text = elem.text
+                elif tag == "result":
+                    result = elem.text
+                elif tag == "endtime" or tag == "time" or tag == "timestamp":
+                    endTime = elem.text
+            innerTest.subInnerTests.append(SubInnerTest(result, text, endTime))
+
 
 
 def generateTestReport(outDir):
@@ -162,14 +218,14 @@ def createHTML(file, outDir):
         htmlFile.write("<span>Start: " + innerTest.startTime + "&emsp; End: "+ innerTest.endTime + "&emsp; Duration: " +
                        innerTest.duration + "</span>")
         for subInnerTest in innerTest.subInnerTests:
-            if innerTest.logfile not in logFiles:
-                logFiles.append(innerTest.logfile)
+            if innerTest.logFile not in logFiles:
+                logFiles.append(innerTest.logFile)
             subColor = getColorFromResult(subInnerTest.result)[0]
             htmlFile.write("<div onclick='oneClick(event,this);searchClick(this)'>")
             htmlFile.write("<i class='material-icons' style='color:" + subColor + "'>add_box</i>")
             htmlFile.write(subInnerTest.errorMessage)
-            pos, lines = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp, 3, 3)
-            htmlFile.write("<div class='innertestcontent " + innerTest.logfile + " " + str(pos) + "' onclick='threeClick(event,this)'>")
+            pos, lines = locateLinesInLog(os.path.join(outDir, innerTest.logFile), subInnerTest.timeStamp, 3, 3)
+            htmlFile.write("<div class='innertestcontent " + innerTest.logFile + " " + str(pos) + "' onclick='threeClick(event,this)'>")
             htmlFile.write("</div></div>")
         htmlFile.write("</div></div>")     
     htmlFile.write("</div></div></div></div>")
