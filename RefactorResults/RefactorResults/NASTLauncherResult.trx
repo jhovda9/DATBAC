@@ -1,7 +1,7 @@
 <SummaryResult>
     <TestName>ipsunittest</TestName>
     <TestResult>Error</TestResult>
-    <ErrorMessage>Error: IpsReadSignal error: SignalCheck: A1Material/Value is 8.000 actual 0.000000 (Passed: 1/15, Warning: 1/15, Error: 13/15, Abort: 0/15)</ErrorMessage>
+    <ErrorMessage>Den fkkings IPSen gikk p en ny feil i Brenn i hel</ErrorMessage>
     <InnerTests>
         <InnerTest>
             <TestName>HVC02 Init Test</TestName>
