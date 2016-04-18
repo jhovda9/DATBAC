@@ -523,15 +523,27 @@ def HTMLTemplate():
             var outerdiv = document.getElementById("innertestcontainer");
             var outerdivchildren = outerdiv.children;
             var fromnumber = 1;
-            var tonumber = 0;
+            var totalnumber = 0;
+            var incnumber = 0;
+            var str = "";
+
             for (var i = 0; i < outerdivchildren.length; i++) {
                 var div = outerdivchildren[i].getElementsByTagName("div")[0];
-                var incnumber = div.children.length;
-                tonumber += incnumber;
-                var str = "Test " + fromnumber + "-" + tonumber + ": ";
+                incnumber = div.children.length;
+                totalnumber += incnumber;
+            }
+            for (var i = 0; i < outerdivchildren.length; i++) {
+                var div = outerdivchildren[i].getElementsByTagName("div")[0];
+                incnumber = div.children.length;
+                if (incnumber > 1){
+                    str = "Test " + fromnumber + "-" + (incnumber+fromnumber-1) + " of " + totalnumber + ": ";
+                } else{
+                    str = "Test " + fromnumber + " of " + totalnumber + ": ";
+                }
                 outerdivchildren[i].getElementsByTagName("span")[0].innerHTML = str;
                 fromnumber+=incnumber;
             }
+
         };
 
         function amIclicked(e, element)
