@@ -10,139 +10,12 @@ from re import split
 import datetime
 import timeit
 import Tkinter as TK
+import random
 #from time import strptime
 
 filepath = "D:Desktop/NASTLauncherResult.trx"
 
 
-def initializeTRXStructure(path):
-    testElement = ET.parse(path)
-    testObject = RefactorResults.TRXTest(testElement.find("TestName").text, testElement.find("TestResult").text,
-                         testElement.find("ErrorMessage").text)
-    for innerTest in testElement.find("InnerTests").iter("InnerTest"):
-        testObject.innerTests.append(RefactorResults.InnerTest(innerTest.find("TestName").text, innerTest.find("TestResult").text,
-                                               innerTest.find("ErrorMessage").text,
-                                               innerTest.find("DetailedResultsFile").text))
-    return testObject
-
-def parseInnerTest(trxTest, outdir):
-    
-    for inner in trxTest.innerTests:
-        root = ET.parse(os.path.join(outdir, inner.detailedFile))
-        inner.logfile = root.find("logfile").text
-        inner.startTime = root.find("starttime").text
-        inner.endTime = root.find("endtime").text
-        inner.duration = root.find("duration").text
-        for subinnertest in root.findall("subinnertest"):
-            inner.subInnerTests.append(SubInnerTest(subinnertest.find("result").text, subinnertest.find("text").text,
-                                                    subinnertest.find("endtime").text))
-
-
-#Alternativ:
-def initstructsafe(path):
-    testElement = ET.parse(path)
-    name = ""
-    result = ""
-    errorMessage = ""
-    innertestRoot = None
-    for elem in testElement.findall("*"):
-        tag = elem.tag.lower()
-        if tag == "testname" or tag == "name":
-            name = elem.text
-        elif tag == "testresult" or tag == "result":
-            result = elem.text
-        elif tag == "errormessage":
-            errorMessage = elem.text
-        elif tag == "innertests" or tag == "subtests" or tag == "tests":
-            innertestsRoot = elem
-    trxTest = RefactorResults.TRXTest(name, result, errorMessage)
-
-    for innertest in innertestsRoot.findall('*'):
-        name = ""
-        result = ""
-        errorMessage = ""
-        detailedResultsFile = ""
-        for elem in innertest.findall("*"):
-            tag = elem.tag.lower()
-            if tag == "testname" or tag == "name":
-                name = elem.text
-            elif tag == "testresult" or tag == "result":
-                result = elem.text
-            elif tag == "errormessage":
-                errorMessage = elem.text
-            elif tag == "detailedresultsfile" or tag == "resultsfile" or tag == "file" or tag == "detailedfile":
-                detailedResultsFile = elem.text
-        inner = RefactorResults.InnerTest(name, result, errorMessage, detailedResultsFile)
-        trxTest.innerTests.append(inner)
-    return trxTest
-
-
-#Alternative for sub-inner tests
-def createSubInnerTests(trxTest, outDir):
-    for innerTest in trxTest.innerTests:
-        logFile = ""
-        startTime = ""
-        endTime = ""
-        duration = ""
-        subInnerTests = []
-        root = ET.parse(os.path.join(outDir, innerTest.detailedFile))
-        for elem in root.findall('*'):
-            tag = elem.tag.lower()
-            if tag == "logfile" or tag == "log" or tag == "file":
-                logFile = elem.text
-            elif tag == "starttime" or tag == "start":
-                startTime == elem.text
-            elif tag == "endtime" or tag == "end" or tag == "stop":
-                endTime = elem.text
-            elif tag == "duration":
-                duration = elem.text
-            elif tag == "subinnertest":
-                subInnerTests.append(elem)
-        innerTest.logFile = logFile
-        innerTest.startTime = startTime
-        innerTest.endTime = endTime
-        innerTest.duration = duration
-        for subInnerTest in subInnerTests:
-            text = ""
-            result = ""
-            endTime = ""
-            for elem in root.findall('*'):
-                tag = elem.tag.lower()
-                if tag == "text" or tag == "message":
-                    text = elem.text
-                elif tag == "result":
-                    result = elem.text
-                elif tag == "endTime" or tag == "time" or tag == "timestamp":
-                    endTime = elem.text
-            innerTest.subInnerTests.append(RefactorResults.SubInnerTest(result, text, endTime))
-
-
-
-def findElement(element,string):
-    try:
-        element.find(string)
-    except ET.ParseError:
-        return
-
-
-
-
-def parseInnerTest(trxTest, outdir):
-    
-    for inner in trxTest.innerTests:
-        root = ET.parse(os.path.join(outdir, inner.detailedFile))
-        inner.logfile = root.find("logfile").text
-        inner.startTime = root.find("starttime").text
-        inner.endTime = root.find("endtime").text
-        inner.duration = root.find("duration").text
-        for subinnertest in root.findall("subinnertest"):
-            inner.subInnerTests.append(RefactorResults.SubInnerTest(subinnertest.find("result").text, subinnertest.find("text").text,
-                                                    subinnertest.find("endtime").text))
-
-testobject = initstructsafe(filepath)
-print testobject.name
-print testobject.innerTests[0].name
-print testobject.innerTests[1].subInnerTests[0].errorMessage
 """
 gui = TK.Tk()
 topFrame = TK.Frame(gui)
@@ -185,8 +58,6 @@ l5 = TK.Label(frameb5, text = "Error X/X")
 l5.pack(side = "right")
 gui.mainloop()"""
 
-filepath = "D:Desktop/AnalogIoCcpu.txt"
-timestamp = "2016-02-22 09:34:08,211"
 
 def locateLinesInLog(filePath, timeStamp):
     fil = open(filePath, "r+")
@@ -222,8 +93,73 @@ def locateLinesInLog(filePath, timeStamp):
     addedCusRemoved += removedInRow
     return lo + addedCusRemoved
 
-lo = locateLinesInLog(filepath, timestamp)
-file = open("D:Desktop/AnalogIoCcpu.txt", "r+")
-lines = file.readlines()
-file.close()
-print lo, lines[lo]
+def oldlocateLinesInLog(filePath, timeStamp, preLines, postLines):
+    preLines = 2
+    postLines = 2
+    lines = []
+    file = open(filePath, "r+")
+    time = datetime.datetime.strptime(timeStamp, "%Y-%m-%d %H:%M:%S,%f")
+    for i in range(preLines):
+        lines.append("")
+    x = -1
+    while True:
+        line = file.readline()
+        x += 1
+        if not line: 
+            break
+        try:
+            if time <= datetime.datetime.strptime(line[0:23],"%Y-%m-%d %H:%M:%S,%f"):
+                lines.append(line)
+                break
+        except ValueError:
+            continue
+        else:
+            for i in range(preLines):
+                if i != preLines-1:
+                    lines[i] = lines[i+1]
+                else:
+                    lines[preLines - 1] = line
+    for i in range(postLines):
+        lines.append(file.readline())
+    file.close()
+    return x
+
+def timer():
+    trxtest = RefactorResults.initializeTRXStructure("D:TONSofTEST/NASTLauncherResult.trx")
+    RefactorResults.parseInnerTest(trxtest, "D:TONSofTEST")
+    for innertest in trxtest.innerTests:
+        for subinner in innertest.subInnerTests:
+            locateLinesInLog(os.path.join("D:TONSofTEST", innertest.logFile), subinner.timeStamp)
+
+#Timer for single logfile
+def timerSingle():
+    file = open("D:Desktop/Acu.txt")
+    lines = file.readlines()
+    file.close()
+    stamp = random.randint(0,len(lines)-1)
+    timeStamp = lines[stamp][0:23]
+    locateLinesInLog("D:Desktop/Acu.txt", timeStamp)
+
+    
+
+
+def timer2():
+    trxtest = RefactorResults.initializeTRXStructure("D:TONSofTEST/NASTLauncherResult.trx")
+    RefactorResults.parseInnerTest(trxtest, "D:TONSofTEST")
+    for innertest in trxtest.innerTests:
+        for subinner in innertest.subInnerTests:
+            oldlocateLinesInLog(os.path.join("D:TONSofTEST", innertest.logFile), subinner.timeStamp, 2, 2)
+
+
+
+#timer for single logfile
+def timer2Single():
+    file = open("D:Desktop/Acu.txt")
+    lines = file.readlines()
+    file.close()
+    stamp = random.randint(0, len(lines)-1)
+    timeStamp = lines[stamp][0:23]
+    oldlocateLinesInLog("D:Desktop/Acu.txt", timeStamp, 2, 2)
+
+print timeit.timeit(timerSingle, number = 1, setup= "import datetime")
+#print timeit.timeit(timer2Single, number = 50, setup = "import datetime")
