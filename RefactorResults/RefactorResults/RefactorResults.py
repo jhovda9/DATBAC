@@ -1,16 +1,12 @@
 """This program is part of "Presentasjon av resultat av automatisk testing av software" by Hovda and Jonassen. """
 
 import xml.etree.ElementTree as ET
-from reportlab.pdfgen import canvas
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
-from reportlab.lib.colors import green
 from BeautifulSoup import BeautifulSoup as BS
 import os
 import sys
 import datetime
 import matplotlib.pyplot as plt
 import cStringIO
-import TestDef
 
 colors = {'passed': '#26C154',
           'error': '#DF4138',
@@ -139,10 +135,13 @@ def parseInnerTest(trxTest, outdir):
 
 def testCounter(result):
     global testCounters
+    if result is None:
+        result = 'Other'
     if result not in testCounters:
         testCounters[result] = 1
     else:
         testCounters[result] += 1
+
 
 
 def createTestObject(testElement):
@@ -297,41 +296,6 @@ def prettifyHTMLandAddTemplate(htmlFile):
     htmlFile.close()
 
 
-def createPDF(file, outDir, trxRoot):
-    headers = ["Test name", "Result", "Innertest", "Innertest Result"]
-    table = []
-    tableStyle = TableStyle([('Grid'),(0,0),(-1,-1)], 1, green)
-    table.append(headers)
-    table.append([trxRoot.name, str(trxRoot.result), "place", "place"])
-    for innerTest in trxRoot.innerTests:
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-        table.append(["place", "place", innerTest.name, str(innerTest.result)])
-    c = canvas.Canvas((file + ".pdf"))
-    doc = SimpleDocTemplate(file + ".pdf")
-    #c.drawString(100,2000, "Test av ReportLab")
-    #print table
-    tab = Table(table)
-    tab.setStyle(tableStyle)
-    what = []
-    what.append(tab)
-    doc.build(what)
-    #c.draw
-    #c.save()
-
-
 def locateLinesInLog(filePath, timeStamp):
     fil = open(filePath, "r+")
     lines = fil.readlines()
@@ -373,7 +337,7 @@ def drawBase64PieChart():
     chartcolors = []
     labels = []
     totalTests = 0
-    if len(testCounters) != 0 :
+    if len(testCounters) != 0:
         for test, counter in testCounters.iteritems():
             totalTests += counter
         for test, counter in testCounters.iteritems():
@@ -400,13 +364,16 @@ def drawBase64PieChart():
 
 
 def getColorAndResultFromResult(result):
-    global base64Icons
-    result = str.lower(result)
-    if result in base64Icons:
-        color = base64Icons[result]
+    if result is not None:
+        global base64Icons
+        result = str.lower(result)
+        if result in base64Icons:
+            color = base64Icons[result]
+        else:
+            color = base64Icons['other']
+        return color, result
     else:
-        color = base64Icons['other']
-    return color, result
+        return base64Icons['other'], "N/A"
 
 
 def HTMLTemplate():
@@ -439,7 +406,7 @@ def HTMLTemplate():
             margin-right: 540px;
             height: 100%;
             min-height: 205px;
-            padding: 0 25px 0 0;
+            padding: 1px 25px 0 0;
             border-right: 1px solid black;
         }
         #iconarea{
@@ -536,7 +503,7 @@ def HTMLTemplate():
             position: fixed;
             top: 0;
             left: 0;
-            background-color: rgba(220,220,220,0.5);
+            background-color: rgba(102,102,102,0.5);
         }
     </style>
     <script type="text/javascript">
@@ -544,8 +511,8 @@ def HTMLTemplate():
            "\tvar passednon = '" + iconsForJS['passed'] + "';\n" +\
            "\tvar error = '" + base64Icons['error'] + "';\n" +\
            "\tvar errornon = '" + iconsForJS['error'] + "';\n" +\
-            "\tvar failed = '" + base64Icons['error'] + "';\n" +\
-            "\tvar failednon = '" + iconsForJS['error'] + "';\n" +\
+           "\tvar failed = '" + base64Icons['error'] + "';\n" +\
+           "\tvar failednon = '" + iconsForJS['error'] + "';\n" +\
            "\tvar warning = '" + base64Icons['warning'] + "';\n" +\
            "\tvar warningnon = '" + iconsForJS['warning'] + "';\n" +\
            "\tvar other = '" + base64Icons['other'] + "';\n" +\
@@ -556,15 +523,27 @@ def HTMLTemplate():
             var outerdiv = document.getElementById("innertestcontainer");
             var outerdivchildren = outerdiv.children;
             var fromnumber = 1;
-            var tonumber = 0;
+            var totalnumber = 0;
+            var incnumber = 0;
+            var str = "";
+
             for (var i = 0; i < outerdivchildren.length; i++) {
                 var div = outerdivchildren[i].getElementsByTagName("div")[0];
-                var incnumber = div.children.length;
-                tonumber += incnumber;
-                var str = "Test " + fromnumber + "-" + tonumber + ": ";
+                incnumber = div.children.length;
+                totalnumber += incnumber;
+            }
+            for (var i = 0; i < outerdivchildren.length; i++) {
+                var div = outerdivchildren[i].getElementsByTagName("div")[0];
+                incnumber = div.children.length;
+                if (incnumber > 1){
+                    str = "Test " + fromnumber + "-" + (incnumber+fromnumber-1) + " of " + totalnumber + ": ";
+                } else{
+                    str = "Test " + fromnumber + " of " + totalnumber + ": ";
+                }
                 outerdivchildren[i].getElementsByTagName("span")[0].innerHTML = str;
                 fromnumber+=incnumber;
             }
+
         };
 
         function amIclicked(e, element)
