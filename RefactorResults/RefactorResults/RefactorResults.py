@@ -54,7 +54,10 @@ class SubInnerTest(object):
         self.errorMessage = errorMessage
         self.timeStamp = timeStamp
 
-
+"""
+Takes in a path to a trx/xml file. Initializes the TRXtest object, and the innertests objects with the information that it has from the TRX.
+It then appends these objects to the TRXobjects innerTests array. Finally it returns the TRXTest object.
+"""
 def initializeTRXStructure(path):
     testElement = ET.parse(path)
     name = ""
@@ -94,7 +97,10 @@ def initializeTRXStructure(path):
     return trxTest
 
 
-
+"""
+Takes a TRXTest object and a directory where the detailed files are located as arguments. Completes the innertest objects and creates the
+SubInnertestObjects and appends these to the subinnertest array in the parent innertest object
+"""
 def parseInnerTest(trxTest, outdir):
     for innerTest in trxTest.innerTests:
         logFile = ""
@@ -143,38 +149,10 @@ def testCounter(result):
         testCounters[result] += 1
 
 
-
-def createTestObject(testElement):
-    detailedResultsFile = "No file exists"
-    if testElement.find("DetailedResultsFile") != None:
-        detailedResultsFile = testElement.find("DetailedResultsFile").text
-    testObject = TRXTest(testElement.find("TestName").text, testElement.find("TestResult").text,
-                         testElement.find("ErrorMessage").text, detailedResultsFile)
-    return testObject
-
-
-def parseInnerTest(trxTest, outDir):
-    for inner in trxTest.innerTests:
-        root = ET.parse(os.path.join(outDir, inner.detailedFile))
-        inner.logfile = root.find("logfile").text
-        inner.startTime = root.find("starttime").text
-        inner.endTime = root.find("endtime").text
-        inner.duration = root.find("duration").text
-        for subinnertest in root.findall("subinnertest"):
-            inner.subInnerTests.append(SubInnerTest(subinnertest.find("result").text, subinnertest.find("text").text,
-                                                    subinnertest.find("endtime").text))
-
-
-def createTestHierarchy(root):
-    baseTest = createTestObject(root)
-    if root.find("InnerTests") != None:
-        for test in root.find("InnerTests"):
-            baseTest.innerTests.append(createTestObject(test))
-    return baseTest
-
-
+"""
+Locates the path for the TRX file in a directory.
+"""
 def findTRX(outDir):
-    #What if there are multiple TRX files?
     if os.path.exists(outDir):
         files = []
         for file in os.listdir(outDir):
@@ -187,6 +165,11 @@ def findTRX(outDir):
     else:
         sys.exit('Directory "%s" does not exist' % outDir)
 
+
+"""
+May be used as a single function call entry points.
+Takes just a directory containing a TRX and all the detailed files as arguments. Creates an HTML file with the completed result output in the dir.
+"""
 def generateTestReport(outDir):
     trxFile = findTRX(outDir)
     if trxFile == None:
@@ -202,7 +185,9 @@ def returnEmptyIfNone(s):
         return ''
     return str(s)
 
-
+"""
+Creates the final HTML output.
+"""
 def createHTML(file, outDir, trxRoot):
     global base64Icons
     divCounter = 0
@@ -255,19 +240,19 @@ def createHTML(file, outDir, trxRoot):
             htmlFile.write("<div class='innertestcontent subinnertestcontent'>")
             htmlFile.write("<span class='detailspan'>Start: " + returnEmptyIfNone(innerTest.startTime) + "&emsp; End: " +
                            returnEmptyIfNone(innerTest.endTime) + "&emsp; Duration: " +
-                           returnEmptyIfNone(innerTest.duration) + "&emsp; Logfile: " +
+                           returnEmptyIfNone(innerTest.duration) + "&emsp; LogFile: " +
                            "<span class='displaylogspan' onclick='displayLog(event,this)'>" +
-                           returnEmptyIfNone(innerTest.logfile) + "</span></span>")
+                           returnEmptyIfNone(innerTest.logFile) + "</span></span>")
             for subInnerTest in innerTest.subInnerTests:
                 if subInnerTest is not None:
-                    if innerTest.logfile not in logFiles:
-                        logFiles.append(innerTest.logfile)
+                    if innerTest.logFile not in logFiles:
+                        logFiles.append(innerTest.logFile)
                     subColor, subTest = getColorAndResultFromResult(subInnerTest.result)
                     htmlFile.write("<div>")
                     htmlFile.write("<img class='imageicon " + subTest + "' src='data:image/png;base64," + subColor + "'onclick='oneClick(event,this); searchClick(this)'/>")
                     htmlFile.write(returnEmptyIfNone(subInnerTest.errorMessage))
-                    pos = locateLinesInLog(os.path.join(outDir, innerTest.logfile), subInnerTest.timeStamp)
-                    htmlFile.write("<div class='logcontent " + innerTest.logfile + " " +
+                    pos = locateLinesInLog(os.path.join(outDir, innerTest.logFile), subInnerTest.timeStamp)
+                    htmlFile.write("<div class='logcontent " + innerTest.logFile + " " +
                                    str(pos) + "' onclick='threeClick(event,this)'>")
                     htmlFile.write("</div></div>")
             htmlFile.write("</div></div>")
@@ -295,7 +280,10 @@ def prettifyHTMLandAddTemplate(htmlFile):
     htmlFile.write(newHTML)
     htmlFile.close()
 
-
+"""
+Takes a logfile as TXT and a timestamp as string as inputs.
+Returns the line number of the matching line.
+"""
 def locateLinesInLog(filePath, timeStamp):
     fil = open(filePath, "r+")
     lines = fil.readlines()
@@ -330,6 +318,9 @@ def locateLinesInLog(filePath, timeStamp):
     addedCusRemoved += removedInRow
     return lo + addedCusRemoved
 
+"""
+Function that draws pie chart based on the results of the tests.
+"""
 def drawBase64PieChart():
     global testCounters
     global colors
@@ -362,7 +353,9 @@ def drawBase64PieChart():
     plt.savefig(sio, format=format, transparent=True, dpi=200, bbox_inches='tight')
     return sio
 
-
+"""
+Locates the hex value of the color affiliated with the result.
+"""
 def getColorAndResultFromResult(result):
     if result is not None:
         global base64Icons
