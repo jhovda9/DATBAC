@@ -8,12 +8,18 @@ import datetime
 import matplotlib.pyplot as plt
 import cStringIO
 
+"""
+Dictionary for linking results to colors used in pie-chart
+"""
 colors = {'passed': '#26C154',
           'error': '#DF4138',
           'failed': '#DF4138',
           'warning': '#DF9538',
           'other': '#4138df'
           }
+"""
+Dictionary for linking results to images(base64 strings)
+"""
 base64Icons = {'testpass': 'iVBORw0KGgoAAAANSUhEUgAAAIsAAABpCAYAAAAKldB2AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAAPrSURBVHhe7d2/axRBGMbx/DUKYqMIFora2IilIhYqCEqEgAQbG0GsLAQrGxEL/5OEeEEtVfzxz5z3rky4vX3ubndm3pl3Zp7ic7l97rjNsl8IaZKd+XxOjTp3dG9++uD2/NWfj4tD/J5lcKT6SSinDm51xgYDR6rbcihTgoEj1QuF4mwLBo5Up02hOJuCGQxUpzGhOOuC6R1QnaaE4qBgeh9K9fEJxVkNZvDhVI+QUJzlYOBJqHwxQnFcMPBEVLaYoThXj3fxyahcGqFcnj1efDR/DFVFMxQxOCGVSTsU0TshlSlFKKJ3QOVJFYoYDFSOC58fwJsdYl0oAo5kX+pQBBzJthyhCDiSXblCEXAkm3KGIuBI9uQORcCRbLEQioAj2XFx9hDe7BA+oQg4kg2WQhFwpPyshSLgSHlZDEXAkfKxGoqAI+VhORQBR0rPeigCjpRWCaEIOFI6l2aP4M0OoRGKgCOlUVIoAo6kr7RQBBxJV4mhCDiSnlJDEXAkHSWHIuBI8ZUeioAjxVVDKAKOFI/cVHSzQ+QIRcCR4qgpFAFHCldbKAKOFKbGUAQcyV+toQg4kp+aQxFwpOlqD0XAkaZpIRQBRxqvlVAEHGmclkIRcKTtWgtFwBHZ+/5m8QW/1poWQxFwXPX0x9vuryyfObyzOMTvaUWroQg4Lnv+810XiruwloNpORQBR+fl7w+9UJwWg2k9FAFHsS4Up6VgGMp/cJT/ALEpFKeFYK4dP4HXHqLEUMRgeP33UxcBukik5mAYSt9gmBKKU2MwDGWod+ATilNTMAwFO3kSEopTQzAMZb3u4ezhXXiRPkoOhqFstvVXZB8lBsNQtuseXvx633Qw17/swWsIUVso4uRJq8EwlPF6B60Fw1CmGQytBMNQpoNj7cEwFD9wFLUGw1D8wdGpLRiGEgaOy2oJhqGEg+Oq0oO58W0ffg8hWgtFwBEpNRiGEg8c1yktGIYSFxw3KSUYhhIfHLexHgxD0QHHMawGw1D0wHEsa8EwFF1wnMJKMAxFHxynyh3Mza/P4GeEYChDcPSRKxiGkg4cfaUOhqGkBccQqYJhKOnBMZR2MAwlDzjGoBXM+aP78LUQDGUcOMaiEUxsDGU8OMZkORiGMg0cY7MYDEOZDo4aLAXDUPzAUYuFYBiKPzhqyhkMQwkDR205gmEo4eCYQspgGEoccEwlRTAMJR44pqQZDEOJC46paQTDUOKDYw4xg2EoOuCYS4xgGIoeOOYUEgxD0QXH3HyCYSj64GjBlGAYShpwtGJMMAwlHThasikYhpIWHK1BwTCU9OBo0XIwDCUPOFolwVw53l08xa+TpvnOP9N0RctZvjZJAAAAAElFTkSuQmCC',
                'testfail': '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',
                'error': 'iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAABaSURBVDhPY/j//z/DAzeL//cdycRuGUAj/jMwPPbBIkkq9pn3n+ERNgmScQ/dDOoB+x+ECakbOQYhNBLC6PpoZRA6HkaBjY6pZhCxmJoGUa0YAfmf8oLtPwMAwsMZ2E1CMc0AAAAASUVORK5CYII=',
@@ -139,6 +145,9 @@ def parseInnerTest(trxTest, outdir):
                     endTime = elem.text
             innerTest.subInnerTests.append(SubInnerTest(result, text, endTime))
 
+"""
+Counter used to store the amount of test results in a global dictionary
+"""
 def testCounter(result):
     global testCounters
     if result is None:
@@ -269,7 +278,9 @@ def createHTML(file, outDir, trxRoot):
     htmlFile.close()
     prettifyHTMLandAddTemplate(os.path.join(outDir, file))
 
-
+"""
+Formats the HTML file, adding the template afterwards so that JavaScript is left untouched by the formatting
+"""
 def prettifyHTMLandAddTemplate(htmlFile):
     htmlFile = open(htmlFile + ".html", "r+")
     prevHtml = htmlFile.read()
@@ -319,7 +330,7 @@ def locateLinesInLog(filePath, timeStamp):
     return lo + addedCusRemoved
 
 """
-Function that draws pie chart based on the results of the tests.
+Function that draws pie chart based on the results of the tests. Returns a base64 string.
 """
 def drawBase64PieChart():
     global testCounters
@@ -354,7 +365,7 @@ def drawBase64PieChart():
     return sio
 
 """
-Locates the hex value of the color affiliated with the result.
+Returns the color for a given test, and the result as lowercase
 """
 def getColorAndResultFromResult(result):
     if result is not None:
@@ -368,7 +379,9 @@ def getColorAndResultFromResult(result):
     else:
         return base64Icons['other'], "N/A"
 
-
+"""
+Returns the HTML template
+"""
 def HTMLTemplate():
     global base64Icons
     iconsForJS = {'passed': 'iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAABPSURBVDhPY/j//z9D5MGQ/2pk4yKgEf8ZGCYfwiZJIj405z9DAzYJkvH0UYMIYtoZNB2cJojB6PpoZRC5eNQgwpiaBlGtGAGlCcoLtv8MAGpW768pGjUHAAAAAElFTkSuQmCC',
